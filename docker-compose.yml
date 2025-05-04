@@ -1,0 +1,95 @@
+version: '3.9'
+services:
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - red_microservicios
+    depends_on:
+      - db_auth
+  db_auth:
+    image: mongo
+    container_name: db_auth
+    ports:
+      - "27017:27017"
+    networks:
+      - red_microservicios
+
+  locatarios:
+    build:
+      context: ./locatarios
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    networks:
+      - red_microservicios
+    depends_on:
+      - db_locatarios
+  db_locatarios:
+    image: mongo
+    container_name: db_locatarios
+    ports:
+      - "27018:27017"
+    networks:
+      - red_microservicios
+
+  pagos:
+    build:
+      context: ./pagos
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    networks:
+      - red_microservicios
+    depends_on:
+      - db_pagos
+  db_pagos:
+    image: mongo
+    container_name: db_pagos
+    ports:
+      - "27019:27017"
+    networks:
+      - red_microservicios
+
+  pedidos:
+    build:
+      context: ./pedidos
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    networks:
+      - red_microservicios
+    depends_on:
+      - db_pedidos
+  db_pedidos:
+    image: mongo
+    container_name: db_pedidos
+    ports:
+      - "27020:27017"
+    networks:
+      - red_microservicios
+
+  reportes:
+    build:
+      context: ./reportes
+      dockerfile: Dockerfile
+    ports:
+      - "3004:3004"
+    networks:
+      - red_microservicios
+    depends_on:
+      - db_reportes
+  db_reportes:
+    image: mongo
+    container_name: db_reportes
+    ports:
+      - "27021:27017"
+    networks:
+      - red_microservicios
+
+networks:
+  red_microservicios:
+    driver: bridge

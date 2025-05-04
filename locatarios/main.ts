@@ -1,0 +1,9 @@
+import 'reflect-metadata'; // Asegúrate de importar reflect-metadata primero
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(3000); // El puerto de tu servidor HTTP
+}
+bootstrap();

@@ -1,0 +1,22 @@
+# Utiliza una imagen oficial de Node.js
+FROM node:20
+
+# Establece el directorio de trabajo dentro del contenedor
+WORKDIR /app
+
+# Copia los archivos necesarios
+COPY package.json ./
+COPY package-lock.json ./
+COPY . .
+
+RUN npm cache clean --force
+
+RUN npm install -g npm@latest
+# Instala las dependencias
+RUN npm install --legacy-peer-deps
+
+# Expone el puerto
+EXPOSE 3002
+
+# Comando para iniciar el servidor
+CMD ["npm", "run", "start"]
