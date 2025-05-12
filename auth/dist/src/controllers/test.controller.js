@@ -19,11 +19,16 @@ let TestController = class TestController {
     constructor(testService) {
         this.testService = testService;
     }
-    async crearPrueba(mensaje) {
-        return this.testService.crearPrueba(mensaje);
-    }
-    async obtenerPruebas() {
-        return this.testService.obtenerPruebas();
+    async crearTest(mensaje) {
+        console.log('Mensaje recibido desde Postman:', mensaje);
+        try {
+            return await this.testService.crearTest(mensaje);
+            // Llama al servicio para guardar el mensaje
+        }
+        catch (error) {
+            console.error('Error en el controlador:', error);
+            throw error;
+        }
     }
 };
 exports.TestController = TestController;
@@ -33,14 +38,9 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], TestController.prototype, "crearPrueba", null);
-__decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], TestController.prototype, "obtenerPruebas", null);
+], TestController.prototype, "crearTest", null);
 exports.TestController = TestController = __decorate([
-    (0, common_1.Controller)('test'),
+    (0, common_1.Controller)('test') // Asegúrate de que la ruta esté definida aquí
+    ,
     __metadata("design:paramtypes", [test_service_1.TestService])
 ], TestController);

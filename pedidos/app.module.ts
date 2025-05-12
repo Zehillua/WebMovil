@@ -1,18 +1,20 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Test, TestSchema } from './src/schemas/test.schema';
-import { TestService } from './src/services/test.service';
-import { TestController } from './src/controllers/test.controller';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PedidoModule } from './src/modules/pedido.module';
 
 @Module({
   imports: [
-    // Conexión a la base de datos (ajustá el URI a tu caso)
-    MongooseModule.forRoot('mongodb://db_pedidos:27020/pedidos'),
-
-    // Registro del schema
-    MongooseModule.forFeature([{ name: Test.name, schema: TestSchema }]),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI'),
+      }),
+      inject: [ConfigService],
+    }),
+    PedidoModule,
   ],
-  controllers: [TestController],
-  providers: [TestService],
 })
 export class AppModule {}

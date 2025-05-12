@@ -9,21 +9,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
-const test_schema_1 = require("./src/schemas/test.schema");
-const test_service_1 = require("./src/services/test.service");
-const test_controller_1 = require("./src/controllers/test.controller");
+const config_1 = require("@nestjs/config");
+const pedido_module_1 = require("./src/modules/pedido.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            // Conexión a la base de datos (ajustá el URI a tu caso)
-            mongoose_1.MongooseModule.forRoot('mongodb://localhost:27017/pedidos'),
-            // Registro del schema
-            mongoose_1.MongooseModule.forFeature([{ name: test_schema_1.Test.name, schema: test_schema_1.TestSchema }]),
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+            }),
+            mongoose_1.MongooseModule.forRootAsync({
+                useFactory: async (configService) => ({
+                    uri: configService.get('MONGO_URI'),
+                }),
+                inject: [config_1.ConfigService],
+            }),
+            pedido_module_1.PedidoModule,
         ],
-        controllers: [test_controller_1.TestController],
-        providers: [test_service_1.TestService],
     })
 ], AppModule);

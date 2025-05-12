@@ -4,6 +4,8 @@ services:
     build:
       context: ./auth
       dockerfile: Dockerfile
+    environment:
+      MONGO_URI: "mongodb://db_auth:27017/auth"
     ports:
       - "3000:3000"
     networks:
@@ -22,8 +24,10 @@ services:
     build:
       context: ./locatarios
       dockerfile: Dockerfile
+    environment:
+      MONGO_URI: "mongodb://db_locatarios:27017/auth"
     ports:
-      - "3001:3001"
+      - "3001:3000"
     networks:
       - red_microservicios
     depends_on:
@@ -40,8 +44,10 @@ services:
     build:
       context: ./pagos
       dockerfile: Dockerfile
+    environment:
+      MONGO_URI: "mongodb://db_pagos:27017/auth"
     ports:
-      - "3002:3002"
+      - "3002:3000"
     networks:
       - red_microservicios
     depends_on:
@@ -58,8 +64,10 @@ services:
     build:
       context: ./pedidos
       dockerfile: Dockerfile
+    environment:
+      MONGO_URI: "mongodb://db_pedidos:27017/auth"
     ports:
-      - "3003:3003"
+      - "3003:3000"
     networks:
       - red_microservicios
     depends_on:
@@ -76,8 +84,10 @@ services:
     build:
       context: ./reportes
       dockerfile: Dockerfile
+    environment:
+      MONGO_URI: "mongodb://db_reportes:27017/auth"
     ports:
-      - "3004:3004"
+      - "3004:3000"
     networks:
       - red_microservicios
     depends_on:

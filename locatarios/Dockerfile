@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
 COPY . .
-
+RUN rm -rf .env
 RUN npm cache clean --force
 
 RUN npm install -g npm@latest

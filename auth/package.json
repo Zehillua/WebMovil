@@ -18,12 +18,15 @@
     "@nestjs/core": "^11.0.15",
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/platform-express": "^11.0.15",
+    "@tanstack/react-query": "^5.75.7",
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.4.7",
     "mongoose": "^8.13.2",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.6",
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.14.0",
     "typescript": "^5.8.3"
   }

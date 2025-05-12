@@ -16,23 +16,19 @@ exports.TestService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-const test_schema_1 = require("../schemas/test.schema");
+const test_schema_1 = require("../schemas/test.schema"); // Asegúrate de que la ruta sea correcta
 let TestService = class TestService {
     constructor(testModel) {
         this.testModel = testModel;
     }
-    async crearPrueba(mensaje) {
+    async crearTest(mensaje) {
         const nuevoTest = new this.testModel({ mensaje });
-        return nuevoTest.save();
-    }
-    async obtenerPruebas() {
-        return this.testModel.find().exec();
+        return nuevoTest.save(); // Guardar el mensaje en MongoDB
     }
 };
 exports.TestService = TestService;
 exports.TestService = TestService = __decorate([
-    (0, common_1.Injectable)() // Este decorador debe estar en la clase
-    ,
+    (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(test_schema_1.Test.name)),
     __metadata("design:paramtypes", [mongoose_2.Model])
 ], TestService);
