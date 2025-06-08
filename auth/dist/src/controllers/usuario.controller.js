@@ -17,14 +17,34 @@ const common_1 = require("@nestjs/common");
 const usuario_service_1 = require("../services/usuario.service");
 const create_usuario_dto_1 = require("../dtos/create-usuario.dto");
 const login_usuario_dto_1 = require("../dtos/login-usuario.dto");
+const class_transformer_1 = require("class-transformer");
+const class_validator_1 = require("class-validator");
 let UsuarioController = class UsuarioController {
     constructor(usuarioService) {
         this.usuarioService = usuarioService;
     }
-    async registro(createUsuarioDto) {
-        return this.usuarioService.crearUsuario(createUsuarioDto);
+    async registro(body) {
+        let dtoInstance;
+        if (body.tipoUsuario === create_usuario_dto_1.TipoUsuario.USUARIO) {
+            dtoInstance = (0, class_transformer_1.plainToInstance)(create_usuario_dto_1.CreateUsuarioDto, body);
+        }
+        else if (body.tipoUsuario === create_usuario_dto_1.TipoUsuario.LOCATARIO) {
+            dtoInstance = (0, class_transformer_1.plainToInstance)(create_usuario_dto_1.CreateLocatarioDto, body);
+        }
+        else if (body.tipoUsuario === create_usuario_dto_1.TipoUsuario.REPARTIDOR) {
+            dtoInstance = (0, class_transformer_1.plainToInstance)(create_usuario_dto_1.CreateRepartidorDto, body);
+        }
+        else {
+            throw new common_1.BadRequestException('tipoUsuario inválido');
+        }
+        const errors = await (0, class_validator_1.validate)(dtoInstance, { whitelist: true, forbidNonWhitelisted: true });
+        if (errors.length > 0) {
+            throw new common_1.BadRequestException(errors.map(e => Object.values(e.constraints || {})).flat());
+        }
+        return this.usuarioService.crearUsuario(dtoInstance);
     }
     async login(loginUsuarioDto) {
+        console.log('DTO recibido:', loginUsuarioDto);
         return this.usuarioService.loginUsuario(loginUsuarioDto);
     }
 };
@@ -33,7 +53,7 @@ __decorate([
     (0, common_1.Post)('registro'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_usuario_dto_1.CreateUsuarioDto]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "registro", null);
 __decorate([

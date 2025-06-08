@@ -5,6 +5,7 @@ import { Usuario, UsuarioSchema } from './src/schemas/usuario.schema';
 import { UsuarioService } from './src/services/usuario.service';
 import { UsuarioController } from './src/controllers/usuario.controller';
 import { UsuarioModule } from './src/modules/usuario.module';
+import { AuthModule } from './src/modules/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UsuarioModule } from './src/modules/usuario.module';
     }),
     MongooseModule.forFeature([{ name: Usuario.name, schema: UsuarioSchema }]),
     UsuarioModule,
+    AuthModule,
   ],
   controllers: [UsuarioController],
   providers: [UsuarioService],

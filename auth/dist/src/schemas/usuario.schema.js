@@ -56,27 +56,23 @@ __decorate([
 __decorate([
     (0, mongoose_1.Prop)({ unique: true, sparse: true }),
     __metadata("design:type", String)
-], Usuario.prototype, "nombreUsuario", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ unique: true, sparse: true }),
-    __metadata("design:type", String)
 ], Usuario.prototype, "correo", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
-], Usuario.prototype, "contrase\u00F1a", void 0);
+], Usuario.prototype, "clave", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
-], Usuario.prototype, "pais", void 0);
+], Usuario.prototype, "direccion", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
-], Usuario.prototype, "ciudad", void 0);
+], Usuario.prototype, "telefono", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
-], Usuario.prototype, "numeroTelefono", void 0);
+], Usuario.prototype, "nombreUsuario", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
@@ -97,6 +93,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: [{ comida: String, precio: Number }] }),
     __metadata("design:type", Array)
 ], Usuario.prototype, "ventas", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Usuario.prototype, "usuarioRepartidor", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)

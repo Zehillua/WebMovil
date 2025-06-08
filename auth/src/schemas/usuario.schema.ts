@@ -28,19 +28,18 @@ export class Usuario extends Document {
   @Prop()
   apellido: string;
   @Prop({ unique: true, sparse: true })
-  nombreUsuario?: string;
-  @Prop({ unique: true, sparse: true })
   correo: string;
   @Prop({ required: true })
-  contraseña: string;
+  clave: string;
   @Prop()
-  pais: string;
+  direccion: string;
   @Prop()
-  ciudad: string;
-  @Prop()
-  numeroTelefono: string;
+  telefono: string;
 
   // Usuario
+  
+  @Prop()
+  nombreUsuario?: string;
   @Prop()
   numeroCasaDepto?: string;
 
@@ -55,6 +54,8 @@ export class Usuario extends Document {
   ventas?: Venta[];
 
   // Repartidor
+  @Prop()
+  usuarioRepartidor?: string;
   @Prop()
   vehiculo?: string;
   @Prop()
