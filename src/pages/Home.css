@@ -1,0 +1,108 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #fff;
+  }
+  
+  .home-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, #cf5caa, #e97c50, #f2c94c);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    padding: 2rem;
+  }
+  
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .home-inner {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 1100px;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  }
+  
+  .home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .home-text {
+    max-width: 500px;
+  }
+  
+  .home-text h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .home-text p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #666;
+  }
+  
+  .home-buttons button {
+    background-color: #d87a9c;
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    margin-right: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .home-buttons button:hover {
+    background-color: #c76988;
+  }
+  
+  .home-header img {
+    max-width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  }
+  
+  .home-categories, .home-info {
+    margin-top: 2rem;
+  }
+  
+  .section-box {
+    background-color: #cecdcd;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  }
+  
+  .category-grid, .info-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .category-card, .info-card {
+    background-color: #f5f5f5;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    min-width: 200px;
+    color: #333;
+  }
+  
+  .info-card {
+    max-width: 300px;
+  }
+  

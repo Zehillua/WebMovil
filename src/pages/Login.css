@@ -1,0 +1,125 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #fff;
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #cf5caa, #e97c50, #f2c94c);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  padding: 2rem;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-inner {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-icon {
+  margin-bottom: 2rem;
+}
+
+.login-icon img {
+  width: 80px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.671);
+  padding: 10px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background-color: #d8d7d7;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  width: 100%;
+}
+
+.input-icon {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.input-group input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+.login-options a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-options a:hover {
+  text-decoration: underline;
+}
+
+.login-button {
+  background-color: #d87a9c;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.login-button:hover {
+  background-color: #c76988;
+}
+
+.login-button.auth0 {
+  background-color: #4a90e2;
+}
+
+.login-button.auth0:hover {
+  background-color: #3573c2;
+}
+
+.login-separator {
+  margin: 1rem 0;
+  border: none;
+  border-top: 1px solid #ccc;
+  width: 100%;
+}

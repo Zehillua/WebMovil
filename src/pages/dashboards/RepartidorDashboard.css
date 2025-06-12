@@ -1,0 +1,62 @@
+.repartidor-dashboard {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.repartidor-dashboard h1 {
+  margin-bottom: 2rem;
+}
+
+.card-pedido {
+  background: #f8f8f8;
+  border-left: 5px solid #d87a9c;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+.card-pedido h3 {
+  margin-top: 0;
+}
+
+.card-pedido ul {
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.card-pedido button {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  background-color: #d87a9c;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.card-pedido button:hover {
+  background-color: #c05d83;
+}
+
+.estado {
+  font-weight: bold;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+}
+
+.estado.pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.estado.en-camino {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.estado.entregado {
+  background-color: #d4edda;
+  color: #155724;
+}
