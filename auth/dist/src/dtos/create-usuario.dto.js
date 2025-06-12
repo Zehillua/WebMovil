@@ -9,43 +9,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateRepartidorDto = exports.CreateLocatarioDto = exports.CreateUsuarioDto = exports.CreateUsuarioBaseDto = exports.VentaDto = exports.ComidaDto = exports.TipoUsuario = void 0;
+exports.CreateRepartidorDto = exports.CreateLocatarioDto = exports.CreateUsuarioDto = exports.CreateUsuarioBaseDto = exports.TipoUsuario = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
+const comidas_dto_1 = require("./comidas.dto");
 var TipoUsuario;
 (function (TipoUsuario) {
     TipoUsuario["USUARIO"] = "usuario";
     TipoUsuario["LOCATARIO"] = "locatario";
     TipoUsuario["REPARTIDOR"] = "repartidor";
 })(TipoUsuario || (exports.TipoUsuario = TipoUsuario = {}));
-class ComidaDto {
-}
-exports.ComidaDto = ComidaDto;
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], ComidaDto.prototype, "nombre", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], ComidaDto.prototype, "precio", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], ComidaDto.prototype, "cantidad", void 0);
-class VentaDto {
-}
-exports.VentaDto = VentaDto;
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], VentaDto.prototype, "comida", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], VentaDto.prototype, "precio", void 0);
 class CreateUsuarioBaseDto {
 }
 exports.CreateUsuarioBaseDto = CreateUsuarioBaseDto;
@@ -82,6 +55,12 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateUsuarioBaseDto.prototype, "telefono", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], CreateUsuarioBaseDto.prototype, "isAdmin", void 0);
+// Usuario normal
 class CreateUsuarioDto extends CreateUsuarioBaseDto {
 }
 exports.CreateUsuarioDto = CreateUsuarioDto;
@@ -95,6 +74,7 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateUsuarioDto.prototype, "numeroCasaDepto", void 0);
+// Locatario
 class CreateLocatarioDto extends CreateUsuarioBaseDto {
 }
 exports.CreateLocatarioDto = CreateLocatarioDto;
@@ -111,15 +91,30 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.ValidateNested)({ each: true }),
-    (0, class_transformer_1.Type)(() => ComidaDto),
+    (0, class_transformer_1.Type)(() => comidas_dto_1.ComidaDto),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], CreateLocatarioDto.prototype, "comidasStock", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.ValidateNested)({ each: true }),
-    (0, class_transformer_1.Type)(() => VentaDto),
+    (0, class_transformer_1.Type)(() => comidas_dto_1.VentaNormalDto),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], CreateLocatarioDto.prototype, "ventas", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => comidas_dto_1.VentaPromoDto),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateLocatarioDto.prototype, "ventasPromo", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateLocatarioDto.prototype, "valoracion", void 0);
+// Repartidor
 class CreateRepartidorDto extends CreateUsuarioBaseDto {
 }
 exports.CreateRepartidorDto = CreateRepartidorDto;
@@ -138,3 +133,8 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateRepartidorDto.prototype, "patente", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateRepartidorDto.prototype, "valoracionRepartidor", void 0);

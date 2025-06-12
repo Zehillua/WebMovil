@@ -11,6 +11,8 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const config_1 = require("@nestjs/config");
 const pedido_module_1 = require("./src/modules/pedido.module");
+const carrito_module_1 = require("./src/modules/carrito.module");
+const jwt_strategy_1 = require("./src/strategies/jwt.strategy"); // <--- IMPORTA LA ESTRATEGIA
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -27,6 +29,8 @@ exports.AppModule = AppModule = __decorate([
                 inject: [config_1.ConfigService],
             }),
             pedido_module_1.PedidoModule,
+            carrito_module_1.CarritoModule
         ],
+        providers: [jwt_strategy_1.JwtStrategy], // <--- AGREGA LA ESTRATEGIA COMO PROVIDER
     })
 ], AppModule);

@@ -1,31 +1,11 @@
-import { IsString, IsNotEmpty, IsEmail, IsEnum, IsArray, ValidateNested, IsNumber, IsOptional } from 'class-validator';
+import { IsBoolean, IsString, IsNotEmpty, IsEmail, IsEnum, IsArray, ValidateNested, IsNumber, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ComidaDto, VentaNormalDto, VentaPromoDto } from './comidas.dto';
 
 export enum TipoUsuario {
   USUARIO = 'usuario',
   LOCATARIO = 'locatario',
   REPARTIDOR = 'repartidor',
-}
-
-export class ComidaDto {
-  @IsString()
-  @IsNotEmpty()
-  nombre: string;
-
-  @IsNumber()
-  precio: number;
-
-  @IsNumber()
-  cantidad: number;
-}
-
-export class VentaDto {
-  @IsString()
-  @IsNotEmpty()
-  comida: string;
-
-  @IsNumber()
-  precio: number;
 }
 
 export class CreateUsuarioBaseDto {
@@ -49,13 +29,18 @@ export class CreateUsuarioBaseDto {
 
   @IsString()
   @IsNotEmpty()
-  direccion: string; // Nuevo campo
+  direccion: string;
 
   @IsString()
   @IsNotEmpty()
-  telefono: string; // Renombrado
+  telefono: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isAdmin?: boolean;
 }
 
+// Usuario normal
 export class CreateUsuarioDto extends CreateUsuarioBaseDto {
   @IsString()
   @IsNotEmpty()
@@ -66,6 +51,7 @@ export class CreateUsuarioDto extends CreateUsuarioBaseDto {
   numeroCasaDepto: string;
 }
 
+// Locatario
 export class CreateLocatarioDto extends CreateUsuarioBaseDto {
   @IsString()
   @IsNotEmpty()
@@ -78,14 +64,27 @@ export class CreateLocatarioDto extends CreateUsuarioBaseDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ComidaDto)
+  @IsOptional()
   comidasStock: ComidaDto[];
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => VentaDto)
-  ventas: VentaDto[];
+  @Type(() => VentaNormalDto)
+  @IsOptional()
+  ventas: VentaNormalDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => VentaPromoDto)
+  @IsOptional()
+  ventasPromo: VentaPromoDto[];
+
+  @IsNumber()
+  @IsOptional()
+  valoracion: number;
 }
 
+// Repartidor
 export class CreateRepartidorDto extends CreateUsuarioBaseDto {
   @IsString()
   @IsNotEmpty()
@@ -98,4 +97,8 @@ export class CreateRepartidorDto extends CreateUsuarioBaseDto {
   @IsString()
   @IsNotEmpty()
   patente: string;
+
+  @IsNumber()
+  @IsOptional()
+  valoracionRepartidor: number;
 }

@@ -1,4 +1,6 @@
-import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, Get, Req, UseGuards} from '@nestjs/common';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard'; // Asegúrate de tener este guard
+import { Request } from 'express';
 import { UsuarioService } from '../services/usuario.service';
 import { CreateUsuarioDto, CreateLocatarioDto, CreateRepartidorDto, TipoUsuario } from '../dtos/create-usuario.dto';
 import { LoginUsuarioDto } from '../dtos/login-usuario.dto';
@@ -33,4 +35,12 @@ export class UsuarioController {
     console.log('DTO recibido:', loginUsuarioDto);
     return this.usuarioService.loginUsuario(loginUsuarioDto);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async getMe(@Req() req: Request) {
+    console.log('Usuario autenticado en /usuarios/me:', req.user);
+    return req.user;
+  }
+
 }

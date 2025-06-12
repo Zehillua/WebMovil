@@ -3,14 +3,18 @@ export class ComidaPedidoDto {
 }
 
 export class CreatePedidoDto {
+  idComprador: string;
+  idLocal: string;
   nombrePedido: string;
   pago: 'efectivo' | 'tarjeta';
   precioPedido: number;
   comidas: ComidaPedidoDto[];
-  nombreLocalRetirar: string;
-  ciudadLocal: string;
-  numeroLocal: string;
-  ciudadDejar: string;
-  numeroCasaDepto: string;
-  propina: number;
+  esDelivery: boolean;
+  direccionEntrega?: string;
+  numeroCasaDepto?: string;
+  propina: boolean;
+  cantidadPropina?: number;
+  idRepartidor?: string;
+  fechaPedido?: Date;
+  valoracionPedido?: number;
 }

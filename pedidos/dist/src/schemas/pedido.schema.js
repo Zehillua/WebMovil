@@ -9,19 +9,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PedidoSchema = exports.Pedido = exports.ComidaPedido = void 0;
+exports.PedidoSchema = exports.Pedido = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-class ComidaPedido {
-}
-exports.ComidaPedido = ComidaPedido;
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], ComidaPedido.prototype, "nombre", void 0);
 let Pedido = class Pedido extends mongoose_2.Document {
 };
 exports.Pedido = Pedido;
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true, ref: 'Usuario' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Pedido.prototype, "idComprador", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true, ref: 'Locatario' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Pedido.prototype, "idLocal", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
@@ -40,29 +41,37 @@ __decorate([
 ], Pedido.prototype, "comidas", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], Pedido.prototype, "nombreLocalRetirar", void 0);
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "esDelivery", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
-], Pedido.prototype, "ciudadLocal", void 0);
+], Pedido.prototype, "direccionEntrega", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], Pedido.prototype, "numeroLocal", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], Pedido.prototype, "ciudadDejar", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Pedido.prototype, "numeroCasaDepto", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", Number)
+    __metadata("design:type", Boolean)
 ], Pedido.prototype, "propina", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], Pedido.prototype, "cantidadPropina", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Repartidor' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Pedido.prototype, "idRepartidor", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: Date.now }),
+    __metadata("design:type", Date)
+], Pedido.prototype, "fechaPedido", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: 0 }),
+    __metadata("design:type", Number)
+], Pedido.prototype, "valoracionPedido", void 0);
 exports.Pedido = Pedido = __decorate([
-    (0, mongoose_1.Schema)({ collection: 'pedidos' })
+    (0, mongoose_1.Schema)()
 ], Pedido);
 exports.PedidoSchema = mongoose_1.SchemaFactory.createForClass(Pedido);

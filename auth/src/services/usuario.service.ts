@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, BadRequestException} from '@nestjs/c
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Usuario } from '../schemas/usuario.schema';
+import axios from 'axios';
 import { CreateUsuarioDto } from '../dtos/create-usuario.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUsuarioDto } from '../dtos/login-usuario.dto';
@@ -14,12 +15,15 @@ export class UsuarioService {
     private jwtService: JwtService,
   ) {}
 
-  async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
+
+async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
     const hash = await bcrypt.hash(createUsuarioDto.clave, 10);
     let usuarioData: any = {
       ...createUsuarioDto,
       clave: hash,
+      isAdmin: !!createUsuarioDto.isAdmin,
     };
+
     if (createUsuarioDto.tipoUsuario === 'usuario') {
       usuarioData = {
         tipoUsuario: 'usuario',
@@ -45,8 +49,11 @@ export class UsuarioService {
         telefono: dto.telefono,
         nombreLocal: dto.nombreLocal,
         numeroLocal: dto.numeroLocal,
-        comidasStock: dto.comidasStock,
-        ventas: dto.ventas,
+        comidasStock: dto.comidasStock ?? [],
+        ventas: dto.ventas ?? [],
+        ventasPromo: dto.ventasPromo ?? [],
+        valoracion: dto.valoracion ?? 0,
+        // agrega aquí cualquier otro campo que uses en locatarios
       };
     } else if (createUsuarioDto.tipoUsuario === 'repartidor') {
       const dto = createUsuarioDto as any;
@@ -61,22 +68,50 @@ export class UsuarioService {
         usuarioRepartidor: dto.usuarioRepartidor,
         vehiculo: dto.vehiculo,
         patente: dto.patente,
+        valoracionRepartidor: dto.valoracionRepartidor ?? 0,
+        // agrega aquí cualquier otro campo que uses en repartidores
       };
     }
-    // Eliminar nombreUsuario si es null o undefined
+
     if (usuarioData.nombreUsuario === null || usuarioData.nombreUsuario === undefined) {
       delete usuarioData.nombreUsuario;
     }
-    try{
+
+    try {
       const usuario = new this.usuarioModel(usuarioData);
-      return usuario.save();
-    }catch (error:any) {
+      const savedUser = await usuario.save();
+
+      // Sincronizar con microservicio locatarios
+      if (savedUser.tipoUsuario === 'locatario') {
+        try {
+          await axios.post('http://localhost:3001/locatarios/sync', {
+            _id: savedUser._id,
+            ...usuarioData, // envía todos los campos del locatario
+          });
+        } catch (err) {
+          console.error('Error sincronizando locatario:', (err as any).message);
+        }
+      }
+
+      // Sincronizar con microservicio repartidores
+      if (savedUser.tipoUsuario === 'repartidor') {
+        try {
+          await axios.post('http://localhost:3002/repartidores/sync', {
+            _id: savedUser._id,
+            ...usuarioData, // envía todos los campos del repartidor
+          });
+        } catch (err) {
+          console.error('Error sincronizando repartidor:', (err as any).message);
+        }
+      }
+
+      return savedUser;
+    } catch (error: any) {
       if (error.code === 11000 && error.keyPattern && error.keyPattern.correo) {
         throw new BadRequestException('El correo ya está registrado');
       }
       throw error;
     }
-    
   }
 
   async loginUsuario(loginDto: LoginUsuarioDto): Promise<{ access_token: string; tipoUsuario: string }> {

@@ -1,13 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
-export class ComidaPedido {
-  @Prop({ required: true })
-  nombre: string;
-}
-
-@Schema({ collection: 'pedidos' })
+@Schema()
 export class Pedido extends Document {
+  @Prop({ type: Types.ObjectId, required: true, ref: 'Usuario' })
+  idComprador: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, required: true, ref: 'Locatario' })
+  idLocal: Types.ObjectId;
+
   @Prop({ required: true })
   nombrePedido: string;
 
@@ -18,25 +19,31 @@ export class Pedido extends Document {
   precioPedido: number;
 
   @Prop({ type: [{ nombre: String }], required: true })
-  comidas: ComidaPedido[];
+  comidas: { nombre: string }[];
 
   @Prop({ required: true })
-  nombreLocalRetirar: string;
+  esDelivery: boolean;
+
+  @Prop()
+  direccionEntrega?: string;
+
+  @Prop()
+  numeroCasaDepto?: string;
 
   @Prop({ required: true })
-  ciudadLocal: string;
+  propina: boolean;
 
-  @Prop({ required: true })
-  numeroLocal: string;
+  @Prop()
+  cantidadPropina?: number;
 
-  @Prop({ required: true })
-  ciudadDejar: string;
+  @Prop({ type: Types.ObjectId, ref: 'Repartidor' })
+  idRepartidor?: Types.ObjectId;
 
-  @Prop({ required: true })
-  numeroCasaDepto: string;
+  @Prop({ default: Date.now })
+  fechaPedido?: Date;
 
-  @Prop({ required: true })
-  propina: number;
+  @Prop({ default: 0 })
+  valoracionPedido: number;
 }
 
 export const PedidoSchema = SchemaFactory.createForClass(Pedido);

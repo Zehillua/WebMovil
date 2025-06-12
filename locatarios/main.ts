@@ -1,9 +1,12 @@
-import 'reflect-metadata'; // Asegúrate de importar reflect-metadata primero
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(3000); // El puerto de tu servidor HTTP
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads/' });
+  app.enableCors();
+  await app.listen(3001);
 }
 bootstrap();

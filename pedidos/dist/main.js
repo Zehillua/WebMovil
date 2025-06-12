@@ -5,6 +5,7 @@ const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
-    await app.listen(3000); // El puerto de tu servidor HTTP
+    app.enableCors(); // Habilita CORS para permitir solicitudes desde otros dominios
+    await app.listen(3002); // El puerto de tu servidor HTTP
 }
 bootstrap();

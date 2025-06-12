@@ -44,22 +44,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const usuario_schema_1 = require("../schemas/usuario.schema");
+const axios_1 = __importDefault(require("axios"));
+const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
 let UsuarioService = class UsuarioService {
-    constructor(usuarioModel) {
+    constructor(usuarioModel, jwtService) {
         this.usuarioModel = usuarioModel;
+        this.jwtService = jwtService;
     }
     async crearUsuario(createUsuarioDto) {
         const hash = await bcrypt.hash(createUsuarioDto.clave, 10);
         let usuarioData = {
             ...createUsuarioDto,
             clave: hash,
+            isAdmin: !!createUsuarioDto.isAdmin,
         };
         if (createUsuarioDto.tipoUsuario === 'usuario') {
             usuarioData = {
@@ -87,8 +94,11 @@ let UsuarioService = class UsuarioService {
                 telefono: dto.telefono,
                 nombreLocal: dto.nombreLocal,
                 numeroLocal: dto.numeroLocal,
-                comidasStock: dto.comidasStock,
-                ventas: dto.ventas,
+                comidasStock: dto.comidasStock ?? [],
+                ventas: dto.ventas ?? [],
+                ventasPromo: dto.ventasPromo ?? [],
+                valoracion: dto.valoracion ?? 0,
+                // agrega aquí cualquier otro campo que uses en locatarios
             };
         }
         else if (createUsuarioDto.tipoUsuario === 'repartidor') {
@@ -104,15 +114,41 @@ let UsuarioService = class UsuarioService {
                 usuarioRepartidor: dto.usuarioRepartidor,
                 vehiculo: dto.vehiculo,
                 patente: dto.patente,
+                valoracionRepartidor: dto.valoracionRepartidor ?? 0,
+                // agrega aquí cualquier otro campo que uses en repartidores
             };
         }
-        // Eliminar nombreUsuario si es null o undefined
         if (usuarioData.nombreUsuario === null || usuarioData.nombreUsuario === undefined) {
             delete usuarioData.nombreUsuario;
         }
         try {
             const usuario = new this.usuarioModel(usuarioData);
-            return usuario.save();
+            const savedUser = await usuario.save();
+            // Sincronizar con microservicio locatarios
+            if (savedUser.tipoUsuario === 'locatario') {
+                try {
+                    await axios_1.default.post('http://localhost:3001/locatarios/sync', {
+                        _id: savedUser._id,
+                        ...usuarioData, // envía todos los campos del locatario
+                    });
+                }
+                catch (err) {
+                    console.error('Error sincronizando locatario:', err.message);
+                }
+            }
+            // Sincronizar con microservicio repartidores
+            if (savedUser.tipoUsuario === 'repartidor') {
+                try {
+                    await axios_1.default.post('http://localhost:3002/repartidores/sync', {
+                        _id: savedUser._id,
+                        ...usuarioData, // envía todos los campos del repartidor
+                    });
+                }
+                catch (err) {
+                    console.error('Error sincronizando repartidor:', err.message);
+                }
+            }
+            return savedUser;
         }
         catch (error) {
             if (error.code === 11000 && error.keyPattern && error.keyPattern.correo) {
@@ -134,12 +170,15 @@ let UsuarioService = class UsuarioService {
         if (!passwordOk) {
             throw new common_1.UnauthorizedException('Credenciales inválidas');
         }
-        return usuario;
+        const payload = { sub: usuario._id, correo: usuario.correo, tipoUsuario: usuario.tipoUsuario };
+        const access_token = this.jwtService.sign(payload);
+        return { access_token, tipoUsuario: usuario.tipoUsuario };
     }
 };
 exports.UsuarioService = UsuarioService;
 exports.UsuarioService = UsuarioService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(usuario_schema_1.Usuario.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        jwt_1.JwtService])
 ], UsuarioService);

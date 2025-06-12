@@ -14,6 +14,8 @@ const usuario_schema_1 = require("./src/schemas/usuario.schema");
 const usuario_service_1 = require("./src/services/usuario.service");
 const usuario_controller_1 = require("./src/controllers/usuario.controller");
 const usuario_module_1 = require("./src/modules/usuario.module");
+const auth_module_1 = require("./src/modules/auth.module");
+const locatario_module_1 = require("./src/modules/locatario.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,6 +33,8 @@ exports.AppModule = AppModule = __decorate([
             }),
             mongoose_1.MongooseModule.forFeature([{ name: usuario_schema_1.Usuario.name, schema: usuario_schema_1.UsuarioSchema }]),
             usuario_module_1.UsuarioModule,
+            auth_module_1.AuthModule,
+            locatario_module_1.LocatarioModule,
         ],
         controllers: [usuario_controller_1.UsuarioController],
         providers: [usuario_service_1.UsuarioService],

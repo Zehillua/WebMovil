@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioController = void 0;
 const common_1 = require("@nestjs/common");
+const jwt_auth_guard_1 = require("../guards/jwt-auth.guard"); // Asegúrate de tener este guard
 const usuario_service_1 = require("../services/usuario.service");
 const create_usuario_dto_1 = require("../dtos/create-usuario.dto");
 const login_usuario_dto_1 = require("../dtos/login-usuario.dto");
@@ -47,6 +48,10 @@ let UsuarioController = class UsuarioController {
         console.log('DTO recibido:', loginUsuarioDto);
         return this.usuarioService.loginUsuario(loginUsuarioDto);
     }
+    async getMe(req) {
+        console.log('Usuario autenticado en /usuarios/me:', req.user);
+        return req.user;
+    }
 };
 exports.UsuarioController = UsuarioController;
 __decorate([
@@ -63,6 +68,14 @@ __decorate([
     __metadata("design:paramtypes", [login_usuario_dto_1.LoginUsuarioDto]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "login", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "getMe", null);
 exports.UsuarioController = UsuarioController = __decorate([
     (0, common_1.Controller)('usuarios'),
     __metadata("design:paramtypes", [usuario_service_1.UsuarioService])

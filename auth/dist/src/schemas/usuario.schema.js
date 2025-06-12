@@ -9,35 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UsuarioSchema = exports.Usuario = exports.Venta = exports.Comida = void 0;
+exports.UsuarioSchema = exports.Usuario = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-class Comida {
-}
-exports.Comida = Comida;
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], Comida.prototype, "nombre", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", Number)
-], Comida.prototype, "precio", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", Number)
-], Comida.prototype, "cantidad", void 0);
-class Venta {
-}
-exports.Venta = Venta;
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], Venta.prototype, "comida", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", Number)
-], Venta.prototype, "precio", void 0);
 let Usuario = class Usuario extends mongoose_2.Document {
 };
 exports.Usuario = Usuario;
@@ -70,6 +44,10 @@ __decorate([
     __metadata("design:type", String)
 ], Usuario.prototype, "telefono", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Usuario.prototype, "isAdmin", void 0);
+__decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Usuario.prototype, "nombreUsuario", void 0);
@@ -86,13 +64,31 @@ __decorate([
     __metadata("design:type", String)
 ], Usuario.prototype, "numeroLocal", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: [{ nombre: String, precio: Number, cantidad: Number }] }),
+    (0, mongoose_1.Prop)({
+        type: [{
+                nombre: String,
+                precio: Number,
+                cantidad: Number,
+                ingredientes: [String],
+                descripcion: String,
+                imagenUrl: String,
+            }],
+        default: [],
+    }),
     __metadata("design:type", Array)
 ], Usuario.prototype, "comidasStock", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: [{ comida: String, precio: Number }] }),
     __metadata("design:type", Array)
 ], Usuario.prototype, "ventas", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [{ nombrePromo: String, precioPromo: Number }] }),
+    __metadata("design:type", Array)
+], Usuario.prototype, "ventasPromo", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], Usuario.prototype, "valoracion", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
@@ -105,6 +101,10 @@ __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Usuario.prototype, "patente", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], Usuario.prototype, "valoracionRepartidor", void 0);
 exports.Usuario = Usuario = __decorate([
     (0, mongoose_1.Schema)({ collection: 'users' })
 ], Usuario);

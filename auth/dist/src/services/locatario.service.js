@@ -1,0 +1,37 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LocatarioService = void 0;
+const common_1 = require("@nestjs/common");
+const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = require("mongoose");
+const usuario_schema_1 = require("../schemas/usuario.schema");
+let LocatarioService = class LocatarioService {
+    constructor(usuarioModel) {
+        this.usuarioModel = usuarioModel;
+    }
+    async obtenerLocatarios() {
+        // Solo devuelve _id y nombreLocal
+        return this.usuarioModel.find({ tipoUsuario: 'locatario' }, { _id: 1, nombreLocal: 1 }).lean();
+    }
+    async obtenerLocatarioPorId(id) {
+        return this.usuarioModel.findById(id);
+    }
+};
+exports.LocatarioService = LocatarioService;
+exports.LocatarioService = LocatarioService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)(usuario_schema_1.Usuario.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model])
+], LocatarioService);
