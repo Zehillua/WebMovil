@@ -1,33 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './LocatarioDashboard.css';
 
 interface Producto {
   id: number;
+  _id?: string;
   nombre: string;
-  categoria: string;
-  ingredientes: string;
+  ingredientes: string[];
   descripcion: string;
   precio: number;
-  imagen: string;
+  cantidad: number;
+  imagenUrl?: string;
 }
 
 const LocatarioDashboard: React.FC = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
-  const [categorias, setCategorias] = useState<string[]>([]);
   const [formulario, setFormulario] = useState({
     nombre: '',
-    categoria: '',
+    precio: '',
+    cantidad: '',
     ingredientes: '',
     descripcion: '',
-    precio: '',
-    imagen: '',
+    imagenUrl: '',
   });
 
   const [imagenFile, setImagenFile] = useState<File | null>(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [mostrarCrearCategoria, setMostrarCrearCategoria] = useState(false);
-  const [formCategoria, setFormCategoria] = useState('');
-  const [productoEditando, setProductoEditando] = useState<Producto | null>(null);
+
+  // Cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('tipoUsuario');
+    window.location.href = '/';
+  };
+
+  useEffect(() => {
+    const fetchComidas = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const response = await fetch('http://localhost:3001/comidas', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setProductos(data);
+      }
+    };
+    fetchComidas();
+  }, []);
+
 
   // Handlers
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,213 +58,171 @@ const LocatarioDashboard: React.FC = () => {
     setFormulario({ ...formulario, [e.target.name]: e.target.value });
   };
 
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormulario({ ...formulario, categoria: e.target.value });
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setImagenFile(file);
-      const tempUrl = URL.createObjectURL(file);
-      setFormulario({ ...formulario, imagen: tempUrl });
     }
   };
 
-  const handleAgregarProducto = (e: React.FormEvent) => {
+  const subirImagen = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('imagen', file);
+
+    const token = localStorage.getItem('token');
+    const response = await fetch('http://localhost:3001/comidas/upload', {
+      method: 'POST',
+      headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al subir la imagen');
+    }
+    const data = await response.json();
+    return data.url;
+  };
+
+  // Enviar producto al backend
+  const agregarProducto = async (producto: {
+    nombre: string;
+    precio: number;
+    cantidad: number;
+    ingredientes: string[];
+    descripcion: string;
+    imagenUrl?: string;
+  }) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No autenticado');
+    }
+    const response = await fetch('http://localhost:3001/comidas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(producto),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Error al agregar producto');
+    }
+    return response.json();
+  };
+
+  const handleAgregarProducto = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { nombre, categoria, precio, imagen } = formulario;
-    if (!nombre || !categoria || !precio || !imagen) {
+    const { nombre, precio, cantidad, ingredientes, descripcion } = formulario;
+    if (!nombre || !precio || !cantidad || !ingredientes || !descripcion) {
       alert('Por favor completa todos los campos obligatorios');
       return;
     }
+    const ingredientesArray = ingredientes.split(',').map(i => i.trim()).filter(i => i);
 
-    const nuevoProducto: Producto = {
-      id: Date.now(),
-      nombre,
-      categoria,
-      ingredientes: formulario.ingredientes,
-      descripcion: formulario.descripcion,
-      precio: parseFloat(precio),
-      imagen,
-    };
+    let imagenUrl = '';
+    if (imagenFile) {
+      try {
+        imagenUrl = await subirImagen(imagenFile);
+      } catch (err: any) {
+        alert('Error al subir la imagen: ' + err.message);
+        return;
+      }
+    }
 
-    setProductos([...productos, nuevoProducto]);
-    limpiarFormulario();
-    setMostrarFormulario(false);
-  };
-
-  const handleGuardarEdicion = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!productoEditando) return;
-
-    const productosActualizados = productos.map((p) =>
-      p.id === productoEditando.id
-        ? {
-            ...productoEditando,
-            nombre: formulario.nombre,
-            categoria: formulario.categoria,
-            ingredientes: formulario.ingredientes,
-            descripcion: formulario.descripcion,
-            precio: parseFloat(formulario.precio),
-            imagen: formulario.imagen,
-          }
-        : p
-    );
-
-    setProductos(productosActualizados);
-    limpiarFormulario();
-    setProductoEditando(null);
-  };
-
-  const handleEliminarProducto = (id: number) => {
-    const confirmado = confirm('¿Estás seguro de que quieres eliminar este producto?');
-    if (confirmado) {
-      setProductos(productos.filter((p) => p.id !== id));
+    try {
+      await agregarProducto({
+        nombre,
+        precio: parseFloat(precio),
+        cantidad: parseInt(cantidad, 10),
+        ingredientes: ingredientesArray,
+        descripcion,
+        imagenUrl: imagenUrl || undefined,
+      });
+      alert('Producto agregado correctamente');
+      limpiarFormulario();
+      setMostrarFormulario(false);
+      setImagenFile(null);
+    } catch (err: any) {
+      alert(err.message);
     }
   };
 
   const limpiarFormulario = () => {
     setFormulario({
       nombre: '',
-      categoria: '',
+      precio: '',
+      cantidad: '',
       ingredientes: '',
       descripcion: '',
-      precio: '',
-      imagen: '',
+      imagenUrl: '',
     });
     setImagenFile(null);
   };
 
-  const productosPorCategoria = categorias.map((cat) => ({
-    categoria: cat,
-    productos: productos.filter((p) => p.categoria === cat),
-  })).filter((g) => g.productos.length > 0);
-
   return (
     <div className="locatario-dashboard">
-      <nav className="navbar">
-        <div className="logo">Panel Locatario</div>
-        <div className="nav-options">
-          <button onClick={() => setMostrarFormulario(true)}>Agregar Producto</button>
-          <button onClick={() => setMostrarCrearCategoria(true)}>Crear Categoría</button>
-          <button>Mi cuenta</button>
-          <button>Salir</button>
-        </div>
+      {/* Barra superior */}
+      <nav className="navbar-locatario">
+        <div className="logo-centered">Panel Locatario</div>
+        <button className="logout-btn" onClick={handleLogout} title="Cerrar sesión">
+          Salir
+        </button>
       </nav>
 
-      <div className="contenido">
-        {productosPorCategoria.map(({ categoria, productos }) => (
-          <div key={categoria} className="bloque-categoria">
-            <h3>{categoria}</h3>
-            <div className="grid-productos">
-              {productos.map((producto) => (
-                <div className="card-producto" key={producto.id}>
-                  <img src={producto.imagen} alt={producto.nombre} />
-                  <h4>{producto.nombre}</h4>
-                  <p className="precio">${producto.precio}</p>
-                  <p className="descripcion">{producto.descripcion}</p>
-                  <p className="ingredientes">
-                    <strong>Ingredientes:</strong> {producto.ingredientes}
-                  </p>
-                  <button
-                    onClick={() => {
-                      setProductoEditando(producto);
-                      setFormulario({
-                        nombre: producto.nombre,
-                        categoria: producto.categoria,
-                        ingredientes: producto.ingredientes,
-                        descripcion: producto.descripcion,
-                        precio: producto.precio.toString(),
-                        imagen: producto.imagen,
-                      });
-                    }}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleEliminarProducto(producto.id)}
-                    className="btn-eliminar"
-                  >
-                    🗑 Eliminar
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+      {/* Botones principales centrados */}
+      <div className="main-actions">
+        <button onClick={() => setMostrarFormulario(true)}>Agregar Producto</button>
+        <button>Agregar Promoción</button>
+        <button>Edición de productos</button>
+        <button>Top Ventas</button>
+        <button>Top Deliverys</button>
       </div>
 
-      {/* Formularios flotantes (Agregar, Editar, Categoría) aquí abajo, sin cambios */}
-      {/* ... igual que antes ... */}
+      {/* Productos (puedes mejorar esto según tu lógica real) */}
+      <div className="contenido">
+        {productos.length === 0 ? (
+          <div className="no-products">No hay productos registrados.</div>
+        ) : (
+          <div className="productos-grid">
+            {productos.map((producto) => (
+              <div className="producto-card" key={producto.id || producto._id}>
+                <img
+                  src={
+                    producto.imagenUrl
+                      ? producto.imagenUrl.startsWith('/uploads/')
+                        ? `http://localhost:3001${producto.imagenUrl}`
+                        : producto.imagenUrl
+                      : 'https://via.placeholder.com/200x140?text=Sin+Imagen'
+                  }
+                  alt={producto.nombre}
+                  style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 8 }}
+                />
+                <h3>{producto.nombre}</h3>
+                <p><strong>Precio:</strong> ${producto.precio}</p>
+                <p><strong>Cantidad:</strong> {producto.cantidad}</p>
+                <p><strong>Ingredientes:</strong> {producto.ingredientes?.join(', ')}</p>
+                <p>{producto.descripcion}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Formulario para agregar producto */}
       {mostrarFormulario && (
         <div className="overlay" onClick={() => setMostrarFormulario(false)}>
           <form className="formulario-flotante" onClick={(e) => e.stopPropagation()} onSubmit={handleAgregarProducto}>
             <button className="cerrar" onClick={() => setMostrarFormulario(false)}>×</button>
             <h3>Agregar Producto</h3>
             <input type="text" name="nombre" placeholder="Nombre del producto" value={formulario.nombre} onChange={handleInputChange} />
-            <select name="categoria" value={formulario.categoria} onChange={handleSelectChange}>
-              <option value="">Selecciona una categoría</option>
-              {categorias.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-            <textarea name="ingredientes" placeholder="Ingredientes" value={formulario.ingredientes} onChange={handleTextareaChange} />
-            <textarea name="descripcion" placeholder="Descripción" value={formulario.descripcion} onChange={handleTextareaChange} />
             <input type="number" name="precio" placeholder="Precio" value={formulario.precio} onChange={handleInputChange} />
-            <input type="file" accept="image/*" onChange={handleImageUpload} />
-            {formulario.imagen && <img src={formulario.imagen} alt="preview" style={{ width: '100%', height: '120px', objectFit: 'cover' }} />}
+            <input type="number" name="cantidad" placeholder="Cantidad" value={formulario.cantidad} onChange={handleInputChange} />
+            <input type="text" name="ingredientes" placeholder="Ingredientes (separados por coma)" value={formulario.ingredientes} onChange={handleInputChange} />
+            <textarea name="descripcion" placeholder="Descripción" value={formulario.descripcion} onChange={handleTextareaChange} />
+            <input type="file" accept="image/*" onChange={handleFileChange} />
             <button type="submit">Agregar</button>
           </form>
-        </div>
-      )}
-
-      {productoEditando && (
-        <div className="overlay" onClick={() => setProductoEditando(null)}>
-          <form className="formulario-flotante" onClick={(e) => e.stopPropagation()} onSubmit={handleGuardarEdicion}>
-            <button className="cerrar" onClick={() => setProductoEditando(null)}>×</button>
-            <h3>Editar Producto</h3>
-            <input type="text" name="nombre" placeholder="Nombre del producto" value={formulario.nombre} onChange={handleInputChange} />
-            <select name="categoria" value={formulario.categoria} onChange={handleSelectChange}>
-              <option value="">Selecciona una categoría</option>
-              {categorias.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-            <textarea name="ingredientes" placeholder="Ingredientes" value={formulario.ingredientes} onChange={handleTextareaChange} />
-            <textarea name="descripcion" placeholder="Descripción" value={formulario.descripcion} onChange={handleTextareaChange} />
-            <input type="number" name="precio" placeholder="Precio" value={formulario.precio} onChange={handleInputChange} />
-            <input type="file" accept="image/*" onChange={handleImageUpload} />
-            {formulario.imagen && <img src={formulario.imagen} alt="preview" style={{ width: '100%', height: '120px', objectFit: 'cover' }} />}
-            <button type="submit">Guardar Cambios</button>
-          </form>
-        </div>
-      )}
-
-      {mostrarCrearCategoria && (
-        <div className="overlay" onClick={() => setMostrarCrearCategoria(false)}>
-          <div className="formulario-flotante" onClick={(e) => e.stopPropagation()}>
-            <button className="cerrar" onClick={() => setMostrarCrearCategoria(false)}>×</button>
-            <h3>Nueva Categoría</h3>
-            <input
-              type="text"
-              placeholder="Nombre de la categoría"
-              value={formCategoria}
-              onChange={(e) => setFormCategoria(e.target.value)}
-            />
-            <button
-              onClick={() => {
-                const nueva = formCategoria.trim();
-                if (nueva && !categorias.includes(nueva)) {
-                  setCategorias([...categorias, nueva]);
-                  setFormCategoria('');
-                  setMostrarCrearCategoria(false);
-                }
-              }}
-            >
-              Crear
-            </button>
-          </div>
         </div>
       )}
     </div>

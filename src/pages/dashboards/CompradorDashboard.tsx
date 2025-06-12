@@ -1,31 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CompradorDashboard.css';
 
-const localesEjemplo = ['La Picá de Juan', 'Empanadas El Sol', 'Veggie Fresh', 'Pizzería Don Gusto'];
-
-const productosEjemplo = [
-  { nombre: 'Empanada de pino', local: 'La Picá de Juan', imagen: 'https://www.gourmet.cl/wp-content/uploads/2016/09/Empanadas-web-1.jpg' },
-  { nombre: 'Pizza Margarita', local: 'Pizzería Don Gusto', imagen: 'https://source.unsplash.com/400x300/?pizza' },
-  { nombre: 'Ensalada vegana', local: 'Veggie Fresh', imagen: 'https://source.unsplash.com/400x300/?salad' },
-];
+interface Local {
+  _id: string;
+  nombreLocal: string;
+}
 
 const CompradorDashboard: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
-  const [localSeleccionado, setLocalSeleccionado] = useState<string | null>(null);
+  const [locales, setLocales] = useState<Local[]>([]);
   const navigate = useNavigate();
 
-  const localesFiltrados = localesEjemplo.filter((l) =>
-    l.toLowerCase().includes(busqueda.toLowerCase())
-  );
+  // Protección de ruta: redirige si no hay token
+  useEffect(() => {
+    if (!localStorage.getItem('token')) {
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
 
-  const productosFiltrados = localSeleccionado
-    ? productosEjemplo.filter((p) => p.local === localSeleccionado)
-    : [];
+
+  // Obtener locales tipo locatario desde el backend
+  useEffect(() => {
+    const fetchLocales = async () => {
+      const response = await fetch('http://localhost:3000/locatarios');
+      if (response.ok) {
+        const data = await response.json();
+        setLocales(data);
+      }
+    };
+    fetchLocales();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('tipoUsuario');
+    navigate('/', { replace: true });
+  };
+
+  // Filtrar locales por búsqueda
+  const localesFiltrados = locales.filter((l) =>
+    l.nombreLocal.toLowerCase().includes(busqueda.toLowerCase())
+  );
 
   return (
     <div className="comprador-dashboard">
-      {/* Barra superior optimizada y dividida */}
+      {/* Barra superior */}
       <nav className="navbar-opt">
         <div className="navbar-section logo-section">
           <span className="logo">VeciMarket</span>
@@ -34,12 +54,22 @@ const CompradorDashboard: React.FC = () => {
           <input
             type="text"
             className="search-input"
-            placeholder="Buscar locales o productos..."
+            placeholder="Buscar locales..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
         </div>
         <div className="navbar-section icons-section">
+          <button
+            className="icon-btn logout-btn"
+            onClick={handleLogout}
+            title="Cerrar sesión"
+          >
+            <img
+              src="https://img.icons8.com/ios-filled/28/d87a9c/logout-rounded-left.png"
+              alt="Cerrar sesión"
+            />
+          </button>
           <button className="icon-btn" onClick={() => navigate('/carrito')} title="Carrito">
             <img src="https://img.icons8.com/ios-filled/28/d87a9c/shopping-cart.png" alt="Carrito" />
           </button>
@@ -49,34 +79,28 @@ const CompradorDashboard: React.FC = () => {
         </div>
       </nav>
 
-      {/* Contenido principal */}
-      <div className="dashboard-body">
-        {/* Barra lateral izquierda */}
-        <aside className="sidebar">
-          <h3>Buscar locales</h3>
-          <ul className="lista-locales">
-            {localesFiltrados.map((local, i) => (
-              <li key={i}>
-                <button onClick={() => setLocalSeleccionado(local)}>
-                  {local}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </aside>
-
-        {/* Zona principal de productos */}
-        <div className="productos-section">
-          <h2>{localSeleccionado ? `Menú de ${localSeleccionado}` : 'Selecciona un local'}</h2>
-          <div className="productos-grid">
-            {productosFiltrados.map((producto, index) => (
-              <div className="producto-card" key={index}>
-                <img src={producto.imagen} alt={producto.nombre} />
-                <h3>{producto.nombre}</h3>
-                <button>Agregar</button>
+      {/* Grilla central de locales */}
+      <div className="locales-section">
+        <h2 className="locales-title">Locales disponibles</h2>
+        <div className="locales-grid">
+          {localesFiltrados.length === 0 ? (
+            <div style={{ color: '#888', marginTop: '2rem' }}>
+              No hay locales disponibles.
+            </div>
+          ) : (
+            localesFiltrados.map((local) => (
+              <div
+                className="local-card"
+                key={local._id}
+                onClick={() => navigate(`/local/${local._id}`)}
+                tabIndex={0}
+                role="button"
+                onKeyDown={e => { if (e.key === 'Enter') navigate(`/local/${local._id}`); }}
+              >
+                <span className="local-nombre">{local.nombreLocal}</span>
               </div>
-            ))}
-          </div>
+            ))
+          )}
         </div>
       </div>
     </div>
