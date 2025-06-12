@@ -6,8 +6,8 @@ import { TestController } from './src/controllers/test.controller';
 
 @Module({
   imports: [
-    // Conexión a la base de datos (ajustá el URI a tu caso)
-    MongooseModule.forRoot('mongodb://db_pagos:27017/pagos'),
+    // Conexión a la base de datos usando variable de entorno
+    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/pagos'),
 
     // Registro del schema
     MongooseModule.forFeature([{ name: Test.name, schema: TestSchema }]),

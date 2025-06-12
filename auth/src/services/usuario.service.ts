@@ -79,14 +79,14 @@ export class UsuarioService {
     
   }
 
-  async loginUsuario(loginDto: LoginUsuarioDto): Promise<{ access_token: string; tipoUsuario: string }> {
+  async loginUsuario(loginDto: LoginUsuarioDto): Promise<{ access_token: string; tipoUsuario: string; userId: string }> {
     const { correo, clave } = loginDto;
 
     if (!correo) {
       throw new UnauthorizedException('Debe ingresar correo electrónico');
     }
 
-    const usuario = await this.usuarioModel.findOne({ correo });
+    const usuario = await this.usuarioModel.findOne({ correo }) as Usuario & { _id: any };
     if (!usuario) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
@@ -96,7 +96,8 @@ export class UsuarioService {
     }
     const payload = { sub: usuario._id, correo: usuario.correo, tipoUsuario: usuario.tipoUsuario };
     const access_token = this.jwtService.sign(payload);
-    return { access_token, tipoUsuario: usuario.tipoUsuario };
+    // Asegura que el userId sea un string plano
+    return { access_token, tipoUsuario: usuario.tipoUsuario, userId: usuario._id.toString() };
   }
 
   

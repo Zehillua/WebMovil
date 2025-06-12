@@ -15,6 +15,7 @@ import { PedidoModule } from './src/modules/pedido.module';
       inject: [ConfigService],
     }),
     PedidoModule,
+    
   ],
 })
 export class AppModule {}

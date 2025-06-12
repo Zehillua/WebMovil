@@ -6,6 +6,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TestController } from './src/controllers/test.controller';
 import { TestModule } from './src/modules/test.module'; 
 import { TestControllerr } from './src/controllers/prueba.controller';
+import { CategoriaModule } from './src/modules/categoria.module';
+import { ProductoModule } from './src/modules/producto.module';
+import { ImagenController } from './src/controllers/imagen.controller';
 
 @Module({
   imports: [
@@ -19,8 +22,10 @@ import { TestControllerr } from './src/controllers/prueba.controller';
       inject: [ConfigService],  // Inyecta el servicio de configuración
     }),
     MongooseModule.forFeature([{ name: Test.name, schema: TestSchema }]),
+    CategoriaModule,
+    ProductoModule,
   ],
-  controllers: [TestController, TestControllerr], 
+  controllers: [TestController, TestControllerr, ImagenController], 
   providers: [TestService], 
 })
 export class AppModule {}

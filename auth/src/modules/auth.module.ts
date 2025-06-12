@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { MongooseModule } from '@nestjs/mongoose';
 import { JwtStrategy } from '../strategies/jwt.strategy';
 import { UsuarioService } from '../services/usuario.service';
 import { UsuarioModule } from './usuario.module';
+import { Usuario, UsuarioSchema } from '../schemas/usuario.schema';
 
 @Module({
   imports: [
+    MongooseModule.forFeature([{ name: Usuario.name, schema: UsuarioSchema }]),
     UsuarioModule,
     PassportModule,
     JwtModule.register({

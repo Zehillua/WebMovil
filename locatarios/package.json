@@ -18,8 +18,12 @@
     "@nestjs/core": "^11.0.15",
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/platform-express": "^11.0.15",
+    "class-validator": "^0.14.2",
     "dotenv": "^16.4.7",
+    "gridfs-stream": "^1.1.1",
     "mongoose": "^8.13.2",
+    "multer": "^2.0.1",
+    "multer-gridfs-storage": "^5.0.2",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {

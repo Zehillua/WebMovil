@@ -50,10 +50,12 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const usuario_schema_1 = require("../schemas/usuario.schema");
+const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
 let UsuarioService = class UsuarioService {
-    constructor(usuarioModel) {
+    constructor(usuarioModel, jwtService) {
         this.usuarioModel = usuarioModel;
+        this.jwtService = jwtService;
     }
     async crearUsuario(createUsuarioDto) {
         const hash = await bcrypt.hash(createUsuarioDto.clave, 10);
@@ -134,12 +136,16 @@ let UsuarioService = class UsuarioService {
         if (!passwordOk) {
             throw new common_1.UnauthorizedException('Credenciales inválidas');
         }
-        return usuario;
+        const payload = { sub: usuario._id, correo: usuario.correo, tipoUsuario: usuario.tipoUsuario };
+        const access_token = this.jwtService.sign(payload);
+        // Asegura que el userId sea un string plano
+        return { access_token, tipoUsuario: usuario.tipoUsuario, userId: usuario._id.toString() };
     }
 };
 exports.UsuarioService = UsuarioService;
 exports.UsuarioService = UsuarioService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(usuario_schema_1.Usuario.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        jwt_1.JwtService])
 ], UsuarioService);
