@@ -1,8 +1,10 @@
-<<<<<<< HEAD
-.App {
-  text-align: center;
-}
+/* .App styles from HEAD branch if needed for a root container, otherwise remove */
+/* If your main App.tsx only renders the router, these might not be strictly necessary */
+/* .App {
+  text-align: center; // This often conflicts with flexible layouts
+} */
 
+/* App-logo animation if still used by an <img /> in App.tsx directly */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -14,7 +16,18 @@
   }
 }
 
-.App-header {
+/* @keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+} */
+/* The keyframe `App-logo-spin` is duplicated in index.css (as logo-spin), so let's keep one */
+
+/* .App-header might not be relevant if you have a custom layout */
+/* .App-header {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -23,57 +36,9 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}
+} */
 
-.App-link {
+/* .App-link */
+/* .App-link {
   color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-=======
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
->>>>>>> main
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-<<<<<<< HEAD
-=======
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
->>>>>>> main
+} */
