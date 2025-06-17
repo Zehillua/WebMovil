@@ -29,6 +29,17 @@ export class CarritoService {
     return carrito.save();
     }
 
+  async calcularTotalCarrito(idComprador: string) {
+  const compradorId = new Types.ObjectId(idComprador);
+  const carrito = await this.carritoModel.findOne({ idComprador: compradorId }).lean();
+  if (!carrito || !carrito.items) return { total: 0 };
+  const total = carrito.items.reduce(
+    (acc, item) => acc + (item.precio * item.cantidad),
+    0
+  );
+  return { total };
+}
+    
   async obtenerCarrito(idComprador: string) {
     const compradorId = new Types.ObjectId(idComprador);
     const carrito = await this.carritoModel.findOne({ idComprador: compradorId }).lean();
