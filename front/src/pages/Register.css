@@ -1,0 +1,263 @@
+/* Register.css (Unificado - Basado en Proyecto 2 con variables de Home/Login) */
+
+/* Variables de color (idealmente estas deberían estar en un archivo global como index.css o App.css) */
+:root {
+  --color-dark-brown: #532a14;
+  --color-card-bg-light: #fff8f2;
+  --color-title-brown: #6b3e26;
+  --color-subtitle-orange: #8d5c3d;
+  --color-card-border: #d1a38d;
+  --color-text-brown-dark: #5a3a28;
+  --color-text-brown-light: #7a5540;
+  --color-info-text: #6d4b3c;
+  --color-card-shadow: rgba(0,0,0,0.08);
+  --color-general-shadow: rgba(0,0,0,0.05);
+  --color-inner-card-bg: #fef4e8; /* Mismo que en login */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text-brown-dark);
+}
+
+.register-page {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: var(--color-dark-brown); /* Fondo café oscuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px; /* Añadido para que no se pegue en pantallas pequeñas */
+  box-sizing: border-box; /* Para incluir el padding en el ancho */
+}
+
+.register-card {
+  display: flex;
+  background-color: var(--color-card-bg-light);
+  border-radius: 12px;
+  border: 1.5px solid var(--color-card-border);
+  box-shadow: 0 6px 12px var(--color-card-shadow);
+  overflow: hidden;
+  width: 90%;
+  max-width: 1000px;
+  min-height: 550px;
+}
+
+.register-left {
+  flex: 1;
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Si usas un logo */
+/*
+.register-logo {
+  width: 150px;
+  margin-bottom: 25px;
+}
+*/
+
+.register-main-title {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: var(--color-title-brown);
+  font-weight: bold;
+}
+
+.register-subtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-brown-light);
+  margin-bottom: 30px;
+}
+
+.register-form-inner-card {
+  background-color: var(--color-inner-card-bg);
+  border: 1.5px solid var(--color-card-border);
+  border-radius: 12px;
+  padding: 30px;
+  width: 100%;
+  max-width: 450px; /* Un poco más ancho para más campos */
+  box-shadow: 0 4px 8px var(--color-general-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 15px; /* Espaciado entre campos */
+  width: 100%;
+  text-align: left;
+}
+
+.register-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1em;
+  color: var(--color-text-brown-dark);
+  font-weight: 600;
+}
+
+.register-input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1.5px solid var(--color-card-border);
+  border-radius: 8px;
+  font-size: 1.1em;
+  color: var(--color-text-brown-dark);
+  background-color: white;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-input:focus {
+  outline: none;
+  border-color: var(--color-subtitle-orange);
+  box-shadow: 0 0 0 3px rgba(141, 92, 61, 0.2);
+}
+
+.register-action-button,
+.register-back-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease, color 0.3s ease;
+  margin-top: 15px;
+}
+
+.register-action-button {
+  background-color: var(--color-subtitle-orange);
+  color: white;
+  margin-bottom: 10px;
+}
+
+.register-action-button:hover {
+  background-color: var(--color-title-brown);
+  transform: translateY(-2px);
+}
+
+.register-back-button {
+  background-color: transparent;
+  color: var(--color-subtitle-orange);
+  border: 2px solid var(--color-subtitle-orange);
+}
+
+.register-back-button:hover {
+  background-color: var(--color-subtitle-orange);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.register-right {
+  flex: 1;
+  background-color: var(--color-dark-brown);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.decorative-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.overlay-text {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  right: 30px;
+  color: white;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.45);
+  padding: 15px 20px;
+  border-radius: 10px;
+}
+
+.overlay-text h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.8em;
+  font-weight: bold;
+}
+
+.overlay-text p {
+  margin: 0;
+  font-size: 1.1em;
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 768px) {
+  .register-card {
+    flex-direction: column;
+    width: 95%;
+    max-width: 500px;
+    min-height: auto;
+  }
+
+  .register-left {
+    padding: 30px 25px;
+  }
+
+  .register-right {
+    min-height: 250px;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px; /* Asegura el border-radius al cambiar de flex-direction */
+  }
+
+  .register-main-title {
+    font-size: 2em;
+  }
+
+  .register-subtitle {
+    font-size: 1em;
+  }
+
+  .overlay-text h3 {
+    font-size: 1.4em;
+  }
+
+  .overlay-text p {
+    font-size: 0.9em;
+  }
+
+  .register-form-inner-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-left {
+    padding: 25px 20px;
+  }
+
+  .register-main-title {
+    font-size: 1.8em;
+  }
+
+  .register-input,
+  .register-action-button,
+  .register-back-button {
+    padding: 12px;
+    font-size: 1em;
+  }
+}

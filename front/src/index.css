@@ -1,0 +1,186 @@
+/* Variables de color de tu tema "Cafes y Fondos Pasteles" */
+:root {
+    --color-dark-brown: #532a14;
+    --color-light-orange-pastel: #fef4e8; /* Fondo principal pastel */
+    --color-card-bg-light: #fff8f2; /* Fondo de tarjetas muy claro */
+    --color-title-brown: #6b3e26; /* Marrón para títulos */
+    --color-subtitle-orange: #8d5c3d; /* Naranja/Marrón para subtítulos y botones */
+    --color-card-border: #d1a38d; /* Borde de tarjeta sutil */
+    --color-text-brown-dark: #5a3a28; /* Texto oscuro principal */
+    --color-text-brown-light: #7a5540; /* Texto claro/secundario */
+    --color-info-text: #6d4b3c; /* Color de texto para info-section */
+    --color-card-shadow: rgba(0,0,0,0.08); /* Sombra para tarjetas */
+    --color-general-shadow: rgba(0,0,0,0.05); /* Sombra más sutil */
+
+    /* Colores para estados (reutilizados del LocatarioDashboard) */
+    --color-error: #e65f5f; /* Rojo para errores */
+    --color-success: #4CAF50; /* Verde para éxito */
+
+    /* Colores específicos para AdminDashboard */
+    --admin-color-dark-blue: #2c3e50; /* Base dark color for admin */
+    --admin-color-light-bg: #ecf0f1; /* Light background for the dashboard */
+    --admin-color-accent: #3498db; /* Accent color for links/buttons */
+    --admin-color-info-card: #1abc9c; /* Color for info cards (e.g., total products) */
+    --admin-color-warning-card: #f39c12; /* Color for warning cards (e.g., pending items) */
+    --admin-color-success-card: #27ae60; /* Color for success cards (e.g., active users) */
+    --admin-text-dark: #34495e; /* Darker text */
+    --admin-text-light: #7f8c8d; /* Lighter text for descriptions */
+    --admin-border-light: #bdc3c7; /* Light border color */
+    --admin-shadow: rgba(0,0,0,0.1); /* General shadow */
+
+    /* Colores específicos para RepartidorDashboard */
+    --repartidor-primary: #3498db; /* Azul vibrante */
+    --repartidor-secondary: #2c3e50; /* Azul oscuro */
+    --repartidor-background: #f0f2f5; /* Gris claro */
+    --repartidor-card-bg: white;
+    --repartidor-border: #dcdfe4;
+    --repartidor-text-dark: #333;
+    --repartidor-text-light: #666;
+
+    /* Estados de Pedido para Repartidor */
+    --estado-pendiente-bg: #ffe0b2; /* Naranja claro */
+    --estado-pendiente-text: #e67e22; /* Naranja oscuro */
+    --estado-en-camino-bg: #d9edf7; /* Azul claro */
+    --estado-en-camino-text: #3498db; /* Azul vibrante */
+    --estado-entregado-bg: #d4edda; /* Verde claro */
+    --estado-entregado-text: #28a745; /* Verde oscuro */
+
+
+    /* Configuración de fuente global (tomado de tu main branch index.css) */
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    /* Para manejar temas claro/oscuro si lo necesitas, pero por ahora predomina el pastel */
+    color-scheme: light dark;
+    color: var(--color-text-brown-dark); /* Color de texto por defecto */
+    background-color: var(--color-light-orange-pastel); /* Fondo general pastel */
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Estilos aplicados directamente al body para asegurar el fondo y el scroll */
+body {
+    margin: 0;
+    /* QUITAMOS display: flex y place-items: center del body
+       para que no intente centrar el contenido verticalmente si es muy largo,
+       permitiendo que el scroll del navegador funcione normalmente. */
+    /* display: flex; */
+    /* place-items: center; */
+    min-width: 320px;
+    min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la vista */
+    background-color: var(--color-light-orange-pastel); /* Asegura el fondo pastel en todo el body */
+    overflow-y: auto; /* Permite el scroll vertical si el contenido excede la altura de la ventana */
+}
+
+/* Estilos de `a` tags (tomado de tu main branch index.css) */
+a {
+    font-weight: 500;
+    color: var(--color-subtitle-orange); /* Color de acento para enlaces */
+    text-decoration: inherit;
+}
+a:hover {
+    color: var(--color-title-brown); /* Color de hover para enlaces */
+}
+
+/* Estilos de `h1` (tomado de tu main branch index.css) */
+h1 {
+    font-size: 3.2em;
+    line-height: 1.1;
+    color: var(--color-title-brown); /* Aplicamos nuestro color de título */
+}
+
+/* Estilos de `button` (tomado de tu main branch index.css, adaptado) */
+button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: var(--color-subtitle-orange); /* Color de botón por defecto */
+    color: white; /* Texto blanco en botones */
+    cursor: pointer;
+    transition: background-color 0.25s, border-color 0.25s;
+}
+button:hover {
+    border-color: var(--color-title-brown);
+    background-color: var(--color-title-brown); /* Cambia el fondo al hover */
+}
+button:focus,
+button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Estilos para el contenedor #root */
+#root {
+    max-width: 2300px; /* Limita el ancho de la aplicación */
+    margin: 0 auto; /* Centra la aplicación horizontalmente */
+    padding: 0; /* Quitamos padding si los componentes lo manejan */
+    width: 100%; /* Ocupa todo el ancho disponible hasta max-width */
+    min-height: 100vh; /* Asegura que #root también ocupe al menos 100vh */
+    display: flex; /* Añadir display flex */
+    flex-direction: column; /* Para que los elementos dentro de root se apilen verticalmente */
+    align-items: center; /* Centra el contenido de root horizontalmente */
+    justify-content: flex-start; /* Alinea el contenido al inicio verticalmente, permitiendo scroll */
+}
+
+/* Estilos de `code` (tomado de tu HEAD index.css) */
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* @media (prefers-color-scheme: light) {
+    :root {
+        color: var(--color-text-brown-dark);
+        background-color: var(--color-light-orange-pastel);
+    }
+    a:hover {
+        color: var(--color-title-brown);
+    }
+    button {
+        background-color: var(--color-subtitle-orange);
+        color: white;
+    }
+} */
+/* Comentado el media query de light-scheme por ahora, ya que nuestro tema pastel es el principal */
+
+/* Estilos de logo y card si los usas a nivel global (tomado de main branch App.css) */
+.logo {
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
+}
+.logo:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+    filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    a:nth-of-type(2) .logo {
+        animation: logo-spin infinite 20s linear;
+    }
+}
+
+.card {
+    padding: 2em;
+}
+
+.read-the-docs {
+    color: #888;
+}

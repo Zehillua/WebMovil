@@ -1,0 +1,433 @@
+/* CompradorDashboard.css (Unificado y Mejorado) */
+
+/* Variables de color (asegúrate de que estas sean coherentes con tu index.css global si es posible) */
+:root {
+  --color-dark-brown: #532a14;
+  --color-light-orange-pastel: #fef4e8; /* Fondo principal pastel */
+  --color-card-bg-light: #fff8f2; /* Fondo de tarjetas muy claro */
+  --color-title-brown: #6b3e26; /* Marrón para títulos */
+  --color-subtitle-orange: #8d5c3d; /* Naranja/Marrón para subtítulos y botones */
+  --color-card-border: #d1a38d; /* Borde de las tarjetas y inputs */
+  --color-text-brown-dark: #5a3a28; /* Texto oscuro en cards */
+  --color-text-brown-light: #7a5540; /* Texto más claro en cards */
+  --color-info-text: #6d4b3c; /* Color del texto de info */
+  --color-card-shadow: rgba(0,0,0,0.08); /* Sombra de cards */
+  --color-general-shadow: rgba(0,0,0,0.05); /* Sombra más suave */
+
+  /* Colores específicos para la barra de navegación y tarjetas de locales (adaptados de tu primer CSS) */
+  --navbar-bg: #fff;
+  --navbar-shadow: rgba(216, 122, 156, 0.08);
+  --logo-color: #d87a9c; /* Original logo color */
+  --search-border: #d87a9c;
+  --search-focus-border: #b05c7a;
+  --search-focus-shadow: #d87a9c33;
+  --icon-hover-bg: #f2c94c33;
+  --local-card-gradient-start: #f2c94c; /* Amarillo/naranja */
+  --local-card-gradient-end: #d87a9c; /* Rosa/marrón claro */
+  --local-card-shadow: rgba(216,122,156,0.13);
+  --local-card-hover-shadow: rgba(216,122,156,0.22);
+}
+
+/* Reglas globales para el fondo y la fuente */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text-brown-dark);
+}
+
+/* Contenedor principal de la página de comprador */
+.comprador-dashboard { /* Cambiado de .comprador-page a .comprador-dashboard */
+  width: 100%; /* Ocupa todo el ancho disponible del root */
+  min-height: 100vh;
+  background-color: var(--color-light-orange-pastel); /* Fondo general pastel */
+  display: flex;
+  flex-direction: column; /* Para que la navbar, body y footer se apilen */
+  align-items: center; /* Centra el contenido horizontalmente si no ocupa todo el ancho */
+  box-sizing: border-box; /* Incluir padding/border en el tamaño */
+}
+
+/* Barra superior */
+.navbar-dashboard { /* Renombrado de .navbar-opt para consistencia */
+  width: 100%;
+  max-width: 1200px; /* Limita el ancho como en home */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--navbar-bg); /* Fondo blanco para la navbar */
+  color: var(--color-text-brown-dark); /* Texto oscuro en navbar */
+  padding: 0.8rem 2rem;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 2px 12px var(--navbar-shadow); /* Sombra específica para navbar */
+  margin-bottom: 2rem;
+  min-height: 70px;
+  gap: 2rem;
+  box-sizing: border-box; /* Incluye padding en el width */
+}
+
+.navbar-section {
+  display: flex;
+  align-items: center;
+}
+
+.logo-section .logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--logo-color); /* Logo con el color específico de la primera versión */
+  letter-spacing: 1px;
+}
+
+.search-section {
+  flex: 1;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%; /* Ocupa todo el ancho disponible */
+  max-width: 400px; /* Max-width para el input */
+  padding: 0.7rem 1.2rem;
+  border-radius: 20px; /* Más redondeado, usando el de la primera versión */
+  border: 1.5px solid var(--search-border); /* Borde con color de la primera versión */
+  font-size: 1rem;
+  color: var(--color-text-brown-dark);
+  background-color: #f9f9f9; /* Fondo de input ligeramente gris */
+  transition: box-shadow 0.2s, border-color 0.2s;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: var(--search-focus-border);
+  box-shadow: 0 0 6px var(--search-focus-shadow); /* Sombra de focus */
+}
+
+.icons-section {
+  gap: 1rem; /* Espacio entre íconos de la primera versión */
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem; /* Padding de la primera versión */
+  border-radius: 50%;
+  transition: background 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background-color: var(--icon-hover-bg); /* Ligera opacidad al pasar el mouse */
+}
+
+.icon-btn img {
+  width: 28px; /* Tamaño de íconos de la primera versión */
+  height: 28px;
+  filter: brightness(0.7) sepia(1) hue-rotate(-50deg) saturate(3); /* Para cambiar el color del ícono si son monocromáticos */
+}
+
+.logout-btn img,
+.icon-btn img[alt="Carrito"],
+.icon-btn img[alt="Perfil"] {
+  /* Si los íconos ya son del color deseado, no necesitas `filter`.
+     Si los icons8 que usas son negros, este filtro los hará parecer rojizos/rosados.
+     Asegúrate de que los src de los íconos en TS sean adecuados. */
+     filter: none; /* Quitamos el filtro si los íconos son ya de colores */
+}
+
+
+/* Cuerpo del dashboard (Contenedor principal para sidebar y productos) */
+.dashboard-body {
+  display: flex;
+  flex: 1; /* Permite que el body crezca para ocupar el espacio restante */
+  width: 100%;
+  max-width: 1200px; /* Mismo ancho máximo que la navbar */
+  padding: 0 2rem 2rem 2rem; /* padding: top right bottom left */
+  gap: 2rem;
+  box-sizing: border-box;
+}
+
+/* Barra lateral */
+.sidebar {
+  flex: 1;
+  background-color: var(--color-card-bg-light); /* Fondo de card clara */
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--color-card-border);
+  box-shadow: 0 6px 12px var(--color-card-shadow);
+  height: fit-content; /* Se ajusta al contenido */
+  min-width: 250px; /* Ancho mínimo para evitar que se comprima demasiado */
+  box-sizing: border-box;
+}
+
+.sidebar-title {
+  font-size: 1.5rem;
+  color: var(--color-title-brown);
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.sidebar-search-input {
+  width: 100%;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border: 1.5px solid var(--color-card-border);
+  border-radius: 8px;
+  font-size: 1em;
+  color: var(--color-text-brown-dark);
+  background-color: white;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar-search-input:focus {
+  outline: none;
+  border-color: var(--color-subtitle-orange);
+  box-shadow: 0 0 0 3px rgba(141, 92, 61, 0.2);
+}
+
+.lista-locales {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.lista-locales li {
+  margin-bottom: 0.8rem; /* Espaciado entre botones de locales */
+}
+
+.local-button {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background-color: white; /* Fondo blanco por defecto */
+  border: 2px solid var(--color-subtitle-orange); /* Borde anaranjado */
+  border-radius: 8px;
+  color: var(--color-subtitle-orange);
+  font-weight: 600;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  text-align: left; /* Alineado a la izquierda */
+  box-sizing: border-box;
+}
+
+.local-button:hover {
+  background-color: var(--color-subtitle-orange);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.local-button.selected {
+  background-color: var(--color-title-brown); /* Un café más oscuro para seleccionado */
+  color: white;
+  border-color: var(--color-title-brown);
+}
+
+.clear-selection-button {
+  background-color: transparent;
+  color: var(--color-text-brown-light);
+  border: 1px solid var(--color-text-brown-light);
+  font-size: 0.9em;
+  margin-top: 10px;
+  width: 100%; /* Asegura que el botón ocupe todo el ancho */
+  padding: 0.6em 1.2em; /* Padding estándar de botón */
+  border-radius: 8px;
+}
+
+.clear-selection-button:hover {
+  background-color: var(--color-text-brown-light);
+  color: white;
+}
+
+
+/* Zona principal de productos */
+.productos-section {
+  flex: 3;
+  background-color: var(--color-card-bg-light); /* Fondo de card clara */
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--color-card-border);
+  box-shadow: 0 6px 12px var(--color-card-shadow);
+  box-sizing: border-box;
+  min-height: 400px; /* Asegura una altura mínima */
+}
+
+.productos-title {
+  font-size: 2rem;
+  color: var(--color-title-brown);
+  margin-top: 0;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Columnas responsivas */
+  gap: 1.5rem; /* Más espacio entre productos */
+}
+
+.producto-card {
+  background-color: white; /* Fondo blanco para cada producto */
+  border-radius: 10px;
+  border: 1px solid var(--color-card-border);
+  box-shadow: 0 4px 8px var(--color-general-shadow);
+  overflow: hidden;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.producto-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px var(--color-card-shadow);
+}
+
+.producto-imagen {
+  width: 100%;
+  height: 160px; /* Altura un poco mayor */
+  object-fit: cover;
+  display: block; /* Elimina espacio extra debajo de la imagen */
+}
+
+.producto-info {
+  padding: 1rem;
+  flex-grow: 1; /* Permite que el info ocupe el espacio restante */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Empuja el botón hacia abajo */
+}
+
+.producto-nombre {
+  font-size: 1.2em;
+  margin: 0 0 0.5rem 0;
+  color: var(--color-text-brown-dark);
+}
+
+.producto-local-info { /* Renombrado para evitar conflicto con el estado local */
+  font-size: 0.9em;
+  color: var(--color-text-brown-light);
+  margin-bottom: 1rem;
+}
+
+.add-to-cart-button {
+  background-color: var(--color-subtitle-orange);
+  color: white;
+  border: none;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+
+.add-to-cart-button:hover {
+  background-color: var(--color-title-brown);
+  transform: translateY(-2px);
+}
+
+.no-products-message,
+.loading-message,
+.error-message,
+.no-data-message {
+  grid-column: 1 / -1; /* Ocupa todas las columnas en el grid para mensajes */
+  text-align: center;
+  color: var(--color-text-brown-light);
+  font-size: 1.1em;
+  padding: 20px;
+}
+
+.error-message {
+  color: var(--color-error); /* Usa la variable de color para errores */
+  font-weight: bold;
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 1024px) {
+  .navbar-dashboard, .dashboard-body {
+    padding: 0.8rem 1.5rem; /* Ajuste de padding */
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-dashboard {
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+    justify-content: center;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .logo-section, .icons-section {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .search-section {
+    order: 3; /* Pone la barra de búsqueda al final en pantallas pequeñas */
+    width: 100%;
+  }
+
+  .dashboard-body {
+    flex-direction: column; /* Apila sidebar y productos */
+    padding: 1.5rem;
+  }
+
+  .sidebar {
+    min-width: auto; /* Permite que la sidebar se ajuste al 100% */
+    width: 100%;
+  }
+
+  .productos-section {
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .productos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Ajuste para móviles */
+    gap: 1rem;
+  }
+
+  .producto-card {
+    width: auto; /* Se ajusta al grid */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-section .logo {
+    font-size: 1.8rem;
+  }
+
+  .search-input {
+    padding: 0.6rem 1rem;
+    font-size: 0.9em;
+  }
+
+  .icon-btn img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .sidebar-title, .productos-title {
+    font-size: 1.3rem;
+  }
+
+  .producto-imagen {
+    height: 120px;
+  }
+
+  .producto-nombre {
+    font-size: 1.1em;
+  }
+
+  .add-to-cart-button {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9em;
+  }
+}

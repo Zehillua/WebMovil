@@ -1,0 +1,373 @@
+/* home.css (Modificado) */
+
+/* ... (Variables de color comentadas, igual que tu archivo) ... */
+
+/* Base y Contenedor Principal */
+.home-container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    /* El fondo pastel lo maneja el body en index.css, por lo que no necesitamos un background aquí */
+    /* background: linear-gradient(to bottom, var(--color-light-orange-pastel), var(--color-light-orange-pastel)); */
+}
+
+/* --- Banner Superior --- */
+.top-banner {
+    width: 100%;
+    background-color: var(--color-dark-brown);
+    color: white;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 2px 5px var(--color-general-shadow);
+}
+
+.top-banner-text {
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+}
+
+/* --- Sección Principal de Bienvenida / Cabecera (AHORA SÓLO CONTIENE TÍTULO Y SUBTÍTULOS) --- */
+/* Eliminamos las propiedades de card de home-main-header y se las damos a la nueva card. */
+/* home-main-header ahora solo posiciona el contenido del header. */
+.home-main-header {
+    /* Eliminamos background, padding, border-radius, box-shadow, border */
+    margin: 2.5rem auto 1.5rem; /* Ajusta el margen inferior para separar de los botones si los hay */
+    text-align: center;
+    width: 90%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem; /* Espacio más reducido entre elementos del header */
+}
+
+/* NUEVA CLASE PARA LA CARD DEL TÍTULO Y SUBTÍTULOS */
+.header-title-card {
+    background-color: var(--color-card-bg-light);
+    padding: 2.5rem 3rem; /* Puedes ajustar este padding si quieres más/menos espacio */
+    border-radius: 15px;
+    box-shadow: 0 8px 20px var(--color-card-shadow);
+    margin: 2.5rem auto 1.5rem; /* Margen para posicionar la card y separar de lo de abajo */
+    text-align: center;
+    width: fit-content; /* Se ajusta al contenido */
+    max-width: 1000px;
+    border: 1.5px solid var(--color-card-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem; /* Espacio entre el título y subtítulos */
+}
+
+
+.main-header-title {
+    font-size: 3.5rem;
+    color: var(--color-title-brown);
+    margin: 0;
+    line-height: 1.1;
+}
+
+.main-header-subtitle {
+    font-size: 1.3rem;
+    color: var(--color-subtitle-orange);
+    margin: 0.1rem 0; /* Un poco más juntos */
+    line-height: 1.4;
+}
+/* Asegúrate de que el último subtítulo no tenga un margen excesivo si los pones más pegados */
+.main-header-subtitle:last-of-type {
+    margin-bottom: 0.5rem; /* Pequeño margen después del último subtítulo dentro de la card */
+}
+
+
+/* Botones de autenticación (cuando NO está autenticado) - FUERA de la nueva card del título */
+.main-header-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 700px;
+    margin-top: 1.5rem; /* Aumenta este margen para separarlo de la card de arriba */
+    margin-bottom: 2.5rem; /* Asegura espacio hacia abajo */
+}
+
+.home-card-auth {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--color-card-border);
+    box-shadow: 0 4px 10px var(--color-general-shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.home-card-auth:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px var(--color-card-shadow);
+}
+
+.home-card-auth h2 {
+    margin-bottom: 0.8rem;
+    color: var(--color-text-brown-dark);
+    font-size: 1.6rem;
+}
+
+.home-card-auth p {
+    margin-bottom: 1.5rem;
+    color: var(--color-text-brown-light);
+    font-size: 1rem;
+    flex-grow: 1;
+}
+
+.card-button {
+    background-color: var(--color-subtitle-orange);
+    color: white;
+    padding: 0.9rem 1.8rem;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: inline-block;
+    width: fit-content;
+    margin: 0 auto;
+    border: none;
+    cursor: pointer;
+}
+
+.card-button:hover {
+    background-color: var(--color-title-brown);
+    transform: translateY(-2px);
+}
+
+/* --- Secciones para usuarios autenticados --- */
+.authenticated-section-box {
+    background-color: var(--color-card-bg-light);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px var(--color-card-shadow);
+    margin: 2rem auto;
+    width: 90%;
+    max-width: 1000px;
+    border: 1.5px solid var(--color-card-border);
+    text-align: center;
+}
+
+.authenticated-section-box h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--color-title-brown);
+}
+
+.authenticated-category-grid, .authenticated-info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.authenticated-category-card, .authenticated-info-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px var(--color-general-shadow);
+    border: 1px solid var(--color-card-border);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
+}
+
+.authenticated-category-card:hover, .authenticated-info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 12px var(--color-card-shadow);
+}
+
+.authenticated-category-card {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-subtitle-orange);
+    text-align: center;
+}
+
+.authenticated-info-card h3 {
+    font-size: 1.5rem;
+    color: var(--color-text-brown-dark);
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+}
+
+.authenticated-info-card p {
+    font-size: 0.95rem;
+    color: var(--color-text-brown-light);
+    line-height: 1.6;
+}
+
+/* --- Sección de Información General (para todos los usuarios) --- */
+.general-info-section-card {
+    background-color: var(--color-card-bg-light);
+    border: 1.5px solid var(--color-card-border);
+    border-radius: 15px;
+    padding: 3rem 2.5rem;
+    margin: 2rem auto;
+    box-shadow: 0 8px 20px var(--color-card-shadow);
+    width: 90%;
+    max-width: 1000px;
+}
+
+.info-content-wrapper {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.general-info-text {
+    flex: 1 1 350px;
+    color: var(--color-info-text);
+    font-size: 1.15rem;
+    line-height: 1.7;
+    text-align: left;
+}
+
+/* Esto intentará reducir el espacio que añade el <br> */
+.general-info-text br + br { /* Selecciona el segundo <br> si está precedido por otro <br> */
+    display: block; /* Asegura que se comporte como un bloque */
+    margin-top: -0.7em; /* Margen negativo para acercar las líneas */
+    content: " "; /* Puede ayudar en algunos navegadores */
+}
+
+
+.general-info-image-container {
+    flex: 1 1 300px;
+    max-width: 450px;
+    text-align: center;
+}
+
+.general-info-image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px var(--color-general-shadow);
+}
+
+/* --- Footer --- */
+.home-footer {
+    width: 100%;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    background-color: var(--color-card-bg-light);
+    border-top: 1px solid var(--color-card-border);
+    box-shadow: 0 -2px 5px var(--color-general-shadow);
+    margin-top: 4rem;
+}
+
+.footer-text {
+    color: var(--color-text-brown-light);
+    font-size: 0.9rem;
+    margin: 0.3rem 0;
+}
+
+/* --- Media Queries para Responsividad --- */
+@media (max-width: 1024px) {
+    /* .home-main-header, */ /* Ya no tiene padding */
+    .header-title-card, /* Añadido */
+    .authenticated-section-box,
+    .general-info-section-card {
+        padding: 2rem 2.5rem;
+        margin: 2rem auto;
+    }
+    .home-main-header { /* Sigue siendo flex column */
+        flex-direction: column;
+    }
+    .main-header-title {
+        font-size: 3rem;
+    }
+    .main-header-subtitle {
+        font-size: 1.2rem;
+    }
+    .general-info-text {
+        text-align: center;
+    }
+    .info-content-wrapper {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-banner {
+        font-size: 0.9rem;
+        padding: 0.6rem 0.5rem;
+    }
+    /* .home-main-header, */ /* Ya no tiene padding */
+    .header-title-card, /* Añadido */
+    .authenticated-section-box,
+    .general-info-section-card {
+        padding: 1.5rem;
+        margin: 1.5rem auto;
+    }
+    .main-header-title {
+        font-size: 2.5rem;
+    }
+    .main-header-subtitle {
+        font-size: 1.1rem;
+    }
+    .main-header-buttons-grid {
+        grid-template-columns: 1fr;
+        max-width: 350px;
+    }
+    .card-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    .authenticated-section-box h2 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    .authenticated-category-grid, .authenticated-info-cards {
+        grid-template-columns: 1fr;
+    }
+    .general-info-section-card {
+        padding: 2rem 1.5rem;
+    }
+    .general-info-text {
+        font-size: 1rem;
+    }
+    .home-footer {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* .home-main-header { */ /* Ya no tiene padding */
+    .header-title-card { /* Añadido */
+        padding: 1.2rem;
+    }
+    .main-header-title {
+        font-size: 2rem;
+    }
+    .main-header-subtitle {
+        font-size: 0.95rem;
+    }
+    .home-card-auth h2 {
+        font-size: 1.4rem;
+    }
+    .authenticated-section-box h2 {
+        font-size: 1.7rem;
+    }
+    .authenticated-category-card, .authenticated-info-card {
+        padding: 1.2rem;
+    }
+    .general-info-section-card {
+        padding: 1.5rem;
+    }
+    .general-info-text {
+        font-size: 0.95rem;
+    }
+}

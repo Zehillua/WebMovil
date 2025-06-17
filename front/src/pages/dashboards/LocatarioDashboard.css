@@ -1,0 +1,446 @@
+/* locatarioDashboard.css (Unificado y Mejorado) */
+
+/* Variables de color (idealmente en un archivo global compartido, pero las incluimos aquí por ahora) */
+:root {
+  --color-dark-brown: #532a14;
+  --color-light-orange-pastel: #fef4e8; /* Fondo principal pastel */
+  --color-card-bg-light: #fff8f2; /* Fondo de tarjetas muy claro */
+  --color-title-brown: #6b3e26; /* Marrón para títulos */
+  --color-subtitle-orange: #8d5c3d; /* Naranja/Marrón para subtítulos y botones */
+  --color-card-border: #d1a38d; /* Borde de las tarjetas y inputs */
+  --color-text-brown-dark: #5a3a28; /* Texto oscuro en cards */
+  --color-text-brown-light: #7a5540; /* Texto más claro en cards */
+  --color-info-text: #6d4b3c; /* Color del texto de info */
+  --color-card-shadow: rgba(0,0,0,0.08); /* Sombra de cards */
+  --color-general-shadow: rgba(0,0,0,0.05); /* Sombra más suave */
+
+  /* Colores específicos para este dashboard si difieren */
+  --color-highlight-brown: #4e2c18; /* Para el top-banner */
+  --color-button-primary: var(--color-subtitle-orange);
+  --color-button-hover: var(--color-title-brown);
+}
+
+/* Reglas globales para el fondo y la fuente (Si no están en un index.css general) */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text-brown-dark);
+}
+
+/* NUEVO: Banner superior tipo home */
+.top-banner {
+  width: 100%;
+  background-color: var(--color-highlight-brown); /* Usando variable */
+  padding: 0.8rem;
+  color: white;
+  font-weight: bold;
+  font-size: 1.05rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-sizing: border-box; /* Incluir padding en el ancho */
+}
+
+.top-banner-text {
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+/* Ajuste al contenedor principal */
+.locatario-dashboard {
+  width: 100%; /* Cambiado de 100vw a 100% para mejor control */
+  min-height: 100vh;
+  background-color: var(--color-light-orange-pastel);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra el contenido horizontalmente */
+  box-sizing: border-box;
+}
+
+/* Ajuste de la navbar para que calce con el banner */
+.navbar-locatario {
+  width: 100%;
+  max-width: 1200px; /* Consistente con el ancho del banner */
+  display: flex;
+  justify-content: center; /* Centra el logo */
+  align-items: center;
+  background-color: var(--color-subtitle-orange);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  position: relative; /* Para posicionar el botón de salir */
+  box-sizing: border-box;
+}
+
+.logo-centered {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white; /* Asegura el color blanco del texto del logo */
+}
+
+.logout-btn {
+  position: absolute;
+  right: 2rem;
+  background: white;
+  color: var(--color-subtitle-orange);
+  border: none;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  /* Añadido para el hover */
+  border: 1px solid white; /* Borde sutil para el estado normal */
+}
+.logout-btn:hover {
+  background: var(--color-subtitle-orange);
+  color: white;
+  border-color: white; /* Mantener el borde en hover */
+}
+
+/* Título principal del dashboard (generalmente "Tus Productos" o "Gestión") */
+.dashboard-title {
+  text-align: center;
+  margin: 2rem 0; /* Más espacio arriba y abajo */
+  font-size: 2.2rem; /* Tamaño un poco más grande */
+  color: var(--color-title-brown);
+}
+
+/* NUEVO: Contenedor para las acciones principales (Agregar Producto, Promoción, etc.) */
+.main-actions-container { /* Renombrado de .main-actions para evitar colisión si ya existe en otro lado */
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-wrap: wrap; /* Permite que los botones se envuelvan en pantallas pequeñas */
+    justify-content: center; /* Centra los botones */
+    gap: 1.5rem; /* Espacio entre los botones */
+    padding: 0 2rem 2rem; /* Padding para evitar que se peguen a los bordes */
+    box-sizing: border-box;
+    margin-bottom: 2rem; /* Espacio antes del contenido principal */
+}
+
+.main-actions-container button {
+    background-color: var(--color-button-primary); /* Color primario de botón */
+    color: white;
+    border: none;
+    border-radius: 10px; /* Bordes más redondeados */
+    padding: 1rem 1.8rem; /* Padding más generoso */
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px var(--color-general-shadow); /* Sombra suave */
+    min-width: 180px; /* Asegura un ancho mínimo para botones */
+}
+
+.main-actions-container button:hover {
+    background-color: var(--color-button-hover); /* Color de hover */
+    transform: translateY(-3px); /* Efecto ligero de elevación */
+}
+
+
+/* Contenedor principal de los productos (donde se renderizan las cards) */
+.products-section-wrapper { /* Clase envolvente para el título y el grid de productos */
+    width: 100%;
+    max-width: 1200px;
+    padding: 2rem;
+    background-color: var(--color-card-bg-light); /* Fondo de card clara */
+    border-radius: 12px;
+    border: 1.5px solid var(--color-card-border);
+    box-shadow: 0 6px 12px var(--color-card-shadow);
+    box-sizing: border-box;
+    margin-bottom: 2rem; /* Espacio antes del final de la página */
+    min-height: 400px; /* Asegura que la tarjeta principal tenga un tamaño decente */
+}
+
+/* Estilo para cuando no hay productos */
+.no-products {
+    text-align: center;
+    color: var(--color-text-brown-light);
+    font-size: 1.2em;
+    padding: 40px 20px;
+    background-color: var(--color-card-bg-light);
+    border-radius: 12px;
+    border: 1.5px solid var(--color-card-border);
+    box-shadow: 0 4px 8px var(--color-general-shadow);
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+
+/* Contenedor de productos (grid) */
+.productos-grid { /* Usando el mismo nombre que en compradorDashboard para consistencia */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem; /* Espacio entre cards */
+  justify-content: center; /* Centra las cards si no llenan el grid */
+}
+
+/* Tarjeta de producto */
+.producto-card { /* Usando el mismo nombre que en compradorDashboard para consistencia */
+  background-color: white; /* Fondo blanco para cada producto */
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+  padding: 1.2rem; /* Más padding */
+  text-align: center;
+  box-shadow: 0 4px 8px var(--color-general-shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px var(--color-card-shadow);
+}
+
+
+.producto-card img {
+  max-width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.producto-card h3 {
+  margin: 0.5rem 0;
+  color: var(--color-title-brown);
+  font-size: 1.3rem; /* Un poco más grande */
+}
+
+.producto-card p {
+  margin: 0.2rem 0;
+  color: var(--color-text-brown-dark);
+  font-size: 0.95rem;
+}
+
+/* Botones dentro de la tarjeta de producto */
+.producto-card .card-buttons { /* Contenedor para botones de card */
+    display: flex;
+    justify-content: space-around;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.producto-card .card-buttons button {
+  flex: 1; /* Para que los botones ocupen el mismo ancho */
+  padding: 0.7rem 1rem;
+  background-color: var(--color-subtitle-orange);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: background 0.3s ease;
+}
+.producto-card .card-buttons button:hover {
+  background-color: var(--color-title-brown);
+}
+
+/* Botón flotante para agregar producto */
+.floating-add-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: var(--color-subtitle-orange);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 2.5rem; /* Icono más grande */
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2); /* Sombra más pronunciada */
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  z-index: 999; /* Asegura que esté por encima de otros elementos */
+}
+.floating-add-button:hover {
+  background-color: var(--color-title-brown);
+  transform: scale(1.1);
+}
+
+/* Formulario emergente (Modal) */
+.modal-overlay { /* Fondo semitransparente detrás del formulario */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4); /* Un poco más oscuro */
+  z-index: 1000;
+  display: flex; /* Para centrar el formulario */
+  align-items: center;
+  justify-content: center;
+}
+
+.add-product-form { /* Renombrado de .formulario-flotante para claridad */
+  background-color: var(--color-card-bg-light);
+  padding: 2.5rem; /* Más padding */
+  border-radius: 12px;
+  border: 2px solid var(--color-card-border);
+  box-shadow: 0 8px 20px var(--color-card-shadow);
+  z-index: 1001;
+  width: 90%;
+  max-width: 500px; /* Un poco más ancho */
+  box-sizing: border-box;
+  position: relative; /* Para el botón de cerrar */
+}
+
+.add-product-form .close-button { /* Clase para el botón de cerrar */
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--color-text-brown-light);
+    transition: color 0.2s ease;
+}
+.add-product-form .close-button:hover {
+    color: var(--color-dark-brown);
+}
+
+.add-product-form h2 { /* Cambiado de h3 a h2 */
+  text-align: center;
+  margin-bottom: 2rem; /* Más espacio */
+  color: var(--color-title-brown);
+  font-size: 2rem;
+}
+
+.add-product-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem; /* Más espacio entre campos */
+}
+
+.add-product-form label {
+    font-weight: 600;
+    color: var(--color-text-brown-dark);
+    margin-bottom: 0.3rem;
+    display: block; /* Para que la etiqueta esté en su propia línea */
+}
+
+.add-product-form input[type="text"],
+.add-product-form input[type="number"],
+.add-product-form textarea,
+.add-product-form input[type="file"] {
+  padding: 12px;
+  font-size: 1rem;
+  border: 1.5px solid var(--color-card-border);
+  border-radius: 8px;
+  background-color: white;
+  color: var(--color-text-brown-dark);
+  box-sizing: border-box;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-product-form input:focus,
+.add-product-form textarea:focus {
+    outline: none;
+    border-color: var(--color-subtitle-orange);
+    box-shadow: 0 0 0 3px rgba(141, 92, 61, 0.2); /* Sombra de focus */
+}
+
+.add-product-form button[type="submit"] {
+  padding: 1rem; /* Más padding para el botón de submit */
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--color-subtitle-orange);
+  color: white;
+  transition: background 0.3s ease, transform 0.2s ease;
+  margin-top: 1.5rem; /* Más espacio arriba */
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+.add-product-form button[type="submit"]:hover {
+  background-color: var(--color-title-brown);
+  transform: translateY(-2px);
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar-locatario {
+    padding: 1rem;
+    justify-content: center; /* Centra el logo en móviles */
+  }
+
+  .logout-btn {
+    position: static; /* Quita el absolute para que fluya con el contenido */
+    margin-top: 1rem; /* Añade un poco de margen si se apila */
+  }
+
+  .top-banner {
+      font-size: 0.9rem;
+      padding: 0.6rem;
+  }
+
+  .dashboard-title {
+    font-size: 1.8rem;
+    margin: 1.5rem 0;
+  }
+
+  .main-actions-container {
+    padding: 0 1rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .main-actions-container button {
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    min-width: 150px; /* Ancho mínimo ajustado */
+  }
+
+  .products-section-wrapper {
+      padding: 1.5rem;
+  }
+
+  .productos-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  .producto-card {
+    padding: 1rem;
+  }
+
+  .producto-card img {
+    height: 150px;
+  }
+
+  .floating-add-button {
+    width: 50px;
+    height: 50px;
+    font-size: 2rem;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .add-product-form {
+    padding: 1.5rem;
+  }
+
+  .add-product-form h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .add-product-form input,
+  .add-product-form textarea,
+  .add-product-form button[type="submit"] {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+}
