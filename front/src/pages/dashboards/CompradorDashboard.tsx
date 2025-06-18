@@ -1,28 +1,28 @@
-// CompradorDashboard.tsx (Unificado y Funcional)
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CompradorDashboard.css';
 
-// Define las interfaces para Local y Producto
-// Asegúrate de que estos tipos coincidan con la estructura de datos que tu backend retorna.
+// Interfaces
 interface Local {
-  _id: string; // El ID de MongoDB para el local
-  nombreLocal: string; // El nombre del local
-  // Si tu backend retorna más campos para un local, añádelos aquí.
+  _id: string;
+  nombreLocal: string;
 }
 
 interface Producto {
-  _id: string; // El ID de MongoDB para el producto
+  _id: string;
   nombre: string;
-  localNombre: string; // Nombre del local al que pertenece el producto (asumo que tu producto tiene esto)
-  imagenURL: string; // URL de la imagen del producto
-  precio: number; // Ejemplo, asumiendo que los productos tienen un precio
-  // Agrega aquí otros campos que tu backend retorne para un producto (ej. descripcion, categoria)
+  precio: number;
+  cantidad: number;
+  ingredientes: string[];
+  descripcion: string;
+  imagenUrl: string;
+  locatarioId: string; // Referencia al locatario
+  localNombre: string; // Agregado manualmente en el frontend
 }
 
 const CompradorDashboard: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
-  const [localSeleccionado, setLocalSeleccionado] = useState<string | null>(null); // Guarda el nombre del local
+  const [localSeleccionado, setLocalSeleccionado] = useState<string | null>(null);
   const [locales, setLocales] = useState<Local[]>([]);
   const [productos, setProductos] = useState<Producto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,72 +30,66 @@ const CompradorDashboard: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // Protección de ruta: redirige si no hay token
+  // Protección de ruta
   useEffect(() => {
     if (!localStorage.getItem('token')) {
       navigate('/', { replace: true });
     }
   }, [navigate]);
 
-  // Función para obtener los locales del backend
+  // Obtener locales
   const fetchLocales = useCallback(async () => {
     try {
-      setIsLoading(true);
-      setError(null);
-      const response = await fetch('http://localhost:3000/locatarios'); // URL de tu API para locales
-      if (!response.ok) {
-        throw new Error(`Error al cargar locales: ${response.status} ${response.statusText}`);
-      }
+      const response = await fetch('http://localhost:3000/locatarios');
+      if (!response.ok) throw new Error(`Error al cargar locales: ${response.status} ${response.statusText}`);
       const data: Local[] = await response.json();
       setLocales(data);
+      return data;
     } catch (err: any) {
-      console.error("Error al cargar locales:", err);
-      setError(err.message || "Error al cargar locales disponibles.");
-    } finally {
-      setIsLoading(false);
+      console.error(err);
+      setError(err.message || "Error al cargar locales");
+      return [];
     }
   }, []);
 
-  // Función para obtener los productos del backend
-  const fetchProductos = useCallback(async () => {
+  // Obtener todos los productos de todos los locales
+  const fetchProductos = useCallback(async (localesData: Local[]) => {
     try {
-      setIsLoading(true);
-      setError(null);
-      // Asumo que tienes un endpoint para obtener todos los productos, o un endpoint para productos por local
-      // Si tienes productos asociados a locales, tu API debería exponerlos.
-      const response = await fetch('http://localhost:3000/productos'); // URL de tu API para productos
-      if (!response.ok) {
-        throw new Error(`Error al cargar productos: ${response.status} ${response.statusText}`);
+      let productosAcumulados: Producto[] = [];
+      for (const local of localesData) {
+        const response = await fetch(`http://localhost:3001/comidas/locatario/${local._id}`);
+        if (response.ok) {
+          const data = await response.json();
+          const productosConLocal = data.map((prod: any) => ({
+            ...prod,
+            localNombre: local.nombreLocal, // Agregamos el nombre del local al producto
+          }));
+          productosAcumulados = [...productosAcumulados, ...productosConLocal];
+        }
       }
-      const data: Producto[] = await response.json();
-      setProductos(data);
+      setProductos(productosAcumulados);
     } catch (err: any) {
-      console.error("Error al cargar productos:", err);
-      setError(err.message || "Error al cargar productos disponibles.");
-    } finally {
-      setIsLoading(false);
+      console.error(err);
+      setError(err.message || "Error al cargar productos");
     }
   }, []);
 
-  // Cargar datos iniciales al montar el componente
+  // Cargar inicial
   useEffect(() => {
-    fetchLocales();
-    fetchProductos();
-  }, [fetchLocales, fetchProductos]); // Se ejecutará una vez al montar, y si las funciones cambian (poco probable)
+    setIsLoading(true);
+    setError(null);
+    fetchLocales().then((localesData) => {
+      fetchProductos(localesData).finally(() => setIsLoading(false));
+    });
+  }, [fetchLocales, fetchProductos]);
 
-  // Manejador de cierre de sesión
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('tipoUsuario'); // Eliminar también el tipo de usuario si lo guardas
+    localStorage.removeItem('tipoUsuario');
     navigate('/', { replace: true });
   };
 
-  // Filtrado de locales por la barra de búsqueda superior (también afecta a la sidebar)
-  const localesFiltrados = locales.filter((local) =>
-    local.nombreLocal.toLowerCase().includes(busqueda.toLowerCase())
-  );
-
-  // Filtrado de productos
+  // Filtrado de productos según búsqueda y local seleccionado
   const productosFiltrados = productos.filter((producto) => {
     const coincideBusqueda =
       producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -103,14 +97,14 @@ const CompradorDashboard: React.FC = () => {
 
     const coincideLocalSeleccionado = localSeleccionado
       ? producto.localNombre === localSeleccionado
-      : true; // Si no hay local seleccionado, todos los productos son válidos por local
+      : true;
 
     return coincideBusqueda && coincideLocalSeleccionado;
   });
 
   return (
     <div className="comprador-dashboard">
-      {/* Barra superior */}
+      {/* Navbar */}
       <nav className="navbar-dashboard">
         <div className="navbar-section logo-section">
           <span className="logo">VeciMarket</span>
@@ -137,15 +131,16 @@ const CompradorDashboard: React.FC = () => {
         </div>
       </nav>
 
+      {/* Body */}
       <div className="dashboard-body">
-        {/* Barra lateral */}
+        {/* Sidebar de locales */}
         <aside className="sidebar">
           <h3 className="sidebar-title">Locales del Vecindario</h3>
           <input
             type="text"
             className="sidebar-search-input"
             placeholder="Filtrar locales..."
-            value={busqueda} // Este input también filtra la lista de locales en la sidebar
+            value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
           <ul className="lista-locales">
@@ -153,20 +148,16 @@ const CompradorDashboard: React.FC = () => {
               <li><p className="loading-message">Cargando locales...</p></li>
             ) : error ? (
               <li><p className="error-message">{error}</p></li>
-            ) : localesFiltrados.length > 0 ? (
-              localesFiltrados.map((local) => (
-                <li key={local._id}> {/* Usa _id de MongoDB */}
-                  <button
-                    className={`local-button ${localSeleccionado === local.nombreLocal ? 'selected' : ''}`}
-                    onClick={() => setLocalSeleccionado(local.nombreLocal)}
-                  >
-                    {local.nombreLocal}
-                  </button>
-                </li>
-              ))
-            ) : (
-              <li><p className="no-data-message">No hay locales disponibles.</p></li>
-            )}
+            ) : locales.map((local) => (
+              <li key={local._id}>
+                <button
+                  className={`local-button ${localSeleccionado === local.nombreLocal ? 'selected' : ''}`}
+                  onClick={() => setLocalSeleccionado(local.nombreLocal)}
+                >
+                  {local.nombreLocal}
+                </button>
+              </li>
+            ))}
           </ul>
           {localSeleccionado && (
             <button
@@ -178,7 +169,7 @@ const CompradorDashboard: React.FC = () => {
           )}
         </aside>
 
-        {/* Zona principal de productos */}
+        {/* Productos */}
         <main className="productos-section">
           <h2 className="productos-title">
             {localSeleccionado ? `Menú de ${localSeleccionado}` : 'Productos disponibles'}
@@ -190,23 +181,28 @@ const CompradorDashboard: React.FC = () => {
               <p className="error-message">{error}</p>
             ) : productosFiltrados.length > 0 ? (
               productosFiltrados.map((producto) => (
-                <div className="producto-card" key={producto._id}> {/* Usa _id de MongoDB */}
-                  {/* Asegúrate de que `producto.imagenURL` sea la URL correcta */}
-                  <img src={producto.imagenURL} alt={producto.nombre} className="producto-imagen" />
+                <div className="producto-card" key={producto._id}>
+                  <img
+                    src={
+                      producto.imagenUrl
+                        ? producto.imagenUrl.startsWith('/uploads/')
+                          ? `http://localhost:3001${producto.imagenUrl}`
+                          : producto.imagenUrl
+                        : 'https://via.placeholder.com/200x140?text=Sin+Imagen'
+                    }
+                    alt={producto.nombre}
+                    className="producto-imagen"
+                  />
                   <div className="producto-info">
                     <h3 className="producto-nombre">{producto.nombre}</h3>
                     <p className="producto-local-info">De: {producto.localNombre}</p>
-                    <p className="producto-precio">${producto.precio ? producto.precio.toLocaleString('es-CL') : 'N/A'}</p> {/* Formato de precio Chile */}
+                    <p><strong>Precio:</strong> ${producto.precio.toLocaleString('es-CL')}</p>
                     <button className="add-to-cart-button">Agregar al Carrito</button>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="no-products-message">
-                {localSeleccionado
-                  ? `No se encontraron productos para "${localSeleccionado}".`
-                  : `No se encontraron productos que coincidan con tu búsqueda.`}
-              </p>
+              <p className="no-products-message">No se encontraron productos.</p>
             )}
           </div>
         </main>

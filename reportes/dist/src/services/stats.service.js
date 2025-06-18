@@ -21,13 +21,42 @@ let StatsService = class StatsService {
         this.usuarioModel = usuarioModel;
     }
     async obtenerLocales() {
-        // Devuelve solo nombreLocal y nombre completo del usuario que registró el local
+        // Devuelve nombreLocal, numeroTelefono, ciudad y numeroLocal
         return this.usuarioModel.find({ tipoUsuario: 'locatario' }, {
             nombreLocal: 1,
-            nombre: 1,
-            apellido: 1,
+            numeroTelefono: 1,
+            ciudad: 1,
+            numeroLocal: 1,
             _id: 0
         }).exec();
+    }
+    async estadisticasLocal(nombreLocal) {
+        // 1. Buscar el locatario por nombreLocal
+        const locatario = await this.usuarioModel.findOne({ nombreLocal });
+        // 2. Obtener ventas y comidas
+        const ventas = locatario.ventas || [];
+        const comidasStock = locatario.comidasStock || [];
+        const promociones = locatario.promociones || [];
+        // 3. Calcular estadísticas
+        const totalVentas = ventas.length;
+        const dineroRecaudado = ventas.reduce((sum, v) => sum + v.precio, 0);
+        // Por comida
+        const resumenComidas = comidasStock.map((comida) => {
+            const ventasComida = ventas.filter((v) => v.comida === comida.nombre);
+            const cantidad = ventasComida.length;
+            const dinero = ventasComida.reduce((sum, v) => sum + v.precio, 0);
+            return {
+                nombre: comida.nombre,
+                cantidadVentas: cantidad,
+                dineroRecaudado: dinero,
+            };
+        });
+        return {
+            totalVentas,
+            dineroRecaudado,
+            resumenComidas,
+            promociones,
+        };
     }
 };
 exports.StatsService = StatsService;

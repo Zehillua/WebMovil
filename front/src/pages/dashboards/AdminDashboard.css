@@ -1,118 +1,266 @@
-.admin-dashboard {
-  padding: 2rem;
-  font-family: Arial, sans-serif;
+/* AdminDashboard.css (Unificado al diseño pastel general de VeciMarket) */
+
+:root {
+  --color-dark-brown: #532a14;
+  --color-light-orange-pastel: #fef4e8;
+  --color-card-bg-light: #fff8f2;
+  --color-title-brown: #6b3e26;
+  --color-subtitle-orange: #8d5c3d;
+  --color-card-border: #d1a38d;
+  --color-text-brown-dark: #5a3a28;
+  --color-text-brown-light: #7a5540;
+  --color-info-text: #6d4b3c;
+  --color-card-shadow: rgba(0, 0, 0, 0.08);
+  --color-general-shadow: rgba(0, 0, 0, 0.05);
+  --color-success: #4CAF50;
+  --color-error: #e65f5f;
 }
 
-.admin-dashboard h1 {
-  margin-bottom: 2rem;
-}
-
-.resumen-cards {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.card-resumen {
-  background-color: #f8f8f8;
-  border-left: 6px solid #d87a9c;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  flex: 1;
-  text-align: center;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-
-.card-resumen h2 {
-  font-size: 2rem;
+html, body {
   margin: 0;
-  color: #d87a9c;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--color-light-orange-pastel);
+  color: var(--color-text-brown-dark);
 }
 
-.card-resumen p {
-  margin: 0.5rem 0 0;
-  font-weight: bold;
-  color: #555;
-}
-
-.tabla-revision {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-
-.tabla-revision th,
-.tabla-revision td {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-.tabla-revision th {
-  background-color: #f2f2f2;
-}
-
-.tabla-revision button {
-  margin-right: 0.5rem;
-  padding: 0.4rem 0.8rem;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.tabla-revision button:first-child {
-  background-color: #4caf50;
-  color: white;
-}
-
-.tabla-revision button:last-child {
-  background-color: #f44336;
-  color: white;
-}
-
-.estado {
-  font-weight: bold;
-  padding: 0.25rem 0.5rem;
-  border-radius: 5px;
-}
-
-.estado.revisado {
-  background-color: #c8e6c9;
-  color: #2e7d32;
-}
-
-.estado.sospechoso {
-  background-color: #ffcdd2;
-  color: #b71c1c;
-}
-
-.estado.pendiente {
-  background-color: #fff3cd;
-  color: #856404;
-}
-.bloque-locatario {
-  margin-bottom: 3rem;
-}
-
-.bloque-locatario h3 {
-  margin-bottom: 1rem;
-  color: #d87a9c;
-  border-left: 5px solid #d87a9c;
-  padding-left: 1rem;
-}
-.filtros-admin {
+.admin-dashboard {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
   align-items: center;
 }
 
-.filtros-admin input,
-.filtros-admin select {
-  padding: 0.5rem;
+.admin-navbar {
+  width: 100%;
+  background-color: var(--color-dark-brown);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px var(--color-general-shadow);
+}
+
+.admin-logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.admin-contenido {
+  flex-grow: 1;
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.admin-contenido h1 {
+  text-align: center;
+  color: var(--color-title-brown);
+  margin-bottom: 2rem;
+}
+
+.admin-resumen-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.admin-card-resumen {
+  background-color: var(--color-card-bg-light);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px var(--color-card-shadow);
+  border-left: 6px solid var(--color-subtitle-orange);
+  text-align: center;
+}
+
+.admin-card-resumen h2 {
+  font-size: 2.5rem;
+  color: var(--color-title-brown);
+  margin: 0.5rem 0;
+}
+
+.admin-card-resumen p {
+  color: var(--color-text-brown-light);
+}
+
+.admin-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.admin-filtros input, .admin-filtros select {
+  padding: 0.8rem 1.2rem;
+  border: 1.5px solid var(--color-card-border);
+  border-radius: 10px;
+  background-color: white;
   font-size: 1rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  color: var(--color-text-brown-dark);
+  transition: 0.3s ease;
+}
+
+.admin-filtros input:focus, .admin-filtros select:focus {
+  border-color: var(--color-subtitle-orange);
+  box-shadow: 0 0 0 3px rgba(141, 92, 61, 0.2);
+  outline: none;
+}
+
+.admin-bloque-locatario {
+  background-color: var(--color-card-bg-light);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px var(--color-card-shadow);
+  border: 1px solid var(--color-card-border);
+  margin-bottom: 2.5rem;
+}
+
+.admin-bloque-locatario h3 {
+  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+  color: var(--color-title-brown);
+  border-left: 6px solid var(--color-subtitle-orange);
+  padding-left: 1rem;
+}
+
+.admin-grid-productos-revision {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.admin-card-revision {
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid var(--color-card-border);
+  box-shadow: 0 4px 8px var(--color-general-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.admin-card-revision:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px var(--color-card-shadow);
+}
+
+.admin-card-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.admin-card-info {
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.admin-card-info h4 {
+  margin: 0.5rem 0;
+  font-size: 1.3rem;
+  color: var(--color-title-brown);
+}
+
+.admin-card-meta {
+  color: var(--color-text-brown-light);
+  margin-bottom: 1rem;
+}
+
+.admin-estado {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.admin-estado-revisado {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.admin-estado-sospechoso {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.admin-estado-pendiente {
+  background-color: #fce4ec;
+  color: #c2185b;
+}
+
+.admin-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-top: 1px solid var(--color-card-border);
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.admin-card-actions button {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+  min-width: 130px;
+}
+
+.btn-detalle {
+  background-color: var(--color-subtitle-orange);
+  color: white;
+}
+
+.btn-detalle:hover {
+  background-color: var(--color-title-brown);
+}
+
+.btn-revisado {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.btn-revisado:hover {
+  background-color: #3e8e41;
+}
+
+.btn-sospechoso {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.btn-sospechoso:hover {
+  background-color: #c62828;
+}
+
+.admin-no-data-message {
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 1.2rem;
+  color: var(--color-text-brown-light);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-resumen-cards {
+    grid-template-columns: 1fr;
+  }
+  .admin-filtros {
+    flex-direction: column;
+  }
+  .admin-grid-productos-revision {
+    grid-template-columns: 1fr;
+  }
 }

@@ -12,35 +12,35 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatsController = void 0;
+exports.TestController = void 0;
 const common_1 = require("@nestjs/common");
-const stats_service_1 = require("../services/stats.service");
-let StatsController = class StatsController {
-    constructor(statsService) {
-        this.statsService = statsService;
+const test_service_1 = require("../services/test.service");
+let TestController = class TestController {
+    constructor(testService) {
+        this.testService = testService;
     }
-    async obtenerLocales() {
-        return this.statsService.obtenerLocales();
+    async crearPrueba(mensaje) {
+        return this.testService.crearPrueba(mensaje);
     }
-    async estadisticasLocal(nombreLocal) {
-        return this.statsService.estadisticasLocal(nombreLocal);
+    async obtenerPruebas() {
+        return this.testService.obtenerPruebas();
     }
 };
-exports.StatsController = StatsController;
+exports.TestController = TestController;
 __decorate([
-    (0, common_1.Get)('locales'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], StatsController.prototype, "obtenerLocales", null);
-__decorate([
-    (0, common_1.Get)('locales/:nombreLocal/estadisticas'),
-    __param(0, (0, common_1.Param)('nombreLocal')),
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Body)('mensaje')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], StatsController.prototype, "estadisticasLocal", null);
-exports.StatsController = StatsController = __decorate([
-    (0, common_1.Controller)('stats'),
-    __metadata("design:paramtypes", [stats_service_1.StatsService])
-], StatsController);
+], TestController.prototype, "crearPrueba", null);
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], TestController.prototype, "obtenerPruebas", null);
+exports.TestController = TestController = __decorate([
+    (0, common_1.Controller)('test'),
+    __metadata("design:paramtypes", [test_service_1.TestService])
+], TestController);

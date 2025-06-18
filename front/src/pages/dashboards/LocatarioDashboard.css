@@ -208,7 +208,7 @@ html, body {
 
 .producto-card h3 {
   margin: 0.5rem 0;
-  color: var(--color-title-brown);
+  color: var(--color-title-brown) !important;
   font-size: 1.3rem; /* Un poco más grande */
 }
 
@@ -293,6 +293,8 @@ html, body {
   max-width: 500px; /* Un poco más ancho */
   box-sizing: border-box;
   position: relative; /* Para el botón de cerrar */
+  max-height: 90vh; /* Limita la altura del modal */
+  overflow-y: auto; /* Permite scroll si el contenido es largo */
 }
 
 .add-product-form .close-button { /* Clase para el botón de cerrar */
@@ -333,7 +335,8 @@ html, body {
 .add-product-form input[type="text"],
 .add-product-form input[type="number"],
 .add-product-form textarea,
-.add-product-form input[type="file"] {
+.add-product-form input[type="file"],
+.add-product-form input[type="date"] { /* Añadido input type="date" */
   padding: 12px;
   font-size: 1rem;
   border: 1.5px solid var(--color-card-border);
@@ -367,6 +370,75 @@ html, body {
 .add-product-form button[type="submit"]:hover {
   background-color: var(--color-title-brown);
   transform: translateY(-2px);
+}
+
+/* Este estilo es para el contenido interno de los nuevos paneles (Top Ventas, Top Deliverys) */
+.panel-content {
+    margin-top: 1rem;
+    text-align: left; /* Alinea el texto a la izquierda dentro del panel */
+}
+
+.panel-content ul {
+    list-style: none; /* Quita los puntos de la lista */
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.panel-content ul li {
+    background-color: var(--color-card-bg-light);
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
+    padding: 0.8rem 1.2rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px var(--color-general-shadow);
+}
+
+/* NUEVOS ESTILOS para la selección de productos en el formulario de promoción */
+.products-selection-label {
+    margin-top: 1.5rem; /* Espacio extra antes del listado de productos */
+    font-weight: 600;
+    color: var(--color-text-brown-dark);
+    margin-bottom: 0.8rem;
+    display: block;
+}
+
+.promo-product-list {
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
+    padding: 0.8rem;
+    max-height: 200px; /* Altura máxima para el scroll */
+    overflow-y: auto; /* Habilita el scroll vertical */
+    background-color: white;
+}
+
+.promo-product-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee; /* Separador entre productos */
+}
+
+.promo-product-item:last-child {
+    border-bottom: none; /* No hay separador en el último item */
+}
+
+.promo-product-item input[type="checkbox"] {
+    margin-right: 0.8rem;
+    min-width: 20px; /* Asegura un tamaño clicable */
+    min-height: 20px;
+    cursor: pointer;
+    accent-color: var(--color-subtitle-orange); /* Color del checkbox */
+}
+
+.promo-product-item label {
+    margin-bottom: 0; /* Reinicia margin de label general */
+    font-weight: normal;
+    color: var(--color-text-brown-dark);
+    cursor: pointer;
+    flex-grow: 1; /* Permite que el label ocupe el espacio restante */
 }
 
 
@@ -439,8 +511,14 @@ html, body {
 
   .add-product-form input,
   .add-product-form textarea,
-  .add-product-form button[type="submit"] {
+  .add-product-form button[type="submit"],
+  .add-product-form select, /* Asegura que los selects también se vean bien */
+  .add-product-form input[type="date"] {
     padding: 10px;
     font-size: 0.95rem;
+  }
+
+  .promo-product-list {
+      max-height: 150px; /* Ajuste en móviles */
   }
 }

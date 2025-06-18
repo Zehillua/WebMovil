@@ -1,3 +1,4 @@
+// LocalView.tsx (Adaptado al diseño pastel unificado)
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './LocalView.css';
@@ -26,13 +27,12 @@ const LocalView: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token || !id) return;
 
-      // Obtener nombre del local como ejemplo de ahora
       const localRes = await fetch(`http://localhost:3000/locatarios/${id}`);
       if (localRes.ok) {
         const localData = await localRes.json();
         setNombreLocal(localData.nombreLocal || 'Local');
       }
-      // Aca se obtiene las comidas del locatario como ejemplo por ahora
+
       const response = await fetch(`http://localhost:3001/comidas/locatario/${id}`);
       if (response.ok) {
         const data = await response.json();
@@ -51,71 +51,65 @@ const LocalView: React.FC = () => {
   const handleAceptar = async () => {
     const token = localStorage.getItem('token');
     if (!token || !selectedComida || !id) return;
-    console.log('Iniciando handleAceptar');
 
-    //Aca se puede obtener la id del comprador desde el back
     let idComprador = localStorage.getItem('idUsuario');
     try {
-        const res = await fetch('http://localhost:3000/usuarios/me', {
+      const res = await fetch('http://localhost:3000/usuarios/me', {
         headers: { Authorization: `Bearer ${token}` }
-        });
-        if (res.ok) {
+      });
+      if (res.ok) {
         const data = await res.json();
-        console.log('Respuesta de /usuarios/me:', data);
         idComprador = data.userId;
-        } else {
+      } else {
         alert('No se pudo obtener el usuario');
         return;
-        }
+      }
     } catch {
-        alert('Error de conexión');
-        return;
+      alert('Error de conexión');
+      return;
     }
 
-    // Construir el body según lo que espera tu backend
     const body = {
-        idLocatario: id,
-        nombreLocal,
-        nombreComida: selectedComida.nombre,
-        cantidad,
-        precio: selectedComida.precio
+      idLocatario: id,
+      nombreLocal,
+      nombreComida: selectedComida.nombre,
+      cantidad,
+      precio: selectedComida.precio
     };
-    console.log('idComprador:', idComprador);
-    console.log('Body enviado al carrito:', body);
+
     try {
-        const response = await fetch(`http://localhost:3002/carrito/${idComprador}/agregar`, {
+      const response = await fetch(`http://localhost:3002/carrito/${idComprador}/agregar`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(body)
-        });
-        if (response.ok) {
+      });
+      if (response.ok) {
         alert('Producto agregado al carrito');
         setShowModal(false);
-        } else {
+      } else {
         const error = await response.json();
         alert('Error al agregar al carrito: ' + (error.message || 'Error'));
-        }
+      }
     } catch {
-        alert('Error de conexión al agregar al carrito');
+      alert('Error de conexión al agregar al carrito');
     }
-    };
+  };
 
   return (
     <div className="local-view">
-      {/* Barra superior moderna */}
-      <nav className="local-navbar">
-        <button className="volver-btn" onClick={() => navigate(-1)}>
-          <span>←</span> Volver
-        </button>
-        <span className="local-nombre">{nombreLocal}</span>
-      </nav>
+      <div className="top-banner">
+        <div className="top-banner-text">
+          <button className="volver-btn" onClick={() => navigate(-1)}>&larr; Volver</button>
+          <span className="local-nombre">{nombreLocal}</span>
+        </div>
+      </div>
 
       <div className="productos-grid">
         {comidas.length === 0 ? (
-          <div style={{ color: '#888', marginTop: '2rem' }}>No hay productos disponibles.</div>
+          <div className="no-products-message">No hay productos disponibles.</div>
         ) : (
           comidas.map((comida) => (
             <div className="producto-card" key={comida._id}>
@@ -128,30 +122,28 @@ const LocalView: React.FC = () => {
                     : 'https://via.placeholder.com/200x140?text=Sin+Imagen'
                 }
                 alt={comida.nombre}
-                style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 8 }}
+                className="producto-imagen"
               />
-              <h3>{comida.nombre}</h3>
-              <p><strong>Precio:</strong> ${comida.precio}</p>
-              <p><strong>Stock:</strong> {comida.cantidad}</p>
-              <p><strong>Ingredientes:</strong> {comida.ingredientes?.join(', ')}</p>
-              <p>{comida.descripcion}</p>
-              <button
-                className="agregar-btn"
-                onClick={() => handleAgregarClick(comida)}
-              >
-                + Agregar
-              </button>
+              <div className="producto-info">
+                <h3 className="producto-nombre">{comida.nombre}</h3>
+                <p className="producto-precio">Precio: ${comida.precio.toLocaleString('es-CL')}</p>
+                <p className="producto-stock">Stock: {comida.cantidad}</p>
+                <p className="producto-descripcion">{comida.descripcion}</p>
+                <button className="add-to-cart-button" onClick={() => handleAgregarClick(comida)}>
+                  + Agregar
+                </button>
+              </div>
             </div>
           ))
         )}
       </div>
 
-      {/* Modal para elegir cantidad */}
       {showModal && selectedComida && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-cantidad" onClick={e => e.stopPropagation()}>
-            <h3>¿Cuántos deseas agregar?</h3>
-            <div className="modal-producto-nombre">{selectedComida.nombre}</div>
+          <div className="modal-contenido" onClick={e => e.stopPropagation()}>
+            <button className="close-button" onClick={() => setShowModal(false)}>×</button>
+            <h2>{selectedComida.nombre}</h2>
+            <p>¿Cuántos deseas agregar?</p>
             <input
               type="number"
               min={1}
@@ -161,18 +153,8 @@ const LocalView: React.FC = () => {
               className="input-cantidad"
             />
             <div className="modal-btns">
-              <button
-                className="aceptar-btn"
-                onClick={() => { console.log('Click aceptar'); handleAceptar(); }}
-              >
-                Aceptar
-              </button>
-              <button
-                className="cancelar-btn"
-                onClick={() => setShowModal(false)}
-              >
-                Cancelar
-              </button>
+              <button className="accept-button" onClick={handleAceptar}>Aceptar</button>
+              <button className="cancel-button" onClick={() => setShowModal(false)}>Cancelar</button>
             </div>
           </div>
         </div>
