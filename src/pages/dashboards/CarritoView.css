@@ -39,11 +39,12 @@
 .carrito-header-right {
   flex: 1;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start; /* <-- Ahora el texto va a la izquierda */
   align-items: center;
   font-size: 1.7rem;
   font-weight: bold;
   letter-spacing: 1px;
+  padding-left: 1rem; /* Opcional: agrega un poco de espacio desde la izquierda */
 }
 .carrito-content {
   flex: 1;
@@ -159,9 +160,11 @@
 }
 .carrito-footer {
   position: fixed;
-  left: 0;
-  bottom: 3.5rem; /* Más arriba del borde */
+  left: 50%;
+  bottom: 3.5rem;
+  transform: translateX(-50%);
   width: 100vw;
+  max-width: 700px;
   background: #fff;
   box-shadow: 0 -2px 16px #b2e0ff33;
   display: flex;
@@ -170,8 +173,6 @@
   padding: 1.1rem 2rem;
   z-index: 10;
   border-radius: 18px 18px 0 0;
-  max-width: 700px;
-  margin: 0 auto;
   gap: 1.5rem;
 }
 .carrito-pagar {
@@ -210,35 +211,152 @@
   text-align: center;
   color: #888;
 }
-/* Responsivo */
-@media (max-width: 600px) {
+/* Mejoras de responsividad para CarritoView */
+@media (max-width: 900px) {
   .carrito-header {
     padding: 1rem 1rem;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    border-radius: 0 0 14px 14px;
   }
-  .carrito-footer {
-    padding: 0.7rem 1rem;
-    font-size: 1rem;
-    bottom: 2.5rem;
-    gap: 0.7rem;
+  .carrito-header-right {
+    font-size: 1.3rem;
   }
   .carrito-content {
-    padding: 1rem 0.2rem 6rem 0.2rem;
+    padding: 1rem 0.5rem 6rem 0.5rem;
+  }
+  .carrito-card {
+    min-width: 0;
+    width: 98vw;
+    padding: 1.2rem 0.7rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .carrito-header {
+    padding: 0.7rem 0.3rem;
+    font-size: 1.05rem;
+    border-radius: 0 0 10px 10px;
+  }
+  .carrito-header-right {
+    font-size: 1.05rem;
+  }
+  .carrito-content {
+    padding: 0.5rem 0.1rem 6rem 0.1rem;
   }
   .carrito-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.7rem;
-    padding: 0.8rem;
+    padding: 0.7rem;
+    border-radius: 10px;
   }
   .carrito-img {
     margin-right: 0;
     margin-bottom: 8px;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
   }
   .carrito-eliminar {
     margin-left: 0;
     align-self: flex-end;
+    width: 32px;
+    height: 32px;
   }
+  .carrito-eliminar img {
+    width: 28px;
+    height: 28px;
+  }
+  .carrito-footer {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.98rem;
+    bottom: 1.5rem;
+    gap: 0.5rem;
+    border-radius: 10px 10px 0 0;
+  }
+  .carrito-pagar {
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+  .carrito-total-footer {
+    font-size: 1rem;
+    margin-left: 0.3rem;
+  }
+  .carrito-total-num {
+    font-size: 1.08rem;
+  }
+}
+.modal-pago-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-pago {
+  background: #fff;
+  border-radius: 14px;
+  padding: 2rem 1.5rem;
+  min-width: 320px;
+  box-shadow: 0 4px 24px #0002;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pago-metodos {
+  display: flex;
+  gap: 1.2rem;
+  margin: 1rem 0;
+}
+.pago-btn {
+  background: #f7fafd;
+  border: 2px solid #4f8cff;
+  color: #4f8cff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.pago-btn.selected, .pago-btn:hover {
+  background: #4f8cff;
+  color: #fff;
+}
+.pago-modal-btns {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+.pago-btn-confirm {
+  background: #27ae60;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.pago-btn-confirm:disabled {
+  background: #b2e0c7;
+  cursor: not-allowed;
+}
+.pago-btn-cancel {
+  background: #eee;
+  color: #888;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pago-error {
+  color: #fa314a;
+  margin-bottom: 0.5rem;
+}
+.pago-ok {
+  color: #27ae60;
+  margin-bottom: 0.5rem;
 }

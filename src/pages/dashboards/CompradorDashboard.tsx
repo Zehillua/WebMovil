@@ -70,6 +70,26 @@ const CompradorDashboard: React.FC = () => {
               alt="Cerrar sesión"
             />
           </button>
+          <button
+            className="icon-btn"
+            onClick={() => navigate('/cartera')}
+            title="Cartera"
+          >
+            <img
+              src="https://img.icons8.com/ios-filled/28/d87a9c/wallet-app.png"
+              alt="Cartera"
+            />
+          </button>
+          <button
+            className="icon-btn"
+            onClick={() => navigate('/pedidos')}
+            title="Pedidos"
+          >
+            <img
+              src="https://img.icons8.com/ios-filled/28/d87a9c/order-history.png"
+              alt="Pedidos"
+            />
+          </button>
           <button className="icon-btn" onClick={() => navigate('/carrito')} title="Carrito">
             <img src="https://img.icons8.com/ios-filled/28/d87a9c/shopping-cart.png" alt="Carrito" />
           </button>

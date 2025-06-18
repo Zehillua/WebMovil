@@ -74,11 +74,13 @@ const LocalView: React.FC = () => {
 
     // Construir el body según lo que espera tu backend
     const body = {
-        idLocatario: id,
-        nombreLocal,
-        nombreComida: selectedComida.nombre,
-        cantidad,
-        precio: selectedComida.precio
+      idComida: selectedComida._id,           
+      idLocatario: id,
+      nombreLocal,
+      nombreComida: selectedComida.nombre,
+      cantidad,
+      precio: selectedComida.precio,
+      imagenUrl: selectedComida.imagenUrl   
     };
     console.log('idComprador:', idComprador);
     console.log('Body enviado al carrito:', body);
@@ -101,7 +103,7 @@ const LocalView: React.FC = () => {
     } catch {
         alert('Error de conexión al agregar al carrito');
     }
-    };
+  };
 
   return (
     <div className="local-view">
