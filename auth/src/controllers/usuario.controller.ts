@@ -1,11 +1,12 @@
-import { Controller, Post, Body, BadRequestException, Get, Req, UseGuards} from '@nestjs/common';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard'; // Asegúrate de tener este guard
+import { Controller, Post, Body, BadRequestException, Get, Req, UseGuards, Patch } from '@nestjs/common';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { Request } from 'express';
 import { UsuarioService } from '../services/usuario.service';
 import { CreateUsuarioDto, CreateLocatarioDto, CreateRepartidorDto, TipoUsuario } from '../dtos/create-usuario.dto';
 import { LoginUsuarioDto } from '../dtos/login-usuario.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import { UpdateUsuarioDto } from '../dtos/update-usuario.dto';
 
 @Controller('usuarios')
 export class UsuarioController {
@@ -32,15 +33,19 @@ export class UsuarioController {
 
   @Post('login')
   async login(@Body() loginUsuarioDto: LoginUsuarioDto) {
-    console.log('DTO recibido:', loginUsuarioDto);
     return this.usuarioService.loginUsuario(loginUsuarioDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getMe(@Req() req: Request) {
-    console.log('Usuario autenticado en /usuarios/me:', req.user);
     return req.user;
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Patch('me')
+  async updateMe(@Req() req: Request, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    const usuario = req.user as any;
+    return this.usuarioService.updateUsuario(usuario._id, updateUsuarioDto);
+  }
 }

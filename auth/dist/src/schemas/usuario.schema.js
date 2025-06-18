@@ -44,6 +44,10 @@ __decorate([
     __metadata("design:type", String)
 ], Usuario.prototype, "telefono", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ default: 0 }),
+    __metadata("design:type", Number)
+], Usuario.prototype, "saldo", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ default: false }),
     __metadata("design:type", Boolean)
 ], Usuario.prototype, "isAdmin", void 0);

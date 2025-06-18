@@ -19,7 +19,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             // Conexión a la base de datos (ajustá el URI a tu caso)
-            mongoose_1.MongooseModule.forRoot('mongodb://db_pagos:27017/pagos'),
+            mongoose_1.MongooseModule.forRoot('mongodb://localhost:27017/pagos'),
             // Registro del schema
             mongoose_1.MongooseModule.forFeature([{ name: test_schema_1.Test.name, schema: test_schema_1.TestSchema }]),
         ],

@@ -52,7 +52,7 @@ const CompradorDashboard: React.FC = () => {
     }
   }, []);
 
-  // Obtener todos los productos de todos los locales
+  // Obtener productos
   const fetchProductos = useCallback(async (localesData: Local[]) => {
     try {
       let productosAcumulados: Producto[] = [];
@@ -62,7 +62,7 @@ const CompradorDashboard: React.FC = () => {
           const data = await response.json();
           const productosConLocal = data.map((prod: any) => ({
             ...prod,
-            localNombre: local.nombreLocal, // Agregamos el nombre del local al producto
+            localNombre: local.nombreLocal,
           }));
           productosAcumulados = [...productosAcumulados, ...productosConLocal];
         }
@@ -74,7 +74,6 @@ const CompradorDashboard: React.FC = () => {
     }
   }, []);
 
-  // Cargar inicial
   useEffect(() => {
     setIsLoading(true);
     setError(null);
@@ -89,7 +88,54 @@ const CompradorDashboard: React.FC = () => {
     navigate('/', { replace: true });
   };
 
-  // Filtrado de productos según búsqueda y local seleccionado
+  // 👉 Función para agregar al carrito:
+  const handleAgregarCarrito = async (producto: Producto) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Debes iniciar sesión');
+      return;
+    }
+
+    try {
+      // Primero obtenemos el id del comprador (usuario logueado):
+      const resUser = await fetch('http://localhost:3000/usuarios/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!resUser.ok) throw new Error('No se pudo obtener el usuario');
+      const userData = await resUser.json();
+
+      const idComprador = userData.userId;  // 🔥 Aquí el cambio importante
+
+      // Construimos el DTO esperado:
+      const body = {
+        idLocatario: producto.locatarioId,
+        nombreLocal: producto.localNombre,
+        nombreComida: producto.nombre,
+        cantidad: 1,  // siempre 1 por ahora
+        precio: producto.precio
+      };
+
+      const res = await fetch(`http://localhost:3002/carrito/${idComprador}/agregar`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData?.message || 'Error al agregar al carrito');
+      }
+
+      alert('Producto agregado al carrito');
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
+
   const productosFiltrados = productos.filter((producto) => {
     const coincideBusqueda =
       producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -104,7 +150,6 @@ const CompradorDashboard: React.FC = () => {
 
   return (
     <div className="comprador-dashboard">
-      {/* Navbar */}
       <nav className="navbar-dashboard">
         <div className="navbar-section logo-section">
           <span className="logo">VeciMarket</span>
@@ -131,9 +176,7 @@ const CompradorDashboard: React.FC = () => {
         </div>
       </nav>
 
-      {/* Body */}
       <div className="dashboard-body">
-        {/* Sidebar de locales */}
         <aside className="sidebar">
           <h3 className="sidebar-title">Locales del Vecindario</h3>
           <input
@@ -169,7 +212,6 @@ const CompradorDashboard: React.FC = () => {
           )}
         </aside>
 
-        {/* Productos */}
         <main className="productos-section">
           <h2 className="productos-title">
             {localSeleccionado ? `Menú de ${localSeleccionado}` : 'Productos disponibles'}
@@ -197,7 +239,7 @@ const CompradorDashboard: React.FC = () => {
                     <h3 className="producto-nombre">{producto.nombre}</h3>
                     <p className="producto-local-info">De: {producto.localNombre}</p>
                     <p><strong>Precio:</strong> ${producto.precio.toLocaleString('es-CL')}</p>
-                    <button className="add-to-cart-button">Agregar al Carrito</button>
+                    <button className="add-to-cart-button" onClick={() => handleAgregarCarrito(producto)}>Agregar al Carrito</button>
                   </div>
                 </div>
               ))

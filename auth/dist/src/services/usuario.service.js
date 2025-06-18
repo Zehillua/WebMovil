@@ -79,6 +79,7 @@ let UsuarioService = class UsuarioService {
                 telefono: createUsuarioDto.telefono,
                 nombreUsuario: createUsuarioDto.nombreUsuario,
                 numeroCasaDepto: createUsuarioDto.numeroCasaDepto,
+                saldo: 0 // inicializamos saldo en 0 para usuarios normales
             };
         }
         else if (createUsuarioDto.tipoUsuario === 'locatario') {
@@ -98,7 +99,6 @@ let UsuarioService = class UsuarioService {
                 ventas: dto.ventas ?? [],
                 ventasPromo: dto.ventasPromo ?? [],
                 valoracion: dto.valoracion ?? 0,
-                // agrega aquí cualquier otro campo que uses en locatarios
             };
         }
         else if (createUsuarioDto.tipoUsuario === 'repartidor') {
@@ -115,7 +115,6 @@ let UsuarioService = class UsuarioService {
                 vehiculo: dto.vehiculo,
                 patente: dto.patente,
                 valoracionRepartidor: dto.valoracionRepartidor ?? 0,
-                // agrega aquí cualquier otro campo que uses en repartidores
             };
         }
         if (usuarioData.nombreUsuario === null || usuarioData.nombreUsuario === undefined) {
@@ -124,24 +123,22 @@ let UsuarioService = class UsuarioService {
         try {
             const usuario = new this.usuarioModel(usuarioData);
             const savedUser = await usuario.save();
-            // Sincronizar con microservicio locatarios
             if (savedUser.tipoUsuario === 'locatario') {
                 try {
                     await axios_1.default.post('http://localhost:3001/locatarios/sync', {
                         _id: savedUser._id,
-                        ...usuarioData, // envía todos los campos del locatario
+                        ...usuarioData,
                     });
                 }
                 catch (err) {
                     console.error('Error sincronizando locatario:', err.message);
                 }
             }
-            // Sincronizar con microservicio repartidores
             if (savedUser.tipoUsuario === 'repartidor') {
                 try {
                     await axios_1.default.post('http://localhost:3002/repartidores/sync', {
                         _id: savedUser._id,
-                        ...usuarioData, // envía todos los campos del repartidor
+                        ...usuarioData,
                     });
                 }
                 catch (err) {
@@ -173,6 +170,39 @@ let UsuarioService = class UsuarioService {
         const payload = { sub: usuario._id, correo: usuario.correo, tipoUsuario: usuario.tipoUsuario };
         const access_token = this.jwtService.sign(payload);
         return { access_token, tipoUsuario: usuario.tipoUsuario };
+    }
+    // 🚀 NUEVO MÉTODO PARA ACTUALIZAR PERFIL DEL USUARIO
+    async updateUsuario(id, updateDto) {
+        const usuario = await this.usuarioModel.findById(id);
+        if (!usuario)
+            throw new common_1.BadRequestException('Usuario no encontrado');
+        if (updateDto.clave) {
+            updateDto.clave = await bcrypt.hash(updateDto.clave, 10);
+        }
+        await usuario.updateOne(updateDto);
+        if (usuario.tipoUsuario === 'locatario') {
+            try {
+                await axios_1.default.post('http://localhost:3001/locatarios/sync', {
+                    _id: usuario._id,
+                    ...updateDto,
+                });
+            }
+            catch (err) {
+                console.error('Error sincronizando locatario:', err.message);
+            }
+        }
+        if (usuario.tipoUsuario === 'repartidor') {
+            try {
+                await axios_1.default.post('http://localhost:3002/repartidores/sync', {
+                    _id: usuario._id,
+                    ...updateDto,
+                });
+            }
+            catch (err) {
+                console.error('Error sincronizando repartidor:', err.message);
+            }
+        }
+        return { message: 'Usuario actualizado correctamente' };
     }
 };
 exports.UsuarioService = UsuarioService;

@@ -8,6 +8,7 @@ import CompradorDashboard from '../pages/dashboards/CompradorDashboard';
 import RepartidorDashboard from '../pages/dashboards/RepartidorDashboard';
 import LocalView from '../pages/dashboards/LocalView';
 import CarritoView from '../pages/dashboards/CarritoView';
+import Perfil from '../pages/Perfil';
 
 export default function AppRouter() {
   return (
@@ -21,6 +22,7 @@ export default function AppRouter() {
       <Route path="/repartidor" element={<RepartidorDashboard />} />
       <Route path="/local/:id" element={<LocalView />} />
       <Route path="/carrito" element={<CarritoView />} />
+      <Route path="/perfil" element={<Perfil />} />
     </Routes>
   );
 }

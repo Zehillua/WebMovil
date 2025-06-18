@@ -15,6 +15,8 @@ interface ComidaCarrito {
 const CarritoView: React.FC = () => {
   const [comidas, setComidas] = useState<ComidaCarrito[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,111 +26,155 @@ const CarritoView: React.FC = () => {
         navigate('/', { replace: true });
         return;
       }
-      const resUser = await fetch('http://localhost:3000/usuarios/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!resUser.ok) {
-        navigate('/', { replace: true });
-        return;
-      }
-      const userData = await resUser.json();
-      const idComprador = userData.userId || userData._id;
 
-      const resCarrito = await fetch(`http://localhost:3002/carrito/${idComprador}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (resCarrito.ok) {
+      try {
+        const resUser = await fetch('http://localhost:3000/usuarios/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!resUser.ok) throw new Error('No se pudo obtener el usuario');
+        const userData = await resUser.json();
+        const idComprador = userData.userId || userData._id;
+
+        const resCarrito = await fetch(`http://localhost:3002/carrito/${idComprador}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!resCarrito.ok) throw new Error('Error al obtener el carrito');
+
         const data = await resCarrito.json();
         setComidas(data?.items || []);
+      } catch (err: any) {
+        console.error(err);
+        alert(err.message || "Error al obtener el carrito");
       }
       setLoading(false);
     };
+
     fetchCarrito();
   }, [navigate]);
 
-  const handleEliminar = async (itemId: string) => {
-    const token = localStorage.getItem('token');
-    const resUser = await fetch('http://localhost:3000/usuarios/me', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const userData = await resUser.json();
-    const idComprador = userData.userId || userData._id;
+  const abrirModalEliminar = (itemId: string) => {
+    setItemToDelete(itemId);
+    setModalVisible(true);
+  };
 
-    const res = await fetch(`http://localhost:3002/carrito/${idComprador}/item/${itemId}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (res.ok) {
-      setComidas(comidas.filter(c => c._id !== itemId));
+  const cancelarEliminar = () => {
+    setModalVisible(false);
+    setItemToDelete(null);
+  };
+
+  const confirmarEliminar = async () => {
+    if (!itemToDelete) return;
+    const token = localStorage.getItem('token');
+
+    try {
+      const resUser = await fetch('http://localhost:3000/usuarios/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const userData = await resUser.json();
+      const idComprador = userData.userId || userData._id;
+
+      const res = await fetch(`http://localhost:3002/carrito/${idComprador}/item/${itemToDelete}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setComidas(comidas.filter(c => c._id !== itemToDelete));
+        setModalVisible(false);
+        setItemToDelete(null);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar producto");
     }
   };
 
   const total = comidas.reduce((acc, comida) => acc + comida.precio * comida.cantidad, 0);
+  const envioCosto = 0;
+  const ivaPorcentaje = 0.19;
+  const ivaMonto = total * ivaPorcentaje;
+  const totalEstimado = total + envioCosto + ivaMonto;
 
   if (loading) return <div className="carrito-loading">Cargando carrito...</div>;
 
-return (
+  return (
     <div className="carrito-root">
-        {/* Barra superior */}
-        <div className="carrito-header">
-            <button className="carrito-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
-            <div className="carrito-header-right">
-                <span>🛒 Mi Carrito</span>
-            </div>
-        </div>
-        <div className="carrito-content">
-        {comidas.length === 0 ? (
-            <div className="carrito-empty">No hay productos en el carrito.</div>
-        ) : (
+      <div className="carrito-header">
+        <button className="carrito-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
+        <span className="header-title">VeciMarket - Mi Carrito</span>
+        <div></div>
+      </div>
+
+      <div className="carrito-main-container">
+        <div className="carrito-product-list-column">
+          <h2 className="carrito-list-title">Mi Carrito ({comidas.length} productos)</h2>
+          {comidas.length === 0 ? (
+            <div className="carrito-empty">No hay productos en el carrito. ¡Añade algunos!</div>
+          ) : (
             <div className="carrito-list">
-            {comidas.map((comida) => (
+              {comidas.map((comida) => (
                 <div className="carrito-item" key={comida._id}>
-                <div className="carrito-img">
-                    <img
-                    src={comida.imagenUrl || 'https://img.icons8.com/ios-filled/80/cccccc/meal.png'}
-                    alt={comida.nombreComida}
-                    />
-                </div>
-                <div className="carrito-info">
+                  <div className="carrito-img">
+                    <img src={comida.imagenUrl || 'https://via.placeholder.com/90x90?text=Producto'} alt={comida.nombreComida} />
+                  </div>
+                  <div className="carrito-info">
                     <div className="carrito-nombre">{comida.nombreComida}</div>
-                    <div className="carrito-local">Local: {comida.nombreLocal}</div>
+                    <div className="carrito-local">Vendido por: {comida.nombreLocal}</div>
                     <div className="carrito-cantidad">Cantidad: {comida.cantidad}</div>
-                    <div className="carrito-precio-unit">
-                    Precio unitario: ${comida.precio.toLocaleString()}
+                    <div className="carrito-precio-unit">Precio unitario: ${comida.precio.toLocaleString('es-CL')}</div>
+                    <div className="carrito-item-actions">
+                      <button onClick={() => abrirModalEliminar(comida._id)} className="carrito-eliminar">Eliminar</button>
                     </div>
-                    <div className="carrito-total">
-                    Total: ${(comida.precio * comida.cantidad).toLocaleString()}
-                    </div>
+                  </div>
+                  <div className="carrito-total-item-price">
+                    ${(comida.precio * comida.cantidad).toLocaleString('es-CL')}
+                  </div>
                 </div>
-                <button
-                    className="carrito-eliminar"
-                    onClick={() => handleEliminar(comida._id)}
-                    title="Eliminar"
-                >
-                    <span className="carrito-eliminar-bg"></span>
-                    <img
-                    src="https://img.icons8.com/ios-filled/40/fa314a/delete-sign.png"
-                    alt="Eliminar"
-                    />
-                </button>
-                </div>
-            ))}
+              ))}
             </div>
-        )}
+          )}
         </div>
 
-        {/* Barra inferior con total y botón pagar */}
-        {comidas.length > 0 && (
-        <div className="carrito-footer">
+        <div className="carrito-summary-column">
+          <h2 className="carrito-summary-title">Resumen del Pedido</h2>
+          <div className="carrito-summary-row">
+            <span>Subtotal</span>
+            <span>${total.toLocaleString('es-CL')}</span>
+          </div>
+          <div className="carrito-summary-row">
+            <span>Envío</span>
+            <span style={{ color: 'var(--color-success)', fontWeight: 'bold' }}>GRATIS</span>
+          </div>
+          <div className="carrito-summary-row">
+            <span>IVA (19%)</span>
+            <span>${ivaMonto.toLocaleString('es-CL')}</span>
+          </div>
+          <div className="carrito-summary-row total">
+            <span>Total Estimado</span>
+            <span>${totalEstimado.toLocaleString('es-CL')}</span>
+          </div>
+
+          <div className="carrito-payment-buttons">
             <button className="carrito-pagar">Pagar</button>
-            <div className="carrito-total-footer">
-            <span>Total:</span>
-            <span className="carrito-total-num">${total.toLocaleString()}</span>
-            </div>
+          </div>
+
+          <p className="carrito-security-text">Paga con rapidez y seguridad.</p>
         </div>
-        )}
+      </div>
+
+      {/* Modal Overlay de Confirmación */}
+      {modalVisible && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>¿Estás seguro de eliminar este producto?</h2>
+            <div className="modal-buttons">
+              <button className="modal-confirm" onClick={confirmarEliminar}>Eliminar</button>
+              <button className="modal-cancel" onClick={cancelarEliminar}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-    );
+  );
 };
 
 export default CarritoView;

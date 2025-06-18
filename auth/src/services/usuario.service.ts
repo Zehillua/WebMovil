@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException} from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Usuario } from '../schemas/usuario.schema';
@@ -6,6 +6,7 @@ import axios from 'axios';
 import { CreateUsuarioDto } from '../dtos/create-usuario.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUsuarioDto } from '../dtos/login-usuario.dto';
+import { UpdateUsuarioDto } from '../dtos/update-usuario.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -15,8 +16,7 @@ export class UsuarioService {
     private jwtService: JwtService,
   ) {}
 
-
-async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
+  async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
     const hash = await bcrypt.hash(createUsuarioDto.clave, 10);
     let usuarioData: any = {
       ...createUsuarioDto,
@@ -35,6 +35,7 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
         telefono: createUsuarioDto.telefono,
         nombreUsuario: createUsuarioDto.nombreUsuario,
         numeroCasaDepto: createUsuarioDto.numeroCasaDepto,
+        saldo: 0  // inicializamos saldo en 0 para usuarios normales
       };
     } else if (createUsuarioDto.tipoUsuario === 'locatario') {
       const dto = createUsuarioDto as any;
@@ -53,7 +54,6 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
         ventas: dto.ventas ?? [],
         ventasPromo: dto.ventasPromo ?? [],
         valoracion: dto.valoracion ?? 0,
-        // agrega aquí cualquier otro campo que uses en locatarios
       };
     } else if (createUsuarioDto.tipoUsuario === 'repartidor') {
       const dto = createUsuarioDto as any;
@@ -69,7 +69,6 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
         vehiculo: dto.vehiculo,
         patente: dto.patente,
         valoracionRepartidor: dto.valoracionRepartidor ?? 0,
-        // agrega aquí cualquier otro campo que uses en repartidores
       };
     }
 
@@ -81,24 +80,22 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
       const usuario = new this.usuarioModel(usuarioData);
       const savedUser = await usuario.save();
 
-      // Sincronizar con microservicio locatarios
       if (savedUser.tipoUsuario === 'locatario') {
         try {
           await axios.post('http://localhost:3001/locatarios/sync', {
             _id: savedUser._id,
-            ...usuarioData, // envía todos los campos del locatario
+            ...usuarioData,
           });
         } catch (err) {
           console.error('Error sincronizando locatario:', (err as any).message);
         }
       }
 
-      // Sincronizar con microservicio repartidores
       if (savedUser.tipoUsuario === 'repartidor') {
         try {
           await axios.post('http://localhost:3002/repartidores/sync', {
             _id: savedUser._id,
-            ...usuarioData, // envía todos los campos del repartidor
+            ...usuarioData,
           });
         } catch (err) {
           console.error('Error sincronizando repartidor:', (err as any).message);
@@ -134,5 +131,39 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
     return { access_token, tipoUsuario: usuario.tipoUsuario };
   }
 
-  
+  // 🚀 NUEVO MÉTODO PARA ACTUALIZAR PERFIL DEL USUARIO
+  async updateUsuario(id: string, updateDto: UpdateUsuarioDto) {
+    const usuario = await this.usuarioModel.findById(id);
+    if (!usuario) throw new BadRequestException('Usuario no encontrado');
+
+    if (updateDto.clave) {
+      updateDto.clave = await bcrypt.hash(updateDto.clave, 10);
+    }
+
+    await usuario.updateOne(updateDto);
+
+    if (usuario.tipoUsuario === 'locatario') {
+      try {
+        await axios.post('http://localhost:3001/locatarios/sync', {
+          _id: usuario._id,
+          ...updateDto,
+        });
+      } catch (err) {
+        console.error('Error sincronizando locatario:', (err as any).message);
+      }
+    }
+
+    if (usuario.tipoUsuario === 'repartidor') {
+      try {
+        await axios.post('http://localhost:3002/repartidores/sync', {
+          _id: usuario._id,
+          ...updateDto,
+        });
+      } catch (err) {
+        console.error('Error sincronizando repartidor:', (err as any).message);
+      }
+    }
+
+    return { message: 'Usuario actualizado correctamente' };
+  }
 }

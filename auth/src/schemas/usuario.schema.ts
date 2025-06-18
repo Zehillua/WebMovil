@@ -21,6 +21,8 @@ export class Usuario extends Document {
     direccion: string;
     @Prop()
     telefono: string;
+    @Prop({ default: 0 })
+    saldo?: number;
     @Prop({ default: false })
     isAdmin: boolean;
 
