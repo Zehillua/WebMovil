@@ -43,4 +43,25 @@ export class UsuarioController {
     return req.user;
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me/saldo')
+  async getSaldo(@Req() req: Request) {
+    // req.user.userId viene del JWT payload
+    const userId = (req.user as any).userId;
+    const saldo = await this.usuarioService.obtenerSaldo(userId);
+    return { saldo };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me/recargar')
+  async recargarSaldo(@Req() req: Request, @Body() body: { monto: number }) {
+    const userId = (req.user as any).userId;
+    const { monto } = body;
+    if (!monto || typeof monto !== 'number' || monto <= 0) {
+      throw new BadRequestException('Monto inválido');
+    }
+    const saldo = await this.usuarioService.recargarSaldo(userId, monto);
+    return { saldo };
+  }
+
 }

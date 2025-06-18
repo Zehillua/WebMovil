@@ -67,6 +67,7 @@ let UsuarioService = class UsuarioService {
             ...createUsuarioDto,
             clave: hash,
             isAdmin: !!createUsuarioDto.isAdmin,
+            cartera: createUsuarioDto.cartera ?? 0,
         };
         if (createUsuarioDto.tipoUsuario === 'usuario') {
             usuarioData = {
@@ -79,6 +80,7 @@ let UsuarioService = class UsuarioService {
                 telefono: createUsuarioDto.telefono,
                 nombreUsuario: createUsuarioDto.nombreUsuario,
                 numeroCasaDepto: createUsuarioDto.numeroCasaDepto,
+                cartera: createUsuarioDto.cartera ?? 0,
             };
         }
         else if (createUsuarioDto.tipoUsuario === 'locatario') {
@@ -173,6 +175,20 @@ let UsuarioService = class UsuarioService {
         const payload = { sub: usuario._id, correo: usuario.correo, tipoUsuario: usuario.tipoUsuario };
         const access_token = this.jwtService.sign(payload);
         return { access_token, tipoUsuario: usuario.tipoUsuario };
+    }
+    async obtenerSaldo(userId) {
+        const usuario = await this.usuarioModel.findById(userId);
+        if (!usuario)
+            throw new common_1.UnauthorizedException('Usuario no encontrado');
+        return usuario.cartera ?? 0;
+    }
+    async recargarSaldo(userId, monto) {
+        const usuario = await this.usuarioModel.findById(userId);
+        if (!usuario)
+            throw new common_1.UnauthorizedException('Usuario no encontrado');
+        usuario.cartera = (usuario.cartera ?? 0) + monto;
+        await usuario.save();
+        return usuario.cartera;
     }
 };
 exports.UsuarioService = UsuarioService;

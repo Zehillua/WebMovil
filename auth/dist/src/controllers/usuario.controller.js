@@ -52,6 +52,21 @@ let UsuarioController = class UsuarioController {
         console.log('Usuario autenticado en /usuarios/me:', req.user);
         return req.user;
     }
+    async getSaldo(req) {
+        // req.user.userId viene del JWT payload
+        const userId = req.user.userId;
+        const saldo = await this.usuarioService.obtenerSaldo(userId);
+        return { saldo };
+    }
+    async recargarSaldo(req, body) {
+        const userId = req.user.userId;
+        const { monto } = body;
+        if (!monto || typeof monto !== 'number' || monto <= 0) {
+            throw new common_1.BadRequestException('Monto inválido');
+        }
+        const saldo = await this.usuarioService.recargarSaldo(userId, monto);
+        return { saldo };
+    }
 };
 exports.UsuarioController = UsuarioController;
 __decorate([
@@ -76,6 +91,23 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "getMe", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me/saldo'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "getSaldo", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('me/recargar'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "recargarSaldo", null);
 exports.UsuarioController = UsuarioController = __decorate([
     (0, common_1.Controller)('usuarios'),
     __metadata("design:paramtypes", [usuario_service_1.UsuarioService])

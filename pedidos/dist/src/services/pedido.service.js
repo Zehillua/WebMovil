@@ -22,11 +22,22 @@ let PedidoService = class PedidoService {
         this.pedidoModel = pedidoModel;
     }
     async crearPedido(createPedidoDto) {
+        // Validación de propina con tarjeta
+        if (createPedidoDto.pago === 'tarjeta' && createPedidoDto.propina) {
+            if (typeof createPedidoDto.cantidadPropina !== 'number' ||
+                !Number.isInteger(createPedidoDto.cantidadPropina) ||
+                createPedidoDto.cantidadPropina < 0) {
+                throw new common_1.BadRequestException('La propina debe ser un número entero positivo');
+            }
+        }
         const pedido = new this.pedidoModel(createPedidoDto);
         return pedido.save();
     }
     async obtenerPedidos() {
         return this.pedidoModel.find().exec();
+    }
+    async obtenerPedidosPorUsuario(idComprador) {
+        return this.pedidoModel.find({ idComprador }).exec();
     }
 };
 exports.PedidoService = PedidoService;

@@ -1,105 +1,79 @@
 version: '3.9'
+
 services:
-  auth:
-    build:
-      context: ./auth
-      dockerfile: Dockerfile
-    environment:
-      MONGO_URI: "mongodb://db_auth:27017/auth"
-    ports:
-      - "3000:3000"
-    networks:
-      - red_microservicios
-    depends_on:
-      - db_auth
-  db_auth:
-    image: mongo
-    container_name: db_auth
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    restart: always
     ports:
       - "27017:27017"
-    networks:
-      - red_microservicios
+    volumes:
+      - mongo_data:/data/db
+
+  auth:
+    build: ./auth
+    container_name: auth
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/auth
+      - JWT_SECRET=topsecret
+      - API_PORT=3000
+    depends_on:
+      - mongo
 
   locatarios:
-    build:
-      context: ./locatarios
-      dockerfile: Dockerfile
+    build: ./locatarios
+    container_name: locatarios
+    restart: always
+    ports:
+      - "3001:3001"
     environment:
-      MONGO_URI: "mongodb://db_locatarios:27017/auth"
-    ports:
-      - "3001:3000"
-    networks:
-      - red_microservicios
+      - MONGO_URI=mongodb://mongo:27017/locatarios
+      - JWT_SECRET=topsecret
+      - API_PORT=3001
     depends_on:
-      - db_locatarios
-  db_locatarios:
-    image: mongo
-    container_name: db_locatarios
-    ports:
-      - "27018:27017"
-    networks:
-      - red_microservicios
-
-  pagos:
-    build:
-      context: ./pagos
-      dockerfile: Dockerfile
-    environment:
-      MONGO_URI: "mongodb://db_pagos:27017/auth"
-    ports:
-      - "3002:3000"
-    networks:
-      - red_microservicios
-    depends_on:
-      - db_pagos
-  db_pagos:
-    image: mongo
-    container_name: db_pagos
-    ports:
-      - "27019:27017"
-    networks:
-      - red_microservicios
+      - mongo
 
   pedidos:
-    build:
-      context: ./pedidos
-      dockerfile: Dockerfile
+    build: ./pedidos
+    container_name: pedidos
+    restart: always
+    ports:
+      - "3002:3002"
     environment:
-      MONGO_URI: "mongodb://db_pedidos:27017/auth"
-    ports:
-      - "3003:3000"
-    networks:
-      - red_microservicios
+      - MONGO_URI=mongodb://mongo:27017/pedidos
+      - JWT_SECRET=topsecret
+      - API_PORT=3002
     depends_on:
-      - db_pedidos
-  db_pedidos:
-    image: mongo
-    container_name: db_pedidos
+      - mongo
+
+  pagos:
+    build: ./pagos
+    container_name: pagos
+    restart: always
     ports:
-      - "27020:27017"
-    networks:
-      - red_microservicios
+      - "3003:3003"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/pagos
+      - JWT_SECRET=topsecret
+      - API_PORT=3003
+    depends_on:
+      - mongo
 
   reportes:
-    build:
-      context: ./reportes
-      dockerfile: Dockerfile
+    build: ./reportes
+    container_name: reportes
+    restart: always
+    ports:
+      - "3004:3004"
     environment:
-      MONGO_URI: "mongodb://db_reportes:27017/auth"
-    ports:
-      - "3004:3000"
-    networks:
-      - red_microservicios
+      - MONGO_URI=mongodb://mongo:27017/reportes
+      - JWT_SECRET=topsecret
+      - API_PORT=3004
     depends_on:
-      - db_reportes
-  db_reportes:
-    image: mongo
-    container_name: db_reportes
-    ports:
-      - "27021:27017"
-    networks:
-      - red_microservicios
+      - mongo
 
-networks:
-  red_microservicios:
-    driver: bridge
+volumes:
+  mongo_data:

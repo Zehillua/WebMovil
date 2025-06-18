@@ -26,6 +26,9 @@ let PedidoController = class PedidoController {
     async obtenerTodos() {
         return this.pedidoService.obtenerPedidos();
     }
+    async obtenerPorUsuario(idComprador) {
+        return this.pedidoService.obtenerPedidosPorUsuario(idComprador);
+    }
 };
 exports.PedidoController = PedidoController;
 __decorate([
@@ -41,6 +44,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PedidoController.prototype, "obtenerTodos", null);
+__decorate([
+    (0, common_1.Get)('usuario/:idComprador'),
+    __param(0, (0, common_1.Param)('idComprador')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "obtenerPorUsuario", null);
 exports.PedidoController = PedidoController = __decorate([
     (0, common_1.Controller)('pedidos'),
     __metadata("design:paramtypes", [pedido_service_1.PedidoService])

@@ -17,6 +17,12 @@ export class ComidaCarrito {
 
   @Prop({ required: true })
   precio: number;
+
+  @Prop()
+  imagenUrl?: string;
+
+  @Prop()
+  idComida?: string;
 }
 
 export const ComidaCarritoSchema = SchemaFactory.createForClass(ComidaCarrito);

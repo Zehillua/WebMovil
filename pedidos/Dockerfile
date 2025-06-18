@@ -15,8 +15,14 @@ RUN npm install -g npm@latest
 # Instala las dependencias
 RUN npm install --legacy-peer-deps
 
+# 🔧 Compila el código TypeScript
+RUN npm run build
+
+# 🔧 Compila el código TypeScript
+RUN npm run build
+
 # Expone el puerto
-EXPOSE 3003
+EXPOSE 3002
 
 # Comando para iniciar el servidor
 CMD ["npm", "run", "start"]

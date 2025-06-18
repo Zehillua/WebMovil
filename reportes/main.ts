@@ -4,6 +4,6 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000); // El puerto de tu servidor HTTP
+  await app.listen(3004); // El puerto de tu servidor HTTP
 }
 bootstrap();

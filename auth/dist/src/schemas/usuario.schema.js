@@ -56,6 +56,10 @@ __decorate([
     __metadata("design:type", String)
 ], Usuario.prototype, "numeroCasaDepto", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ default: 0 }),
+    __metadata("design:type", Number)
+], Usuario.prototype, "cartera", void 0);
+__decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Usuario.prototype, "nombreLocal", void 0);

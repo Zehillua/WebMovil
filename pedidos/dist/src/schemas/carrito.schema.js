@@ -35,6 +35,14 @@ __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", Number)
 ], ComidaCarrito.prototype, "precio", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], ComidaCarrito.prototype, "imagenUrl", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], ComidaCarrito.prototype, "idComida", void 0);
 exports.ComidaCarrito = ComidaCarrito = __decorate([
     (0, mongoose_1.Schema)()
 ], ComidaCarrito);

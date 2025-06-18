@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param } from '@nestjs/common';
 import { PedidoService } from '../services/pedido.service';
 import { CreatePedidoDto } from '../dtos/create-pedido.dto';
 
@@ -15,4 +15,8 @@ export class PedidoController {
   async obtenerTodos() {
     return this.pedidoService.obtenerPedidos();
   }
+  @Get('usuario/:idComprador')
+  async obtenerPorUsuario(@Param('idComprador') idComprador: string) {
+    return this.pedidoService.obtenerPedidosPorUsuario(idComprador);
+}
 }

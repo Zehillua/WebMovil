@@ -30,6 +30,8 @@ export class Usuario extends Document {
     nombreUsuario?: string;
     @Prop()
     numeroCasaDepto?: string;
+    @Prop({ default: 0 })
+    cartera?: number;
 
     // Locatario
     @Prop()

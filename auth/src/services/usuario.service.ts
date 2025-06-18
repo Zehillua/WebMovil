@@ -22,6 +22,7 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
       ...createUsuarioDto,
       clave: hash,
       isAdmin: !!createUsuarioDto.isAdmin,
+      cartera: createUsuarioDto.cartera ?? 0,
     };
 
     if (createUsuarioDto.tipoUsuario === 'usuario') {
@@ -35,6 +36,7 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
         telefono: createUsuarioDto.telefono,
         nombreUsuario: createUsuarioDto.nombreUsuario,
         numeroCasaDepto: createUsuarioDto.numeroCasaDepto,
+        cartera: createUsuarioDto.cartera ?? 0,
       };
     } else if (createUsuarioDto.tipoUsuario === 'locatario') {
       const dto = createUsuarioDto as any;
@@ -134,5 +136,18 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
     return { access_token, tipoUsuario: usuario.tipoUsuario };
   }
 
+  async obtenerSaldo(userId: string): Promise<number> {
+    const usuario = await this.usuarioModel.findById(userId);
+    if (!usuario) throw new UnauthorizedException('Usuario no encontrado');
+    return usuario.cartera ?? 0;
+  }
+
+  async recargarSaldo(userId: string, monto: number): Promise<number> {
+    const usuario = await this.usuarioModel.findById(userId);
+    if (!usuario) throw new UnauthorizedException('Usuario no encontrado');
+    usuario.cartera = (usuario.cartera ?? 0) + monto;
+    await usuario.save();
+    return usuario.cartera;
+  }
   
 }
