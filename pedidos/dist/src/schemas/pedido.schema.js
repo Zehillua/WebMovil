@@ -44,9 +44,25 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Pedido.prototype, "esDelivery", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "estado", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "dealer", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Repartidor', default: null }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Pedido.prototype, "repartidor", void 0);
+__decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Pedido.prototype, "direccionEntrega", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Pedido.prototype, "direccionLocal", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)

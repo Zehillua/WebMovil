@@ -24,8 +24,21 @@ export class Pedido extends Document {
   @Prop({ required: true })
   esDelivery: boolean;
 
+  @Prop({ default: false })
+  estado: boolean;
+
+  @Prop({ default: false })
+  dealer: boolean;
+
+  @Prop({ type: Types.ObjectId, ref: 'Repartidor', default: null })
+  repartidor?: Types.ObjectId;
+
+// ...resto del schema...
   @Prop()
   direccionEntrega?: string;
+
+  @Prop()
+  direccionLocal?: string;
 
   @Prop()
   numeroCasaDepto?: string;

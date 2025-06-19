@@ -67,6 +67,11 @@ let UsuarioController = class UsuarioController {
         const saldo = await this.usuarioService.recargarSaldo(userId, monto);
         return { saldo };
     }
+    async getDireccion(req) {
+        const userId = req.user.userId;
+        const direccion = await this.usuarioService.obtenerDireccion(userId);
+        return { direccion };
+    }
 };
 exports.UsuarioController = UsuarioController;
 __decorate([
@@ -108,6 +113,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "recargarSaldo", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me/direccion'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "getDireccion", null);
 exports.UsuarioController = UsuarioController = __decorate([
     (0, common_1.Controller)('usuarios'),
     __metadata("design:paramtypes", [usuario_service_1.UsuarioService])

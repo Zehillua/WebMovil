@@ -63,11 +63,15 @@ let UsuarioService = class UsuarioService {
     }
     async crearUsuario(createUsuarioDto) {
         const hash = await bcrypt.hash(createUsuarioDto.clave, 10);
+        const direccionArray = createUsuarioDto.direccion
+            ? [createUsuarioDto.direccion]
+            : [];
         let usuarioData = {
             ...createUsuarioDto,
             clave: hash,
             isAdmin: !!createUsuarioDto.isAdmin,
             cartera: createUsuarioDto.cartera ?? 0,
+            direccion: direccionArray,
         };
         if (createUsuarioDto.tipoUsuario === 'usuario') {
             usuarioData = {
@@ -189,6 +193,12 @@ let UsuarioService = class UsuarioService {
         usuario.cartera = (usuario.cartera ?? 0) + monto;
         await usuario.save();
         return usuario.cartera;
+    }
+    async obtenerDireccion(userId) {
+        const usuario = await this.usuarioModel.findById(userId);
+        if (!usuario)
+            throw new common_1.UnauthorizedException('Usuario no encontrado');
+        return usuario.direccion;
     }
 };
 exports.UsuarioService = UsuarioService;

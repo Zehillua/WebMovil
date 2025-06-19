@@ -18,11 +18,16 @@ export class UsuarioService {
 
 async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
     const hash = await bcrypt.hash(createUsuarioDto.clave, 10);
+    const direccionArray = createUsuarioDto.direccion
+      ? [createUsuarioDto.direccion]
+      : [];
+
     let usuarioData: any = {
       ...createUsuarioDto,
       clave: hash,
       isAdmin: !!createUsuarioDto.isAdmin,
       cartera: createUsuarioDto.cartera ?? 0,
+      direccion: direccionArray,
     };
 
     if (createUsuarioDto.tipoUsuario === 'usuario') {
@@ -149,5 +154,11 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
     await usuario.save();
     return usuario.cartera;
   }
+
+  async obtenerDireccion(userId: string): Promise<string[] | string> {
+    const usuario = await this.usuarioModel.findById(userId);
+    if (!usuario) throw new UnauthorizedException('Usuario no encontrado');
+    return usuario.direccion;
+}
   
 }

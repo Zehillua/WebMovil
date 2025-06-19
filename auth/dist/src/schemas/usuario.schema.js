@@ -36,8 +36,8 @@ __decorate([
     __metadata("design:type", String)
 ], Usuario.prototype, "clave", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
+    (0, mongoose_1.Prop)({ type: [String], default: [] }),
+    __metadata("design:type", Array)
 ], Usuario.prototype, "direccion", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),

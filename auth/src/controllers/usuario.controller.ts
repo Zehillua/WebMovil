@@ -64,4 +64,12 @@ export class UsuarioController {
     return { saldo };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me/direccion')
+  async getDireccion(@Req() req: Request) {
+    const userId = (req.user as any).userId;
+    const direccion = await this.usuarioService.obtenerDireccion(userId);
+    return { direccion };
+}
+
 }
