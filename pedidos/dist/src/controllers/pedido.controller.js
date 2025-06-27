@@ -29,6 +29,15 @@ let PedidoController = class PedidoController {
     async obtenerPorUsuario(idComprador) {
         return this.pedidoService.obtenerPedidosPorUsuario(idComprador);
     }
+    async obtenerPorLocal(idLocal) {
+        return this.pedidoService.obtenerPedidosPorLocal(idLocal);
+    }
+    async actualizarEstado(id, body) {
+        return this.pedidoService.actualizarEstado(id, body.estado);
+    }
+    async rechazarPedido(id) {
+        return this.pedidoService.rechazarPedido(id);
+    }
 };
 exports.PedidoController = PedidoController;
 __decorate([
@@ -51,6 +60,28 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PedidoController.prototype, "obtenerPorUsuario", null);
+__decorate([
+    (0, common_1.Get)('local/:idLocal'),
+    __param(0, (0, common_1.Param)('idLocal')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "obtenerPorLocal", null);
+__decorate([
+    (0, common_1.Patch)(':id/estado'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "actualizarEstado", null);
+__decorate([
+    (0, common_1.Patch)(':id/rechazar'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "rechazarPedido", null);
 exports.PedidoController = PedidoController = __decorate([
     (0, common_1.Controller)('pedidos'),
     __metadata("design:paramtypes", [pedido_service_1.PedidoService])

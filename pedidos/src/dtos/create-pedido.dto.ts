@@ -1,5 +1,6 @@
 export class ComidaPedidoDto {
   nombre: string;
+  cantidad: number;
 }
 
 export class CreatePedidoDto {
@@ -21,4 +22,5 @@ export class CreatePedidoDto {
   estado?: boolean;
   dealer?: boolean;
   repartidor?: string;
+  estadoRechazado?: boolean;
 }

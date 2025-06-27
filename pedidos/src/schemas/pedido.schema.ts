@@ -6,7 +6,7 @@ export class Pedido extends Document {
   @Prop({ type: Types.ObjectId, required: true, ref: 'Usuario' })
   idComprador: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Locatario' })
+  @Prop({ type: Types.ObjectId, ref: 'Local' })
   idLocal: Types.ObjectId;
 
   @Prop({ required: true })
@@ -18,11 +18,14 @@ export class Pedido extends Document {
   @Prop({ required: true })
   precioPedido: number;
 
-  @Prop({ type: [{ nombre: String }], required: true })
-  comidas: { nombre: string }[];
+  @Prop({ type: [{ nombre: String, cantidad: Number }], required: true })
+  comidas: { nombre: string; cantidad: number }[];
 
   @Prop({ required: true })
   esDelivery: boolean;
+
+  @Prop({ default: false })
+  estadoRechazado?: boolean;
 
   @Prop({ default: false })
   estado: boolean;
@@ -38,7 +41,7 @@ export class Pedido extends Document {
   direccionEntrega?: string;
 
   @Prop()
-  direccionLocal?: string;
+  direccionLocal: string;
 
   @Prop()
   numeroCasaDepto?: string;
@@ -58,5 +61,6 @@ export class Pedido extends Document {
   @Prop({ default: 0 })
   valoracionPedido: number;
 }
+
 
 export const PedidoSchema = SchemaFactory.createForClass(Pedido);

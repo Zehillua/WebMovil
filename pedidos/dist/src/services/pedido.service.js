@@ -11,10 +11,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PedidoService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
+const axios_1 = __importDefault(require("axios"));
 const mongoose_2 = require("mongoose");
 const mongoose_3 = require("mongoose");
 const pedido_schema_1 = require("../schemas/pedido.schema");
@@ -25,7 +29,23 @@ let PedidoService = class PedidoService {
         this.carritoModel = carritoModel;
     }
     async crearPedido(createPedidoDto) {
-        // Validación de propina con tarjeta...
+        // 1. Obtener dirección del local
+        let direccionLocal = '';
+        try {
+            const res = await axios_1.default.get(`http://localhost:3000/locatarios/${createPedidoDto.idLocal}`);
+            const dir = res.data.direccion;
+            direccionLocal = Array.isArray(dir) ? dir.join(', ') : (dir || '');
+        }
+        catch (e) {
+            direccionLocal = '';
+        }
+        // 2. Si es delivery, guardar dirección de entrega del usuario
+        let direccionEntrega = '';
+        if (createPedidoDto.esDelivery) {
+            const dir = createPedidoDto.direccionEntrega;
+            direccionEntrega = Array.isArray(dir) ? dir.join(', ') : (dir || '');
+        }
+        // 3. Crear el pedido con todos los datos
         const pedidoData = {
             ...createPedidoDto,
             idComprador: new mongoose_3.Types.ObjectId(createPedidoDto.idComprador),
@@ -33,7 +53,9 @@ let PedidoService = class PedidoService {
             idRepartidor: createPedidoDto.idRepartidor ? new mongoose_3.Types.ObjectId(createPedidoDto.idRepartidor) : undefined,
             estado: false,
             dealer: false,
-            repartidor: null
+            repartidor: null,
+            direccionLocal, // <-- SIEMPRE guarda la dirección del local
+            direccionEntrega, // <-- Si es delivery, guarda la dirección de entrega
         };
         const pedido = new this.pedidoModel(pedidoData);
         const pedidoGuardado = await pedido.save();
@@ -45,7 +67,59 @@ let PedidoService = class PedidoService {
         return this.pedidoModel.find().exec();
     }
     async obtenerPedidosPorUsuario(idComprador) {
-        return this.pedidoModel.find({ idComprador: new mongoose_3.Types.ObjectId(idComprador) }).exec();
+        const pedidos = await this.pedidoModel
+            .find({ idComprador: new mongoose_3.Types.ObjectId(idComprador) })
+            .exec();
+        // Por cada pedido, consulta el microservicio de auth/locatarios
+        const pedidosConLocal = await Promise.all(pedidos.map(async (pedido) => {
+            let nombreLocal = '';
+            let direccionLocal = '';
+            try {
+                const res = await axios_1.default.get(`http://localhost:3000/locatarios/${pedido.idLocal}`);
+                nombreLocal = res.data.nombreLocal || '';
+                direccionLocal = res.data.direccion || '';
+            }
+            catch (e) {
+                // Si falla, deja vacío
+            }
+            return {
+                ...pedido.toObject(),
+                nombreLocal,
+                direccionLocal,
+            };
+        }));
+        return pedidosConLocal;
+    }
+    async obtenerPedidosPorLocal(idLocal) {
+        const pedidos = await this.pedidoModel
+            .find({ idLocal: new mongoose_3.Types.ObjectId(idLocal) })
+            .exec();
+        // Si quieres agregar nombreLocal y direccionLocal desde el microservicio de locales:
+        const pedidosConLocal = await Promise.all(pedidos.map(async (pedido) => {
+            let nombreLocal = '';
+            let direccionLocal = '';
+            try {
+                const res = await axios_1.default.get(`http://localhost:3000/locatarios/${pedido.idLocal}`);
+                nombreLocal = res.data.nombreLocal || '';
+                const dir = res.data.direccion;
+                direccionLocal = Array.isArray(dir) ? dir.join(', ') : (dir || '');
+            }
+            catch (e) {
+                // Si falla, deja vacío
+            }
+            return {
+                ...pedido.toObject(),
+                nombreLocal,
+                direccionLocal,
+            };
+        }));
+        return pedidosConLocal;
+    }
+    async actualizarEstado(id, estado) {
+        return this.pedidoModel.findByIdAndUpdate(id, { estado }, { new: true });
+    }
+    async rechazarPedido(id) {
+        return this.pedidoModel.findByIdAndUpdate(id, { estadoRechazado: true }, { new: true });
     }
 };
 exports.PedidoService = PedidoService;
