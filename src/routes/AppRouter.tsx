@@ -5,6 +5,7 @@ import Register from '../pages/Register';
 import AdminDashboard from '../pages/dashboards/admin/AdminDashboard';
 import LocatarioDashboard from '../pages/dashboards/locatarios/LocatarioDashboard';
 import CompradorDashboard from '../pages/dashboards/usuarios/CompradorDashboard';
+import PedidosDashboards from '../pages/dashboards/locatarios/PedidosDashboards';
 import RepartidorDashboard from '../pages/dashboards/repartidor/RepartidorDashboard';
 import LocalView from '../pages/dashboards/usuarios/LocalView';
 import PedidosDashboard from '../pages/dashboards/usuarios/PedidosDashboard';
@@ -25,6 +26,7 @@ export default function AppRouter() {
       <Route path="/carrito" element={<CarritoView />} />
       <Route path="/cartera" element={<CarteraUsuarioDashboard />} />
       <Route path="/pedidos" element={<PedidosDashboard />} />
+      <Route path="/locatario/pedidos" element={<PedidosDashboards />} />
     </Routes>
   );
 }

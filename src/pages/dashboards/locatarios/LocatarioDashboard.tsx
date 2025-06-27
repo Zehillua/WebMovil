@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LocatarioDashboard.css';
 
 interface Producto {
@@ -25,6 +26,7 @@ const LocatarioDashboard: React.FC = () => {
 
   const [imagenFile, setImagenFile] = useState<File | null>(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const navigate = useNavigate();
 
   // Cerrar sesión
   const handleLogout = () => {
@@ -177,6 +179,7 @@ const LocatarioDashboard: React.FC = () => {
         <button>Edición de productos</button>
         <button>Top Ventas</button>
         <button>Top Deliverys</button>
+        <button onClick={() => navigate('/locatario/pedidos')}>Pedidos</button>
       </div>
 
       {/* Productos (puedes mejorar esto según tu lógica real) */}

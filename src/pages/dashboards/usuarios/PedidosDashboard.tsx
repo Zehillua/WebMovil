@@ -7,6 +7,8 @@ interface Pedido {
   estado: boolean;
   fechaPedido: string;
   nombrePedido: string;
+  nombreLocal?: string; 
+  direccionLocal?: string;
   precioPedido: number;
   pago: string;
   propina?: boolean;
@@ -65,7 +67,12 @@ const PedidosDashboard: React.FC = () => {
           {pedidos.map((pedido) => (
             <div className="pedido-card" key={pedido._id}>
               <div className="pedido-header">
-                <span className="pedido-nombre">{pedido.nombrePedido}</span>
+                <span className="pedido-nombre">
+                  {pedido.nombrePedido}
+                  {pedido.nombreLocal && (
+                    <span className="pedido-local"> — {pedido.nombreLocal}</span>
+                  )}
+                  </span>
                 <span className={`pedido-estado pedido-estado-${pedido.estado ? 'listo' : 'preparando'}`}>
                   {pedido.estado ? 'Listo' : 'Preparando'}
                 </span>
@@ -80,6 +87,11 @@ const PedidosDashboard: React.FC = () => {
                 <span>
                   <b>Método:</b> {pedido.pago}
                 </span>
+                {pedido.nombreLocal && pedido.direccionLocal && (
+                  <span>
+                    <b>Dirección local:</b> {pedido.direccionLocal}
+                  </span>
+                )}
                 {pedido.propina && pedido.cantidadPropina ? (
                   <span>
                     <b>Propina:</b> ${pedido.cantidadPropina}

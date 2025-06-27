@@ -126,11 +126,16 @@ const CarritoView: React.FC = () => {
         nombrePedido: comidasLocal.map(c => c.nombreComida).join(', '),
         pago: metodoPago,
         precioPedido: comidasLocal.reduce((acc, c) => acc + c.precio * c.cantidad, 0) +
-          (metodoPago === 'tarjeta' && propina && cantidadPropina ? Number(cantidadPropina) : 0),
-        comidas: comidasLocal.map(c => ({ nombre: c.nombreComida })),
-        esDelivery: false,
-        propina: !!propina,
-        cantidadPropina: propina && cantidadPropina ? Number(cantidadPropina) : undefined
+          (metodoPago === 'tarjeta' && esDelivery && propina && cantidadPropina ? Number(cantidadPropina) : 0),
+        comidas: comidasLocal.map(c => ({
+          nombre: c.nombreComida,
+          cantidad: c.cantidad
+        })),
+        esDelivery: !!esDelivery, // <-- Usa el valor real
+        direccionEntrega: esDelivery ? direccionEntrega : undefined, // <-- Solo si es delivery
+        numeroCasaDepto: esDelivery ? numeroCasaDepto : undefined,   // <-- Solo si es delivery
+        propina: esDelivery ? !!propina : false,
+        cantidadPropina: esDelivery && propina && cantidadPropina ? Number(cantidadPropina) : undefined
       };
       const res = await fetch('http://localhost:3002/pedidos/crear', {
         method: 'POST',
