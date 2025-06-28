@@ -20,6 +20,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const axios_1 = __importDefault(require("axios"));
 const mongoose_2 = require("mongoose");
+const schedule_1 = require("@nestjs/schedule");
 const mongoose_3 = require("mongoose");
 const pedido_schema_1 = require("../schemas/pedido.schema");
 const carrito_schema_1 = require("../schemas/carrito.schema");
@@ -54,8 +55,8 @@ let PedidoService = class PedidoService {
             estado: false,
             dealer: false,
             repartidor: null,
-            direccionLocal, // <-- SIEMPRE guarda la dirección del local
-            direccionEntrega, // <-- Si es delivery, guarda la dirección de entrega
+            direccionLocal,
+            direccionEntrega,
         };
         const pedido = new this.pedidoModel(pedidoData);
         const pedidoGuardado = await pedido.save();
@@ -67,62 +68,77 @@ let PedidoService = class PedidoService {
         return this.pedidoModel.find().exec();
     }
     async obtenerPedidosPorUsuario(idComprador) {
-        const pedidos = await this.pedidoModel
+        return this.pedidoModel
             .find({ idComprador: new mongoose_3.Types.ObjectId(idComprador) })
+            .lean()
             .exec();
-        // Por cada pedido, consulta el microservicio de auth/locatarios
-        const pedidosConLocal = await Promise.all(pedidos.map(async (pedido) => {
-            let nombreLocal = '';
-            let direccionLocal = '';
-            try {
-                const res = await axios_1.default.get(`http://localhost:3000/locatarios/${pedido.idLocal}`);
-                nombreLocal = res.data.nombreLocal || '';
-                direccionLocal = res.data.direccion || '';
-            }
-            catch (e) {
-                // Si falla, deja vacío
-            }
-            return {
-                ...pedido.toObject(),
-                nombreLocal,
-                direccionLocal,
-            };
-        }));
-        return pedidosConLocal;
     }
     async obtenerPedidosPorLocal(idLocal) {
-        const pedidos = await this.pedidoModel
+        return this.pedidoModel
             .find({ idLocal: new mongoose_3.Types.ObjectId(idLocal) })
+            .lean()
             .exec();
-        // Si quieres agregar nombreLocal y direccionLocal desde el microservicio de locales:
-        const pedidosConLocal = await Promise.all(pedidos.map(async (pedido) => {
-            let nombreLocal = '';
-            let direccionLocal = '';
-            try {
-                const res = await axios_1.default.get(`http://localhost:3000/locatarios/${pedido.idLocal}`);
-                nombreLocal = res.data.nombreLocal || '';
-                const dir = res.data.direccion;
-                direccionLocal = Array.isArray(dir) ? dir.join(', ') : (dir || '');
-            }
-            catch (e) {
-                // Si falla, deja vacío
-            }
-            return {
-                ...pedido.toObject(),
-                nombreLocal,
-                direccionLocal,
-            };
-        }));
-        return pedidosConLocal;
+    }
+    async obtenerPedidosDeliveryDisponibles() {
+        return this.pedidoModel
+            .find({
+            esDelivery: true,
+            estado: true,
+            listo: true,
+            dealer: false
+        })
+            .lean()
+            .exec();
     }
     async actualizarEstado(id, estado) {
         return this.pedidoModel.findByIdAndUpdate(id, { estado }, { new: true });
     }
     async rechazarPedido(id) {
-        return this.pedidoModel.findByIdAndUpdate(id, { estadoRechazado: true }, { new: true });
+        return this.pedidoModel.findByIdAndUpdate(id, {
+            estadoRechazado: true,
+            fechaRechazo: new Date()
+        }, { new: true });
+    }
+    // Método para eliminar un pedido específico
+    async eliminarPedido(id) {
+        return this.pedidoModel.findByIdAndDelete(id);
+    }
+    // Tarea programada que se ejecuta cada 10 segundos para eliminar pedidos rechazados antiguos
+    async eliminarPedidosRechazadosAntiguos() {
+        const fechaLimite = new Date();
+        fechaLimite.setSeconds(fechaLimite.getSeconds() - 30); // 30 segundos atrás
+        const resultado = await this.pedidoModel.deleteMany({
+            estadoRechazado: true,
+            fechaRechazo: { $lt: fechaLimite }
+        });
+        if (resultado.deletedCount > 0) {
+            console.log(`Eliminados ${resultado.deletedCount} pedidos rechazados antiguos (más de 30 segundos)`);
+        }
+    }
+    async marcarListo(id) {
+        return this.pedidoModel.findByIdAndUpdate(id, { listo: true }, { new: true });
+    }
+    async aceptarPorRepartidor(id, idRepartidor) {
+        return this.pedidoModel.findByIdAndUpdate(id, {
+            dealer: true,
+            repartidor: new mongoose_3.Types.ObjectId(idRepartidor)
+        }, { new: true });
+    }
+    async marcarEnCamino(id) {
+        return this.pedidoModel.findByIdAndUpdate(id, { enCamino: true }, { new: true });
+    }
+    async marcarEntregado(id) {
+        return this.pedidoModel.findByIdAndUpdate(id, { pedidoEntregado: true }, { new: true });
     }
 };
 exports.PedidoService = PedidoService;
+__decorate([
+    (0, schedule_1.Cron)('*/10 * * * * *') // Cada 10 segundos (formato: segundos minutos horas día mes año)
+    ,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PedidoService.prototype, "eliminarPedidosRechazadosAntiguos", null);
 exports.PedidoService = PedidoService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(pedido_schema_1.Pedido.name)),

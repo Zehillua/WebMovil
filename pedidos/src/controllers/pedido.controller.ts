@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Patch } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Patch, Delete } from '@nestjs/common';
 import { PedidoService } from '../services/pedido.service';
 import { CreatePedidoDto } from '../dtos/create-pedido.dto';
 
@@ -33,5 +33,35 @@ export class PedidoController {
   @Patch(':id/rechazar')
   async rechazarPedido(@Param('id') id: string) {
     return this.pedidoService.rechazarPedido(id);
+  }
+
+  @Delete(':id')
+  async eliminarPedido(@Param('id') id: string) {
+    return this.pedidoService.eliminarPedido(id);
+  }
+
+  @Patch(':id/listo')
+  async marcarListo(@Param('id') id: string) {
+    return this.pedidoService.marcarListo(id);
+  }
+
+  @Get('delivery/disponibles')
+  async obtenerPedidosDeliveryDisponibles() {
+    return this.pedidoService.obtenerPedidosDeliveryDisponibles();
+  }
+
+  @Patch(':id/aceptar-repartidor')
+  async aceptarPorRepartidor(@Param('id') id: string, @Body() body: { idRepartidor: string }) {
+    return this.pedidoService.aceptarPorRepartidor(id, body.idRepartidor);
+  }
+
+  @Patch(':id/en-camino')
+  async marcarEnCamino(@Param('id') id: string) {
+    return this.pedidoService.marcarEnCamino(id);
+  }
+
+  @Patch(':id/entregado')
+  async marcarEntregado(@Param('id') id: string) {
+    return this.pedidoService.marcarEntregado(id);
   }
 }

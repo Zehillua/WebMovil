@@ -38,6 +38,24 @@ let PedidoController = class PedidoController {
     async rechazarPedido(id) {
         return this.pedidoService.rechazarPedido(id);
     }
+    async eliminarPedido(id) {
+        return this.pedidoService.eliminarPedido(id);
+    }
+    async marcarListo(id) {
+        return this.pedidoService.marcarListo(id);
+    }
+    async obtenerPedidosDeliveryDisponibles() {
+        return this.pedidoService.obtenerPedidosDeliveryDisponibles();
+    }
+    async aceptarPorRepartidor(id, body) {
+        return this.pedidoService.aceptarPorRepartidor(id, body.idRepartidor);
+    }
+    async marcarEnCamino(id) {
+        return this.pedidoService.marcarEnCamino(id);
+    }
+    async marcarEntregado(id) {
+        return this.pedidoService.marcarEntregado(id);
+    }
 };
 exports.PedidoController = PedidoController;
 __decorate([
@@ -82,6 +100,48 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PedidoController.prototype, "rechazarPedido", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "eliminarPedido", null);
+__decorate([
+    (0, common_1.Patch)(':id/listo'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "marcarListo", null);
+__decorate([
+    (0, common_1.Get)('delivery/disponibles'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "obtenerPedidosDeliveryDisponibles", null);
+__decorate([
+    (0, common_1.Patch)(':id/aceptar-repartidor'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "aceptarPorRepartidor", null);
+__decorate([
+    (0, common_1.Patch)(':id/en-camino'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "marcarEnCamino", null);
+__decorate([
+    (0, common_1.Patch)(':id/entregado'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "marcarEntregado", null);
 exports.PedidoController = PedidoController = __decorate([
     (0, common_1.Controller)('pedidos'),
     __metadata("design:paramtypes", [pedido_service_1.PedidoService])

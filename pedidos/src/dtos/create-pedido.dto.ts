@@ -23,4 +23,8 @@ export class CreatePedidoDto {
   dealer?: boolean;
   repartidor?: string;
   estadoRechazado?: boolean;
+  listo?: boolean;
+  enCamino?: boolean;
+  pedidoEntregado?: boolean;
+  fechaRechazo?: Date;
 }

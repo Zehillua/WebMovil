@@ -50,6 +50,22 @@ __decorate([
 __decorate([
     (0, mongoose_1.Prop)({ default: false }),
     __metadata("design:type", Boolean)
+], Pedido.prototype, "listo", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "enCamino", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "pedidoEntregado", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Date)
+], Pedido.prototype, "fechaRechazo", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
 ], Pedido.prototype, "estado", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: false }),

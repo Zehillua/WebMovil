@@ -28,6 +28,18 @@ export class Pedido extends Document {
   estadoRechazado?: boolean;
 
   @Prop({ default: false })
+  listo?: boolean;
+
+  @Prop({ default: false })
+  enCamino?: boolean;
+
+  @Prop({ default: false })
+  pedidoEntregado?: boolean; 
+
+  @Prop()
+  fechaRechazo?: Date;
+
+  @Prop({ default: false })
   estado: boolean;
 
   @Prop({ default: false })

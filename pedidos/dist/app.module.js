@@ -10,9 +10,12 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const config_1 = require("@nestjs/config");
+const schedule_1 = require("@nestjs/schedule");
+const graphql_1 = require("@nestjs/graphql");
+const apollo_1 = require("@nestjs/apollo");
 const pedido_module_1 = require("./src/modules/pedido.module");
 const carrito_module_1 = require("./src/modules/carrito.module");
-const jwt_strategy_1 = require("./src/strategies/jwt.strategy"); // <--- IMPORTA LA ESTRATEGIA
+const jwt_strategy_1 = require("./src/strategies/jwt.strategy");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -21,6 +24,12 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
+            }),
+            schedule_1.ScheduleModule.forRoot(),
+            graphql_1.GraphQLModule.forRoot({
+                driver: apollo_1.ApolloDriver,
+                autoSchemaFile: true,
+                context: ({ req }) => ({ req }),
             }),
             mongoose_1.MongooseModule.forRootAsync({
                 useFactory: async (configService) => ({
@@ -31,6 +40,6 @@ exports.AppModule = AppModule = __decorate([
             pedido_module_1.PedidoModule,
             carrito_module_1.CarritoModule
         ],
-        providers: [jwt_strategy_1.JwtStrategy], // <--- AGREGA LA ESTRATEGIA COMO PROVIDER
+        providers: [jwt_strategy_1.JwtStrategy],
     })
 ], AppModule);
