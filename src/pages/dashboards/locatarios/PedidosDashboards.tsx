@@ -16,6 +16,7 @@ interface Pedido {
   repartidor?: string | null;
   comidas?: { nombre: string; cantidad: number }[];
   estadoRechazado?: boolean;
+  listo?: boolean;
 }
 
 const PedidosDashboards: React.FC = () => {
@@ -87,6 +88,24 @@ const handleRechazarPedido = async (pedidoId: string) => {
   );
 };
 
+const handleMarcarListo = async (pedidoId: string) => {
+  const token = localStorage.getItem('token');
+  // Llama al endpoint del backend
+  await fetch(`http://localhost:3002/pedidos/${pedidoId}/listo`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  // Actualiza el estado local después de la llamada exitosa
+  setPedidos(pedidos =>
+    pedidos.map(p =>
+      p._id === pedidoId ? { ...p, listo: true } : p
+    )
+  );
+};
+
   return (
     <div className="pedidos-dashboard-root">
       <div className="pedidos-dashboard-header">
@@ -104,9 +123,54 @@ const handleRechazarPedido = async (pedidoId: string) => {
             <div className="pedido-card" key={pedido._id}>
               <div className="pedido-header">
                 <span className="pedido-nombre">{pedido.nombrePedido}</span>
-                <span className={`pedido-estado pedido-estado-${pedido.estado ? 'listo' : 'preparando'}`}>
-                  {pedido.estado ? 'Listo' : 'Preparando'}
+                <span className={`pedido-estado pedido-estado-${
+                  pedido.estadoRechazado
+                    ? 'cancelado'
+                    : pedido.listo
+                      ? 'completado'
+                      : pedido.estado
+                        ? 'listo'
+                        : 'preparando'
+                }`}>
+                  {pedido.estadoRechazado
+                    ? 'Cancelado'
+                    : pedido.listo
+                      ? 'Completado'
+                      : pedido.estado
+                        ? 'Listo'
+                        : 'Preparando'}
                 </span>
+              </div>
+              {/* En la sección de acciones */}
+              <div className="pedido-acciones">
+                {pedido.estadoRechazado ? (
+                  <span className="pedido-cancelado">Pedido cancelado por el usuario</span>
+                ) : pedido.listo ? (
+                  <span className="pedido-completado">Pedido completado</span>
+                ) : pedido.estado ? (
+                  <button
+                    className="btn-pedido-listo"
+                    onClick={() => handleMarcarListo(pedido._id)}
+                  >
+                    Pedido listo
+                  </button>
+                ) : (
+                  <>
+                    <span className="pedido-en-espera">En espera</span>
+                    <button
+                      className="btn-aceptar"
+                      onClick={() => handleActualizarEstado(pedido._id, true)}
+                    >
+                      Aceptar
+                    </button>
+                    <button
+                      className="btn-rechazar"
+                      onClick={() => handleRechazarPedido(pedido._id)}
+                    >
+                      Rechazar
+                    </button>
+                  </>
+                )}
               </div>
               <div className="pedido-info">
                 <span>

@@ -114,3 +114,44 @@
     padding: 0.7rem 0.5rem;
   }
 }
+
+.pedido-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-eliminar-pedido {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.btn-eliminar-pedido:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-cancelar-pedido {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  color: #ff6b6b;
+}
+
+.btn-cancelar-pedido:hover {
+  background-color: #ffe0e0;
+}
+
+.pedido-estado-listo {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  border: 1px solid #4caf50;
+}

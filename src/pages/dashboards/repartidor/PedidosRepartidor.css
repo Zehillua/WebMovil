@@ -1,0 +1,77 @@
+.pedidos-repartidor-root {
+  padding: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.pedidos-repartidor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.pedidos-repartidor-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.pedido-repartidor-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.pedido-repartidor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.pedido-repartidor-nombre {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.pedido-repartidor-local {
+  color: #666;
+  font-style: italic;
+}
+
+.pedido-repartidor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.comidas-lista {
+  margin: 0.5rem 0;
+}
+
+.comida-item {
+  margin-left: 1rem;
+  color: #555;
+}
+
+.btn-aceptar-pedido {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 1rem;
+  transition: background-color 0.2s;
+}
+
+.btn-aceptar-pedido:hover {
+  background-color: #45a049;
+}
