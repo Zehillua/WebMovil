@@ -42,7 +42,6 @@ const LocatarioDashboard: React.FC = () => {
   const [productsError, setProductsError] = useState<string | null>(null);
 
   const [mostrarTopVentas, setMostrarTopVentas] = useState(false);
-  const [mostrarTopDeliverys, setMostrarTopDeliverys] = useState(false);
 
   // Estados para el formulario de Promoción
   const [mostrarFormularioPromocion, setMostrarFormularioPromocion] = useState(false);
@@ -293,7 +292,6 @@ const LocatarioDashboard: React.FC = () => {
     // Cierra cualquier otro modal que pudiera estar abierto
     setMostrarFormularioPromocion(false);
     setMostrarTopVentas(false);
-    setMostrarTopDeliverys(false);
   };
 
   // NUEVA Función para manejar la eliminación de un producto
@@ -424,19 +422,21 @@ const LocatarioDashboard: React.FC = () => {
   };
 
   return (
-    <div className="locatario-dashboard">
-      <div className="top-banner">
-        <span className="top-banner-text">
-          Bienvenido, Locatario — gestiona tus productos y promociones
-        </span>
-      </div>
+    <>
+      <header className="header-banner">
+        <div className="header-left">Bienvenido, Locatario — gestiona tus productos y promociones</div>
+        <div className="header-right-icons">
+          <button className="icon-btn" onClick={() => navigate('/perfil')} title="Perfil">
+            <img src="https://img.icons8.com/ios-filled/28/ffffff/user.png" alt="Perfil" />
+          </button>
+          <button className="icon-btn logout-btn" onClick={handleLogout} title="Cerrar sesión">
+            <img src="https://img.icons8.com/ios-filled/28/ffffff/exit.png" alt="Salir" />
+          </button>
+        </div>
+      </header>
 
-      <nav className="navbar-locatario">
-        <div className="logo-centered">Panel Locatario</div>
-        <button className="logout-btn" onClick={handleLogout} title="Cerrar sesión">
-          Salir
-        </button>
-      </nav>
+
+      <div className="locatario-dashboard">
 
       <h2 className="dashboard-title">Tus Productos</h2>
 
@@ -446,13 +446,13 @@ const LocatarioDashboard: React.FC = () => {
           limpiarFormulario(); // Asegura que el formulario esté limpio y en modo agregar
           setMostrarFormularioPromocion(false);
           setMostrarTopVentas(false);
-          setMostrarTopDeliverys(false);
+
         }}>Agregar Producto</button>
         <button onClick={() => {
           setMostrarFormularioPromocion(true);
           setMostrarFormulario(false);
           setMostrarTopVentas(false);
-          setMostrarTopDeliverys(false);
+
           limpiarFormularioPromocion();
         }}>Agregar Promoción</button>
         {/* El botón "Edición de productos" ahora está cubierto por el botón "Editar" en cada tarjeta */}
@@ -461,14 +461,8 @@ const LocatarioDashboard: React.FC = () => {
           setMostrarTopVentas(true);
           setMostrarFormulario(false);
           setMostrarFormularioPromocion(false);
-          setMostrarTopDeliverys(false);
+
         }}>Top Ventas</button>
-        <button onClick={() => {
-          setMostrarTopDeliverys(true);
-          setMostrarFormulario(false);
-          setMostrarFormularioPromocion(false);
-          setMostrarTopVentas(false);
-        }}>Top Deliverys</button>
       </div>
 
       <div className="products-section-wrapper">
@@ -652,35 +646,17 @@ const LocatarioDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Panel emergente para Top Deliverys */}
-      {mostrarTopDeliverys && (
-        <div className="modal-overlay" onClick={() => setMostrarTopDeliverys(false)}>
-          <div className="add-product-form" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button" onClick={() => setMostrarTopDeliverys(false)}>×</button>
-            <h2>Top de Productos Más Entregados</h2>
-            <div className="panel-content">
-              <p>Contenido del Top Deliverys. Por ejemplo, una lista de productos más pedidos para delivery.</p>
-              <ul>
-                <li>Producto X: 80 entregas</li>
-                <li>Producto Y: 70 entregas</li>
-                <li>Producto Z: 60 entregas</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Botón flotante para agregar producto (siempre visible) */}
       <button className="floating-add-button" onClick={() => {
         setMostrarFormulario(true);
         limpiarFormulario(); // Asegura que el formulario esté limpio y en modo agregar
         setMostrarFormularioPromocion(false);
         setMostrarTopVentas(false);
-        setMostrarTopDeliverys(false);
       }}>
         +
       </button>
     </div>
+    </>
   );
 };
 

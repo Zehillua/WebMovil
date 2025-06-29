@@ -82,7 +82,7 @@ html, body {
 
 .logout-btn {
   position: absolute;
-  right: 2rem;
+  right: 4rem;
   background: white;
   color: var(--color-subtitle-orange);
   border: none;
@@ -521,4 +521,79 @@ html, body {
   .promo-product-list {
       max-height: 150px; /* Ajuste en móviles */
   }
+}
+
+.header-banner {
+  width: 100vw;
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-highlight-brown);
+  color: white;
+  padding: 1rem 2rem;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+
+.header-text-left {
+  flex: 1;
+  text-align: left;
+}
+
+.header-text-center {
+  flex: 1;
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.logout-btn {
+  flex: 1;
+  text-align: right;
+  background: white;
+  color: var(--color-subtitle-orange);
+  border: none;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  max-width: fit-content;
+  margin-left: auto;
+}
+.logout-btn:hover {
+  background: var(--color-subtitle-orange);
+  color: white;
+}
+
+.header-right-icons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3rem;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 50%;
+  transition: background 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+
+.icon-btn img {
+  width: 28px;
+  height: 28px;
 }
