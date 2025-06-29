@@ -36,17 +36,13 @@ __decorate([
     __metadata("design:type", String)
 ], Usuario.prototype, "clave", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
+    (0, mongoose_1.Prop)({ type: [String], default: [] }),
+    __metadata("design:type", Array)
 ], Usuario.prototype, "direccion", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Usuario.prototype, "telefono", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ default: 0 }),
-    __metadata("design:type", Number)
-], Usuario.prototype, "saldo", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: false }),
     __metadata("design:type", Boolean)
@@ -59,6 +55,10 @@ __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Usuario.prototype, "numeroCasaDepto", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: 0 }),
+    __metadata("design:type", Number)
+], Usuario.prototype, "cartera", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)

@@ -18,9 +18,6 @@ export class ComidaController {
     return this.comidaService.crearComida(usuario._id, dto);
   }
 
-
-  //AGREGA LIMITE DE PESOO**** - aws podria servir para el tema de imagenes
-
   @Post('upload')
   @UseInterceptors(FileInterceptor('imagen', {
     storage: diskStorage({
@@ -30,6 +27,7 @@ export class ComidaController {
         cb(null, uniqueSuffix + extname(file.originalname));
       },
     }),
+    limits: { fileSize: 2 * 1024 * 1024 }, // <-- Limite de 2MB
   }))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     if (!file) {

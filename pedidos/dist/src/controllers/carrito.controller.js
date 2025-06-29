@@ -29,12 +29,12 @@ let CarritoController = class CarritoController {
         }
         return this.carritoService.agregarComidaAlCarrito(idComprador, dto);
     }
-    // Obtener el carrito de un usuario
-    async obtener(idComprador, req) {
+    //Calcular el total del carrito de un usuario
+    async obtenerTotal(idComprador, req) {
         if (req.user?.sub !== idComprador) {
             throw new common_1.UnauthorizedException('No puedes ver el carrito de otro usuario');
         }
-        return this.carritoService.obtenerCarrito(idComprador);
+        return this.carritoService.calcularTotalCarrito(idComprador);
     }
     // Eliminar un item del carrito
     async eliminarItem(idComprador, itemId, req) {
@@ -64,13 +64,13 @@ __decorate([
 ], CarritoController.prototype, "agregarComida", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Get)(':idComprador'),
+    (0, common_1.Get)(':idComprador/total'),
     __param(0, (0, common_1.Param)('idComprador')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
-], CarritoController.prototype, "obtener", null);
+], CarritoController.prototype, "obtenerTotal", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':idComprador/item/:itemId'),

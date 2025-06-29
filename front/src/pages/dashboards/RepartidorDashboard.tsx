@@ -1,13 +1,21 @@
-// RepartidorDashboard.tsx (Fusionado diseño + funcionalidad pastel)
 import React, { useState, useEffect } from 'react';
 import './RepartidorDashboard.css';
 
 interface Pedido {
   _id: string;
-  local: string;
   direccion: string;
   estado: 'Pendiente' | 'En camino' | 'Entregado';
-  productos: string[];
+  comprador?: {
+    nombre: string;
+  };
+  productos: {
+    producto: {
+      nombre: string;
+      precio?: number;
+      descripcion?: string;
+    };
+    cantidad: number;
+  }[];
 }
 
 const RepartidorDashboard: React.FC = () => {
@@ -22,8 +30,8 @@ const RepartidorDashboard: React.FC = () => {
     setLoading(true);
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('http://localhost:3001/pedidos', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const response = await fetch('http://localhost:3002/pedidos', {
+        headers: { Authorization: `Bearer ${token}` }
       });
       if (response.ok) {
         const data = await response.json();
@@ -39,11 +47,12 @@ const RepartidorDashboard: React.FC = () => {
   };
 
   const avanzarEstado = async (pedido: Pedido) => {
-    const nuevoEstado = pedido.estado === 'Pendiente'
-      ? 'En camino'
-      : pedido.estado === 'En camino'
-      ? 'Entregado'
-      : pedido.estado;
+    const nuevoEstado =
+      pedido.estado === 'Pendiente'
+        ? 'En camino'
+        : pedido.estado === 'En camino'
+        ? 'Entregado'
+        : pedido.estado;
 
     const token = localStorage.getItem('token');
     try {
@@ -51,7 +60,7 @@ const RepartidorDashboard: React.FC = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ estado: nuevoEstado })
       });
@@ -82,13 +91,19 @@ const RepartidorDashboard: React.FC = () => {
         <div className="pedidos-grid">
           {pedidos.map((pedido) => (
             <div className="pedido-card" key={pedido._id}>
-              <h3>{pedido.local}</h3>
+              <h3>{pedido.comprador?.nombre || 'Local desconocido'}</h3>
               <p><strong>Dirección:</strong> {pedido.direccion}</p>
-              <p><strong>Estado:</strong> <span className={`estado ${pedido.estado.replace(' ', '-').toLowerCase()}`}>{pedido.estado}</span></p>
+              <p><strong>Estado:</strong>{' '}
+                <span className={`estado ${pedido.estado.replace(' ', '-').toLowerCase()}`}>
+                  {pedido.estado}
+                </span>
+              </p>
               <p><strong>Productos:</strong></p>
               <ul>
-                {pedido.productos.map((prod, index) => (
-                  <li key={index}>{prod}</li>
+                {pedido.productos.map((item, index) => (
+                  <li key={index}>
+                    {item.cantidad} × {item.producto?.nombre || 'Producto'}
+                  </li>
                 ))}
               </ul>
               {pedido.estado !== 'Entregado' && (

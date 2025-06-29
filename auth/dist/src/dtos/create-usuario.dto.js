@@ -74,6 +74,11 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateUsuarioDto.prototype, "numeroCasaDepto", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateUsuarioDto.prototype, "cartera", void 0);
 // Locatario
 class CreateLocatarioDto extends CreateUsuarioBaseDto {
 }

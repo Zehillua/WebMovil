@@ -13,6 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apollo/server": "^4.12.2",
+    "@nestjs/apollo": "^13.1.0",
     "@nestjs/common": "^11.0.15",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.15",
@@ -21,7 +23,9 @@
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.15",
+    "@nestjs/schedule": "^6.0.0",
     "@types/graphql": "^14.2.3",
+    "axios": "^1.10.0",
     "dotenv": "^16.4.7",
     "graphql": "^16.11.0",
     "mongoose": "^8.13.2",

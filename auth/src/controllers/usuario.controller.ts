@@ -1,12 +1,11 @@
-import { Controller, Post, Body, BadRequestException, Get, Req, UseGuards, Patch } from '@nestjs/common';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { Controller, Post, Body, BadRequestException, Get, Req, UseGuards} from '@nestjs/common';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard'; // Asegúrate de tener este guard
 import { Request } from 'express';
 import { UsuarioService } from '../services/usuario.service';
 import { CreateUsuarioDto, CreateLocatarioDto, CreateRepartidorDto, TipoUsuario } from '../dtos/create-usuario.dto';
 import { LoginUsuarioDto } from '../dtos/login-usuario.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { UpdateUsuarioDto } from '../dtos/update-usuario.dto';
 
 @Controller('usuarios')
 export class UsuarioController {
@@ -33,19 +32,44 @@ export class UsuarioController {
 
   @Post('login')
   async login(@Body() loginUsuarioDto: LoginUsuarioDto) {
+    console.log('DTO recibido:', loginUsuarioDto);
     return this.usuarioService.loginUsuario(loginUsuarioDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getMe(@Req() req: Request) {
+    console.log('Usuario autenticado en /usuarios/me:', req.user);
     return req.user;
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch('me')
-  async updateMe(@Req() req: Request, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    const usuario = req.user as any;
-    return this.usuarioService.updateUsuario(usuario._id, updateUsuarioDto);
+  @Get('me/saldo')
+  async getSaldo(@Req() req: Request) {
+    // req.user.userId viene del JWT payload
+    const userId = (req.user as any).userId;
+    const saldo = await this.usuarioService.obtenerSaldo(userId);
+    return { saldo };
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me/recargar')
+  async recargarSaldo(@Req() req: Request, @Body() body: { monto: number }) {
+    const userId = (req.user as any).userId;
+    const { monto } = body;
+    if (!monto || typeof monto !== 'number' || monto <= 0) {
+      throw new BadRequestException('Monto inválido');
+    }
+    const saldo = await this.usuarioService.recargarSaldo(userId, monto);
+    return { saldo };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me/direccion')
+  async getDireccion(@Req() req: Request) {
+    const userId = (req.user as any).userId;
+    const direccion = await this.usuarioService.obtenerDireccion(userId);
+    return { direccion };
+}
+
 }

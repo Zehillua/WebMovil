@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Carrito } from '../schemas/carrito.schema';
+import axios from 'axios';
 import { CreateComidaCarritoDto } from '../dtos/create-comidaCarrito.dto';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class CarritoService {
  async agregarComidaAlCarrito(idComprador: string, dto: CreateComidaCarritoDto) {
     const compradorId = new Types.ObjectId(idComprador);
     const locatarioId = new Types.ObjectId(dto.idLocatario);
+    
 
     const item = {
         ...dto,
@@ -29,6 +31,17 @@ export class CarritoService {
     return carrito.save();
     }
 
+  async calcularTotalCarrito(idComprador: string) {
+  const compradorId = new Types.ObjectId(idComprador);
+  const carrito = await this.carritoModel.findOne({ idComprador: compradorId }).lean();
+  if (!carrito || !carrito.items) return { total: 0 };
+  const total = carrito.items.reduce(
+    (acc, item) => acc + (item.precio * item.cantidad),
+    0
+  );
+  return { total };
+}
+    
   async obtenerCarrito(idComprador: string) {
     const compradorId = new Types.ObjectId(idComprador);
     const carrito = await this.carritoModel.findOne({ idComprador: compradorId }).lean();

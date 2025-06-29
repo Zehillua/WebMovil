@@ -22,14 +22,14 @@ export class CarritoController {
     return this.carritoService.agregarComidaAlCarrito(idComprador, dto);
   }
 
-  // Obtener el carrito de un usuario
+  //Calcular el total del carrito de un usuario
   @UseGuards(JwtAuthGuard)
-  @Get(':idComprador')
-  async obtener(@Param('idComprador') idComprador: string, @Req() req: any) {
+  @Get(':idComprador/total')
+  async obtenerTotal(@Param('idComprador') idComprador: string, @Req() req: any) {
     if (req.user?.sub !== idComprador) {
       throw new UnauthorizedException('No puedes ver el carrito de otro usuario');
     }
-    return this.carritoService.obtenerCarrito(idComprador);
+    return this.carritoService.calcularTotalCarrito(idComprador);
   }
 
   // Eliminar un item del carrito
@@ -48,11 +48,11 @@ export class CarritoController {
 
   // Vaciar el carrito
   @UseGuards(JwtAuthGuard)
-    @Get(':idComprador')
-    async obtenerCarrito(@Param('idComprador') idComprador: string, @Req() req: any) {
+  @Get(':idComprador')
+  async obtenerCarrito(@Param('idComprador') idComprador: string, @Req() req: any) {
     if (req.user?.sub !== idComprador) {
-        throw new UnauthorizedException('No puedes ver el carrito de otro usuario');
+      throw new UnauthorizedException('No puedes ver el carrito de otro usuario');
     }
     return this.carritoService.obtenerCarrito(idComprador);
-    }
+  }
 }

@@ -23,7 +23,10 @@ export class LocatarioController {
       numeroLocal: usuario.numeroLocal,
       correo: usuario.correo,
       tipoUsuario: usuario.tipoUsuario,
+      direccion: usuario.direccion,
     };
   }
+
+  
 
 }

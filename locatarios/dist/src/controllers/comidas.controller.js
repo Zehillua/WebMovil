@@ -28,7 +28,6 @@ let ComidaController = class ComidaController {
         const usuario = req.user;
         return this.comidaService.crearComida(usuario._id, dto);
     }
-    //AGREGA LIMITE DE PESOO**** - aws podria servir para el tema de imagenes
     async uploadFile(file) {
         if (!file) {
             throw new Error('No se recibió ningún archivo');
@@ -75,6 +74,7 @@ __decorate([
                 cb(null, uniqueSuffix + (0, path_1.extname)(file.originalname));
             },
         }),
+        limits: { fileSize: 2 * 1024 * 1024 }, // <-- Limite de 2MB
     })),
     __param(0, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),

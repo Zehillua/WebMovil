@@ -10,17 +10,22 @@ exports.PedidoModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const pedido_schema_1 = require("../schemas/pedido.schema");
+const carrito_schema_1 = require("../schemas/carrito.schema");
 const pedido_service_1 = require("../services/pedido.service");
 const pedido_controller_1 = require("../controllers/pedido.controller");
+const pedido_resolver_1 = require("../resolvers/pedido.resolver"); // <-- AGREGA ESTO
 let PedidoModule = class PedidoModule {
 };
 exports.PedidoModule = PedidoModule;
 exports.PedidoModule = PedidoModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            mongoose_1.MongooseModule.forFeature([{ name: pedido_schema_1.Pedido.name, schema: pedido_schema_1.PedidoSchema }]),
+            mongoose_1.MongooseModule.forFeature([
+                { name: pedido_schema_1.Pedido.name, schema: pedido_schema_1.PedidoSchema },
+                { name: carrito_schema_1.Carrito.name, schema: carrito_schema_1.CarritoSchema },
+            ]),
         ],
         controllers: [pedido_controller_1.PedidoController],
-        providers: [pedido_service_1.PedidoService],
+        providers: [pedido_service_1.PedidoService, pedido_resolver_1.PedidoResolver],
     })
 ], PedidoModule);

@@ -20,7 +20,7 @@ __decorate([
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Pedido.prototype, "idComprador", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true, ref: 'Locatario' }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Local' }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Pedido.prototype, "idLocal", void 0);
 __decorate([
@@ -36,7 +36,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Pedido.prototype, "precioPedido", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: [{ nombre: String }], required: true }),
+    (0, mongoose_1.Prop)({ type: [{ nombre: String, cantidad: Number }], required: true }),
     __metadata("design:type", Array)
 ], Pedido.prototype, "comidas", void 0);
 __decorate([
@@ -44,9 +44,45 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Pedido.prototype, "esDelivery", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "estadoRechazado", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "listo", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "enCamino", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "pedidoEntregado", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Date)
+], Pedido.prototype, "fechaRechazo", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "estado", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Pedido.prototype, "dealer", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Repartidor', default: null }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Pedido.prototype, "repartidor", void 0);
+__decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Pedido.prototype, "direccionEntrega", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Pedido.prototype, "direccionLocal", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)

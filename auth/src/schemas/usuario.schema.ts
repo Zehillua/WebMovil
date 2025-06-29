@@ -17,12 +17,10 @@ export class Usuario extends Document {
     correo: string;
     @Prop({ required: true })
     clave: string;
-    @Prop()
-    direccion: string;
+    @Prop({ type: [String], default: [] })
+    direccion: string[];
     @Prop()
     telefono: string;
-    @Prop({ default: 0 })
-    saldo?: number;
     @Prop({ default: false })
     isAdmin: boolean;
 
@@ -32,6 +30,8 @@ export class Usuario extends Document {
     nombreUsuario?: string;
     @Prop()
     numeroCasaDepto?: string;
+    @Prop({ default: 0 })
+    cartera?: number;
 
     // Locatario
     @Prop()

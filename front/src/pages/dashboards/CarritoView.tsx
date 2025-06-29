@@ -14,6 +14,7 @@ interface ComidaCarrito {
 
 const CarritoView: React.FC = () => {
   const [comidas, setComidas] = useState<ComidaCarrito[]>([]);
+  const [totalBackend, setTotalBackend] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
@@ -42,6 +43,13 @@ const CarritoView: React.FC = () => {
 
         const data = await resCarrito.json();
         setComidas(data?.items || []);
+
+        const resTotal = await fetch(`http://localhost:3002/carrito/${idComprador}/total`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!resTotal.ok) throw new Error('Error al obtener el total del carrito');
+        const totalData = await resTotal.json();
+        setTotalBackend(totalData.total); // ✅ cambio aplicado
       } catch (err: any) {
         console.error(err);
         alert(err.message || "Error al obtener el carrito");
@@ -81,6 +89,12 @@ const CarritoView: React.FC = () => {
         setComidas(comidas.filter(c => c._id !== itemToDelete));
         setModalVisible(false);
         setItemToDelete(null);
+
+        const resTotal = await fetch(`http://localhost:3002/carrito/${idComprador}/total`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const totalData = await resTotal.json();
+        setTotalBackend(totalData.total); // ✅ cambio aplicado
       }
     } catch (err) {
       console.error(err);
@@ -88,11 +102,10 @@ const CarritoView: React.FC = () => {
     }
   };
 
-  const total = comidas.reduce((acc, comida) => acc + comida.precio * comida.cantidad, 0);
   const envioCosto = 0;
   const ivaPorcentaje = 0.19;
-  const ivaMonto = total * ivaPorcentaje;
-  const totalEstimado = total + envioCosto + ivaMonto;
+  const ivaMonto = totalBackend * ivaPorcentaje;
+  const totalEstimado = totalBackend + envioCosto + ivaMonto;
 
   if (loading) return <div className="carrito-loading">Cargando carrito...</div>;
 
@@ -138,7 +151,7 @@ const CarritoView: React.FC = () => {
           <h2 className="carrito-summary-title">Resumen del Pedido</h2>
           <div className="carrito-summary-row">
             <span>Subtotal</span>
-            <span>${total.toLocaleString('es-CL')}</span>
+            <span>${totalBackend.toLocaleString('es-CL')}</span>
           </div>
           <div className="carrito-summary-row">
             <span>Envío</span>
@@ -161,14 +174,13 @@ const CarritoView: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal Overlay de Confirmación */}
       {modalVisible && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>¿Estás seguro de eliminar este producto?</h2>
-            <div className="modal-buttons">
-              <button className="modal-confirm" onClick={confirmarEliminar}>Eliminar</button>
-              <button className="modal-cancel" onClick={cancelarEliminar}>Cancelar</button>
+        <div className="carrito-modal-overlay">
+          <div className="carrito-modal-content">
+            <h3>¿Estás seguro de eliminar este producto?</h3>
+            <div className="carrito-modal-actions">
+              <button className="confirm-button" onClick={confirmarEliminar}>Eliminar</button>
+              <button className="cancel-button" onClick={cancelarEliminar}>Cancelar</button>
             </div>
           </div>
         </div>

@@ -37,6 +37,14 @@ let CarritoService = class CarritoService {
         }
         return carrito.save();
     }
+    async calcularTotalCarrito(idComprador) {
+        const compradorId = new mongoose_2.Types.ObjectId(idComprador);
+        const carrito = await this.carritoModel.findOne({ idComprador: compradorId }).lean();
+        if (!carrito || !carrito.items)
+            return { total: 0 };
+        const total = carrito.items.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+        return { total };
+    }
     async obtenerCarrito(idComprador) {
         const compradorId = new mongoose_2.Types.ObjectId(idComprador);
         const carrito = await this.carritoModel.findOne({ idComprador: compradorId }).lean();

@@ -49,6 +49,10 @@ export class CreateUsuarioDto extends CreateUsuarioBaseDto {
   @IsString()
   @IsNotEmpty()
   numeroCasaDepto: string;
+
+  @IsOptional()
+  @IsNumber()
+  cartera?: number;
 }
 
 // Locatario

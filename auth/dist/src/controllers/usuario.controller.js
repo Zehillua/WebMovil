@@ -14,13 +14,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioController = void 0;
 const common_1 = require("@nestjs/common");
-const jwt_auth_guard_1 = require("../guards/jwt-auth.guard");
+const jwt_auth_guard_1 = require("../guards/jwt-auth.guard"); // Asegúrate de tener este guard
 const usuario_service_1 = require("../services/usuario.service");
 const create_usuario_dto_1 = require("../dtos/create-usuario.dto");
 const login_usuario_dto_1 = require("../dtos/login-usuario.dto");
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
-const update_usuario_dto_1 = require("../dtos/update-usuario.dto");
 let UsuarioController = class UsuarioController {
     constructor(usuarioService) {
         this.usuarioService = usuarioService;
@@ -46,14 +45,32 @@ let UsuarioController = class UsuarioController {
         return this.usuarioService.crearUsuario(dtoInstance);
     }
     async login(loginUsuarioDto) {
+        console.log('DTO recibido:', loginUsuarioDto);
         return this.usuarioService.loginUsuario(loginUsuarioDto);
     }
     async getMe(req) {
+        console.log('Usuario autenticado en /usuarios/me:', req.user);
         return req.user;
     }
-    async updateMe(req, updateUsuarioDto) {
-        const usuario = req.user;
-        return this.usuarioService.updateUsuario(usuario._id, updateUsuarioDto);
+    async getSaldo(req) {
+        // req.user.userId viene del JWT payload
+        const userId = req.user.userId;
+        const saldo = await this.usuarioService.obtenerSaldo(userId);
+        return { saldo };
+    }
+    async recargarSaldo(req, body) {
+        const userId = req.user.userId;
+        const { monto } = body;
+        if (!monto || typeof monto !== 'number' || monto <= 0) {
+            throw new common_1.BadRequestException('Monto inválido');
+        }
+        const saldo = await this.usuarioService.recargarSaldo(userId, monto);
+        return { saldo };
+    }
+    async getDireccion(req) {
+        const userId = req.user.userId;
+        const direccion = await this.usuarioService.obtenerDireccion(userId);
+        return { direccion };
     }
 };
 exports.UsuarioController = UsuarioController;
@@ -81,13 +98,29 @@ __decorate([
 ], UsuarioController.prototype, "getMe", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Patch)('me'),
+    (0, common_1.Get)('me/saldo'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "getSaldo", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('me/recargar'),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, update_usuario_dto_1.UpdateUsuarioDto]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], UsuarioController.prototype, "updateMe", null);
+], UsuarioController.prototype, "recargarSaldo", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me/direccion'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "getDireccion", null);
 exports.UsuarioController = UsuarioController = __decorate([
     (0, common_1.Controller)('usuarios'),
     __metadata("design:paramtypes", [usuario_service_1.UsuarioService])
