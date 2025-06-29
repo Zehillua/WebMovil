@@ -4,7 +4,12 @@ import { Pedido, PedidoSchema } from '../schemas/pedido.schema';
 import { Carrito, CarritoSchema } from '../schemas/carrito.schema';
 import { PedidoService } from '../services/pedido.service';
 import { PedidoController } from '../controllers/pedido.controller';
-import { PedidoResolver } from '../resolvers/pedido.resolver'; // <-- AGREGA ESTO
+import { 
+  PedidoResolver, 
+  PedidoRepartidorResolver,
+  PedidoPendienteRepartidorResolver,
+  PedidoEnCaminoResolver // ✅ NUEVA IMPORTACIÓN
+} from '../resolvers/pedido.resolver'; 
 
 @Module({
   imports: [
@@ -14,6 +19,12 @@ import { PedidoResolver } from '../resolvers/pedido.resolver'; // <-- AGREGA EST
     ]),
   ],
   controllers: [PedidoController],
-  providers: [PedidoService, PedidoResolver],
+  providers: [
+    PedidoService, 
+    PedidoResolver, 
+    PedidoRepartidorResolver,
+    PedidoPendienteRepartidorResolver,
+    PedidoEnCaminoResolver
+  ],
 })
 export class PedidoModule {}

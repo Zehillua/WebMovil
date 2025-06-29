@@ -159,6 +159,11 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
     const usuario = await this.usuarioModel.findById(userId);
     if (!usuario) throw new UnauthorizedException('Usuario no encontrado');
     return usuario.direccion;
-}
+  }
+
+  // En auth/src/services/usuario.service.ts - AGREGA:
+  async obtenerUsuarioPorId(id: string) {
+    return this.usuarioModel.findById(id);
+  }
   
 }

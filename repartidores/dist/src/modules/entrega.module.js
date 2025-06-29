@@ -6,24 +6,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatsModule = void 0;
+exports.EntregaModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
-const stats_controller_1 = require("../controllers/stats.controller");
-const stats_service_1 = require("../services/stats.service");
-const pedido_realizado_schema_1 = require("../schemas/pedido-realizado.schema");
-let StatsModule = class StatsModule {
+const entrega_controller_1 = require("../controllers/entrega.controller");
+const entrega_service_1 = require("../services/entrega.service");
+const entrega_schema_1 = require("../schemas/entrega.schema");
+let EntregaModule = class EntregaModule {
 };
-exports.StatsModule = StatsModule;
-exports.StatsModule = StatsModule = __decorate([
+exports.EntregaModule = EntregaModule;
+exports.EntregaModule = EntregaModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([
-                { name: 'Usuario', schema: {} },
-                { name: 'PedidoRealizado', schema: pedido_realizado_schema_1.PedidoRealizadoSchema },
+                { name: entrega_schema_1.Entrega.name, schema: entrega_schema_1.EntregaSchema }
             ]),
         ],
-        controllers: [stats_controller_1.StatsController],
-        providers: [stats_service_1.StatsService],
+        controllers: [entrega_controller_1.EntregaController],
+        providers: [entrega_service_1.EntregaService],
     })
-], StatsModule);
+], EntregaModule);

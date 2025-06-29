@@ -13,7 +13,7 @@ const pedido_schema_1 = require("../schemas/pedido.schema");
 const carrito_schema_1 = require("../schemas/carrito.schema");
 const pedido_service_1 = require("../services/pedido.service");
 const pedido_controller_1 = require("../controllers/pedido.controller");
-const pedido_resolver_1 = require("../resolvers/pedido.resolver"); // <-- AGREGA ESTO
+const pedido_resolver_1 = require("../resolvers/pedido.resolver");
 let PedidoModule = class PedidoModule {
 };
 exports.PedidoModule = PedidoModule;
@@ -26,6 +26,12 @@ exports.PedidoModule = PedidoModule = __decorate([
             ]),
         ],
         controllers: [pedido_controller_1.PedidoController],
-        providers: [pedido_service_1.PedidoService, pedido_resolver_1.PedidoResolver],
+        providers: [
+            pedido_service_1.PedidoService,
+            pedido_resolver_1.PedidoResolver,
+            pedido_resolver_1.PedidoRepartidorResolver,
+            pedido_resolver_1.PedidoPendienteRepartidorResolver,
+            pedido_resolver_1.PedidoEnCaminoResolver
+        ],
     })
 ], PedidoModule);

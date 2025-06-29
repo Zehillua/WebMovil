@@ -1,78 +1,74 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, ObjectId } from 'mongoose';
 
 @Schema()
 export class Pedido extends Document {
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Usuario' })
-  idComprador: Types.ObjectId;
-
-  @Prop({ type: Types.ObjectId, ref: 'Local' })
-  idLocal: Types.ObjectId;
-
   @Prop({ required: true })
   nombrePedido: string;
 
-  @Prop({ required: true, enum: ['efectivo', 'tarjeta'] })
-  pago: string;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  idComprador: ObjectId;
 
-  @Prop({ required: true })
-  precioPedido: number;
-
-  @Prop({ type: [{ nombre: String, cantidad: Number }], required: true })
-  comidas: { nombre: string; cantidad: number }[];
-
-  @Prop({ required: true })
-  esDelivery: boolean;
-
-  @Prop({ default: false })
-  estadoRechazado?: boolean;
-
-  @Prop({ default: false })
-  listo?: boolean;
-
-  @Prop({ default: false })
-  enCamino?: boolean;
-
-  @Prop({ default: false })
-  pedidoEntregado?: boolean; 
-
-  @Prop()
-  fechaRechazo?: Date;
+  @Prop({ type: Types.ObjectId, ref: 'Local', required: true })
+  idLocal: ObjectId;
 
   @Prop({ default: false })
   estado: boolean;
 
   @Prop({ default: false })
+  listo: boolean;
+
+  @Prop({ default: false })
+  enCamino: boolean;
+
+  @Prop({ default: false })
+  estadoRechazado: boolean;
+
+  @Prop({ required: true })
+  precioPedido: number;
+
+  @Prop({ required: true })
+  pago: string;
+
+  @Prop({ type: Date, default: Date.now })
+  fechaPedido: Date;
+
+  @Prop({ default: false })
+  esDelivery: boolean;
+
+  @Prop()
+  direccionEntrega: string;
+
+  @Prop([{
+    nombre: { type: String, required: true },
+    cantidad: { type: Number, required: true }
+  }])
+  comidas: { nombre: string; cantidad: number }[];
+
+  @Prop()
+  propina: boolean;
+
+  @Prop()
+  cantidadPropina: number;
+
+  @Prop({ default: false })
   dealer: boolean;
 
-  @Prop({ type: Types.ObjectId, ref: 'Repartidor', default: null })
-  repartidor?: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  repartidor: ObjectId;
 
-// ...resto del schema...
-  @Prop()
-  direccionEntrega?: string;
+  @Prop({ default: false })
+  pedidoEntregado: boolean;
 
   @Prop()
   direccionLocal: string;
 
-  @Prop()
-  numeroCasaDepto?: string;
+  @Prop({ type: Date })
+  fechaRechazo: Date;
 
-  @Prop({ required: true })
-  propina: boolean;
-
-  @Prop()
-  cantidadPropina?: number;
-
-  @Prop({ type: Types.ObjectId, ref: 'Repartidor' })
-  idRepartidor?: Types.ObjectId;
-
-  @Prop({ default: Date.now })
-  fechaPedido?: Date;
-
-  @Prop({ default: 0 })
-  valoracionPedido: number;
+  // ✅ NUEVO CAMPO PARA CÓDIGO DE ENTREGA:
+  @Prop({ type: Number, default: 0 })
+  codigoPedido: number;
 }
-
 
 export const PedidoSchema = SchemaFactory.createForClass(Pedido);

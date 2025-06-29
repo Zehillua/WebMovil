@@ -27,4 +27,5 @@ export class CreatePedidoDto {
   enCamino?: boolean;
   pedidoEntregado?: boolean;
   fechaRechazo?: Date;
+  codigoPedido?: number;
 }
