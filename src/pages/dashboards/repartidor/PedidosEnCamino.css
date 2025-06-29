@@ -1,0 +1,229 @@
+.pedidos-en-camino-root {
+  padding: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+  background: #f7fafd;
+  min-height: 100vh;
+}
+
+.pedidos-en-camino-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pedidos-en-camino-volver {
+  background: #f7fafd;
+  border: none;
+  font-size: 1.5rem;
+  color: #FF9800;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pedidos-en-camino-volver:hover {
+  background: #fff3e0;
+}
+
+.pedidos-en-camino-title {
+  color: #FF9800;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+}
+
+.pedidos-en-camino-loading,
+.pedidos-en-camino-empty {
+  color: #888;
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+}
+
+.pedidos-en-camino-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pedido-en-camino-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-left: 4px solid #FF9800;
+}
+
+.pedido-en-camino-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.pedido-en-camino-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.pedido-en-camino-nombre {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.pedido-en-camino-codigo {
+  background: #FF9800;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.pedido-en-camino-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.seccion-cliente,
+.seccion-local,
+.seccion-pedido,
+.seccion-entrega {
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+
+.seccion-cliente {
+  background-color: #e8f5e8;
+  border-left-color: #4caf50;
+}
+
+.seccion-local {
+  background-color: #fff3e0;
+  border-left-color: #ff9800;
+}
+
+.seccion-pedido {
+  background-color: #f3e5f5;
+  border-left-color: #9c27b0;
+}
+
+.seccion-entrega {
+  background-color: #e3f2fd;
+  border-left-color: #2196F3;
+}
+
+.seccion-cliente h4,
+.seccion-local h4,
+.seccion-pedido h4,
+.seccion-entrega h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.seccion-cliente span,
+.seccion-local span,
+.seccion-pedido span {
+  display: block;
+  margin: 0.3rem 0;
+  color: #555;
+}
+
+.comidas-lista {
+  margin-top: 0.5rem;
+}
+
+.comida-item {
+  margin-left: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+  padding: 0.2rem 0;
+}
+
+.codigo-input-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.codigo-input {
+  padding: 0.8rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  width: 100px;
+  letter-spacing: 2px;
+  transition: border-color 0.2s;
+}
+
+.codigo-input:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.btn-entregar {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.3s;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-entregar:hover:not(:disabled) {
+  background: linear-gradient(135deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+}
+
+.btn-entregar:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .pedidos-en-camino-root {
+    padding: 0.5rem;
+  }
+  
+  .pedido-en-camino-card {
+    padding: 1rem;
+  }
+  
+  .pedido-en-camino-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  
+  .codigo-input-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

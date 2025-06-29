@@ -1,4 +1,3 @@
-import React from 'react';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './apollo/client';
 import AppRouter from './routes/AppRouter';

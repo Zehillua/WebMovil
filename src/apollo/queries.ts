@@ -1,5 +1,18 @@
 import { gql } from '@apollo/client';
 
+
+export const ACEPTAR_PEDIDO_REPARTIDOR = gql`
+  mutation AceptarPedidoRepartidor($id: String!, $idRepartidor: String!) {
+    aceptarPedidoRepartidor(id: $id, idRepartidor: $idRepartidor) {
+      _id
+      dealer
+      repartidor
+    }
+  }
+`;
+
+
+
 export const GET_PEDIDOS_USUARIO = gql`
   query PedidosPorUsuario($userId: String!) {
     pedidosPorUsuario(userId: $userId) {
@@ -7,12 +20,14 @@ export const GET_PEDIDOS_USUARIO = gql`
       nombrePedido
       estado
       listo
+      enCamino
       estadoRechazado
       precioPedido
       pago
       fechaPedido
       esDelivery
       direccionEntrega
+      codigoPedido
       comidas {
         nombre
         cantidad
@@ -24,7 +39,14 @@ export const GET_PEDIDOS_USUARIO = gql`
       propina
       cantidadPropina
       dealer
-      repartidor
+      repartidor {
+        _id
+        usuarioRepartidor
+        vehiculo
+        patente
+        valoracion
+        telefono
+      }
     }
   }
 `;
@@ -53,18 +75,25 @@ export const GET_PEDIDOS_LOCAL = gql`
   }
 `;
 
-export const GET_PEDIDOS_DELIVERY = gql`
+export const GET_PEDIDOS_DELIVERY_COMPLETO = gql`
   query PedidosDeliveryDisponibles {
     pedidosDeliveryDisponibles {
       _id
       nombrePedido
-      direccionEntrega
       precioPedido
+      direccionEntrega
       propina
       cantidadPropina
       comidas {
         nombre
         cantidad
+      }
+      usuario {
+        nombre
+        apellido
+        nombreUsuario
+        direccion
+        numeroCasaDepto
       }
       local {
         nombreLocal
@@ -97,6 +126,90 @@ export const MARCAR_PEDIDO_LISTO = gql`
     marcarPedidoListo(id: $id) {
       _id
       listo
+    }
+  }
+`;
+
+export const GET_PEDIDOS_PENDIENTES_REPARTIDOR = gql`
+  query PedidosPendientesRepartidor($idRepartidor: String!) {
+    pedidosPendientesRepartidor(idRepartidor: $idRepartidor) {
+      _id
+      nombrePedido
+      precioPedido
+      direccionEntrega
+      propina
+      cantidadPropina
+      enCamino
+      pedidoEntregado
+      comidas {
+        nombre
+        cantidad
+      }
+      usuario {
+        nombre
+        apellido
+        nombreUsuario
+        direccion
+        numeroCasaDepto
+      }
+      local {
+        nombreLocal
+        direccion
+      }
+    }
+  }
+`;
+
+// NUEVA MUTATION PARA MARCAR EN CAMINO:
+export const MARCAR_PEDIDO_EN_CAMINO = gql`
+  mutation MarcarPedidoEnCamino($id: String!) {
+    marcarPedidoEnCamino(id: $id) {
+      _id
+      enCamino
+    }
+  }
+`;
+
+
+// NUEVA QUERY PARA PEDIDOS EN CAMINO:
+export const GET_PEDIDOS_EN_CAMINO_REPARTIDOR = gql`
+  query PedidosEnCaminoRepartidor($idRepartidor: String!) {
+    pedidosEnCaminoRepartidor(idRepartidor: $idRepartidor) {
+      _id
+      nombrePedido
+      precioPedido
+      direccionEntrega
+      propina
+      cantidadPropina
+      enCamino
+      pedidoEntregado
+      codigoPedido
+      comidas {
+        nombre
+        cantidad
+      }
+      usuario {
+        nombre
+        apellido
+        nombreUsuario
+        direccion
+        numeroCasaDepto
+      }
+      local {
+        nombreLocal
+        direccion
+      }
+    }
+  }
+`;
+
+// NUEVA MUTATION PARA ENTREGAR PEDIDO:
+export const ENTREGAR_PEDIDO = gql`
+  mutation EntregarPedido($id: String!, $codigoPedido: Int!) {
+    entregarPedido(id: $id, codigoPedido: $codigoPedido) {
+      _id
+      pedidoEntregado
+      codigoPedido
     }
   }
 `;

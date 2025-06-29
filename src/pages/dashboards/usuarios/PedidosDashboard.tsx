@@ -4,7 +4,6 @@ import { useQuery, useMutation } from '@apollo/client';
 import { GET_PEDIDOS_USUARIO, RECHAZAR_PEDIDO } from '../../../apollo/queries';
 import './PedidosDashboard.css';
 
-// Define las interfaces correctamente
 interface Comida {
   nombre: string;
   cantidad: number;
@@ -13,6 +12,16 @@ interface Comida {
 interface Local {
   nombreLocal: string;
   direccion: string;
+}
+
+// NUEVA INTERFAZ para el repartidor:
+interface Repartidor {
+  _id: string;
+  usuarioRepartidor: string;
+  vehiculo: string;
+  patente: string;
+  valoracion: number;
+  telefono?: string;
 }
 
 interface Pedido {
@@ -29,16 +38,17 @@ interface Pedido {
   propina?: boolean;
   cantidadPropina?: number;
   dealer?: boolean;
-  repartidor?: string | null;
+  repartidor?: Repartidor | null; // CAMBIAR de string a Repartidor
   estadoRechazado?: boolean;
   listo?: boolean;
+  enCamino?: boolean;
+  codigoPedido?: number;
 }
 
 const PedidosDashboard: React.FC = () => {
   const [userId, setUserId] = useState<string>('');
   const navigate = useNavigate();
 
-  // GraphQL Query - Reemplaza el fetch
   const { data, loading, error, refetch } = useQuery(GET_PEDIDOS_USUARIO, {
     variables: { userId },
     skip: !userId,
@@ -46,7 +56,6 @@ const PedidosDashboard: React.FC = () => {
     errorPolicy: 'all'
   });
 
-  // GraphQL Mutation - Reemplaza handleCancelarPedido
   const [rechazarPedidoMutation] = useMutation(RECHAZAR_PEDIDO, {
     onCompleted: () => {
       refetch();
@@ -138,19 +147,23 @@ const PedidosDashboard: React.FC = () => {
                   <span className={`pedido-estado pedido-estado-${
                     pedido.estadoRechazado
                       ? 'rechazado'
-                      : pedido.listo
-                        ? 'listo'
-                        : pedido.estado
-                          ? 'preparando'
-                          : 'en-espera'
+                      : pedido.enCamino  // ✅ NUEVA PRIORIDAD
+                        ? 'en-camino'
+                        : pedido.listo
+                          ? 'listo'
+                          : pedido.estado
+                            ? 'preparando'
+                            : 'en-espera'
                   }`}>
                     {pedido.estadoRechazado
                       ? 'Pedido Rechazado'
-                      : pedido.listo
-                        ? 'Pedido Listo'
-                        : pedido.estado
-                          ? 'Preparando pedido'
-                          : 'En espera'}
+                      : pedido.enCamino  // ✅ NUEVA PRIORIDAD
+                        ? 'En Camino 🚚'
+                        : pedido.listo
+                          ? 'Pedido Listo'
+                          : pedido.estado
+                            ? 'Preparando pedido'
+                            : 'En espera'}
                   </span>
                   
                   {pedido.estadoRechazado && (
@@ -176,31 +189,19 @@ const PedidosDashboard: React.FC = () => {
               </div>
               
               <div className="pedido-info">
-                <span>
-                  <b>Fecha:</b> {new Date(pedido.fechaPedido).toLocaleString()}
-                </span>
-                <span>
-                  <b>Total:</b> ${pedido.precioPedido.toLocaleString()}
-                </span>
-                <span>
-                  <b>Método:</b> {pedido.pago}
-                </span>
+                <span><b>Fecha:</b> {new Date(pedido.fechaPedido).toLocaleString()}</span>
+                <span><b>Total:</b> ${pedido.precioPedido.toLocaleString()}</span>
+                <span><b>Método:</b> {pedido.pago}</span>
                 
                 {pedido.local?.nombreLocal && (
-                  <span>
-                    <b>Local:</b> {pedido.local.nombreLocal}
-                  </span>
+                  <span><b>Local:</b> {pedido.local.nombreLocal}</span>
                 )}
                 {pedido.local?.direccion && (
-                  <span>
-                    <b>Dirección local:</b> {pedido.local.direccion}
-                  </span>
+                  <span><b>Dirección local:</b> {pedido.local.direccion}</span>
                 )}
                 
                 {pedido.esDelivery && pedido.direccionEntrega && (
-                  <span>
-                    <b>Dirección entrega:</b> {pedido.direccionEntrega}
-                  </span>
+                  <span><b>Dirección entrega:</b> {pedido.direccionEntrega}</span>
                 )}
                 
                 {pedido.comidas && pedido.comidas.length > 0 && (
@@ -215,31 +216,45 @@ const PedidosDashboard: React.FC = () => {
                 )}
                 
                 {pedido.propina && pedido.cantidadPropina && (
-                  <span>
-                    <b>Propina:</b> ${pedido.cantidadPropina}
-                  </span>
+                  <span><b>Propina:</b> ${pedido.cantidadPropina}</span>
                 )}
-                
                 <span>
                   <b>Estado:</b> {
                     pedido.estadoRechazado
                       ? 'Rechazado'
-                      : pedido.listo
-                        ? 'Listo para recoger/entrega'
-                        : pedido.estado
-                          ? 'Preparando'
-                          : 'En espera'
+                      : pedido.enCamino  // ✅ NUEVA PRIORIDAD
+                        ? 'En camino - Repartidor viene hacia ti'
+                        : pedido.listo
+                          ? 'Listo para recoger/entrega'
+                          : pedido.estado
+                            ? 'Preparando'
+                            : 'En espera'
                   }
-                </span>
-                
-                <span>
-                  <b>Repartidor:</b> {pedido.dealer ? 'En camino' : 'Sin asignar'}
-                </span>
-                
-                {pedido.repartidor && (
-                  <span>
-                    <b>ID Repartidor:</b> {pedido.repartidor}
-                  </span>
+                </span>                  
+                {/* INFORMACIÓN DETALLADA DEL REPARTIDOR: */}
+                {pedido.dealer && pedido.repartidor ? (
+                  <div className="repartidor-info">
+                    <b>🚗 Repartidor asignado:</b>
+                    <div className="repartidor-detalles">
+                      <span><b>Nombre:</b> {pedido.repartidor.usuarioRepartidor}</span>
+                      <span><b>Vehículo:</b> {pedido.repartidor.vehiculo}</span>
+                      <span><b>Patente:</b> {pedido.repartidor.patente}</span>
+                      <span><b>⭐ Valoración:</b> {pedido.repartidor.valoracion.toFixed(1)}/5</span>
+                      {pedido.repartidor.telefono && (
+                        <span><b>📱 Teléfono:</b> {pedido.repartidor.telefono}</span>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <span><b>Repartidor:</b> {pedido.dealer ? 'En camino' : 'Sin asignar'}</span>
+                )}
+                {/* MOSTRAR CÓDIGO DE ENTREGA CUANDO ESTÁ EN CAMINO */}
+                {pedido.enCamino && pedido.codigoPedido && pedido.codigoPedido > 0 && (
+                  <div className="codigo-entrega-info">
+                    <b>🔑 Código de entrega:</b>
+                    <span className="codigo-entrega-numero">{pedido.codigoPedido}</span>
+                    <small>Proporciona este código al repartidor cuando llegue</small>
+                  </div>
                 )}
               </div>
             </div>

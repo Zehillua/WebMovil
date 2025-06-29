@@ -1,0 +1,230 @@
+.pedidos-pendientes-root {
+  padding: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+  background: #f7fafd;
+  min-height: 100vh;
+}
+
+.pedidos-pendientes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pedidos-pendientes-volver {
+  background: #f7fafd;
+  border: none;
+  font-size: 1.5rem;
+  color: #2196F3;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pedidos-pendientes-volver:hover {
+  background: #e3f2fd;
+}
+
+.pedidos-pendientes-title {
+  color: #2196F3;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+}
+
+.pedidos-pendientes-loading,
+.pedidos-pendientes-empty {
+  color: #888;
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+}
+
+.pedidos-pendientes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pedido-pendiente-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pedido-pendiente-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.pedido-pendiente-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.pedido-pendiente-nombre {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.pedido-pendiente-estado {
+  font-weight: bold;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.pedido-pendiente-estado.pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffc107;
+}
+
+.pedido-pendiente-estado.en-camino {
+  background-color: #cce5ff;
+  color: #004085;
+  border: 1px solid #2196F3;
+}
+
+.pedido-pendiente-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.seccion-cliente,
+.seccion-local,
+.seccion-pedido {
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+
+.seccion-cliente {
+  background-color: #e8f5e8;
+  border-left-color: #4caf50;
+}
+
+.seccion-local {
+  background-color: #fff3e0;
+  border-left-color: #ff9800;
+}
+
+.seccion-pedido {
+  background-color: #f3e5f5;
+  border-left-color: #9c27b0;
+}
+
+.seccion-cliente h4,
+.seccion-local h4,
+.seccion-pedido h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.seccion-cliente span,
+.seccion-local span,
+.seccion-pedido span {
+  display: block;
+  margin: 0.3rem 0;
+  color: #555;
+}
+
+.comidas-lista {
+  margin-top: 0.5rem;
+}
+
+.comida-item {
+  margin-left: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+  padding: 0.2rem 0;
+}
+
+.btn-en-camino {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.3s;
+  align-self: flex-start;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-en-camino:hover {
+  background: linear-gradient(135deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+}
+
+.estado-en-camino {
+  background-color: #e3f2fd;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #2196F3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.estado-en-camino span {
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.btn-entregado {
+  background: linear-gradient(135deg, #2196F3, #1976d2);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  align-self: flex-start;
+  box-shadow: 0 3px 6px rgba(33, 150, 243, 0.3);
+}
+
+.btn-entregado:hover {
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.4);
+}
+
+@media (max-width: 768px) {
+  .pedidos-pendientes-root {
+    padding: 0.5rem;
+  }
+  
+  .pedido-pendiente-card {
+    padding: 1rem;
+  }
+  
+  .pedido-pendiente-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}
