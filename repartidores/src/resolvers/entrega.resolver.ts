@@ -1,6 +1,6 @@
 import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
 import { EntregaService } from '../services/entrega.service';
-import { EntregaType, EstadisticasType } from '../types/entrega.types';
+import { EntregaType, EstadisticasType, RepartidorStatsType } from '../types/entrega.types';
 import { Entrega } from '../schemas/entrega.schema';
 
 @Resolver(() => EntregaType)
@@ -39,5 +39,11 @@ export class EntregaResolver {
   @Query(() => Number)
   async promedioValoracionRepartidor(@Args('repartidorId') repartidorId: string): Promise<number> {
     return this.entregaService.calcularPromedioValoracion(repartidorId);
+  }
+
+  // ✅ NUEVO QUERY PARA TOP REPARTIDORES
+  @Query(() => [RepartidorStatsType])
+  async topRepartidoresStats(): Promise<any[]> {
+    return this.entregaService.obtenerTopRepartidoresStats();
   }
 }

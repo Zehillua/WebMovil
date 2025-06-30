@@ -39,11 +39,36 @@ export class Pedido extends Document {
   @Prop()
   direccionEntrega: string;
 
+  // ✅ COMIDAS (EXISTENTE)
   @Prop([{
     nombre: { type: String, required: true },
-    cantidad: { type: Number, required: true }
+    cantidad: { type: Number, required: true },
+    tipo: { type: String, default: 'comida' }
   }])
-  comidas: { nombre: string; cantidad: number }[];
+  comidas: { 
+    nombre: string; 
+    cantidad: number;
+    tipo?: string;
+  }[];
+
+  // ✅ NUEVO: PROMOCIONES EN EL PEDIDO
+  @Prop([{
+    nombrePromocion: { type: String, required: true },
+    cantidad: { type: Number, required: true },
+    precio: { type: Number, required: true },
+    comidas: [{
+      nombre: { type: String, required: true },
+      cantidad: { type: Number, required: true }
+    }],
+    tipo: { type: String, default: 'promocion' }
+  }])
+  promociones: {
+    nombrePromocion: string;
+    cantidad: number;
+    precio: number;
+    comidas: { nombre: string; cantidad: number }[];
+    tipo?: string;
+  }[];
 
   @Prop()
   propina: boolean;
@@ -57,7 +82,6 @@ export class Pedido extends Document {
   @Prop({ type: Types.ObjectId, ref: 'Usuario' })
   repartidor?: Types.ObjectId;
 
-  // ✅ AGREGAR CAMPO PARA DATOS COMPLETOS DEL REPARTIDOR:
   @Prop({
     type: {
       _id: { type: String },
@@ -88,7 +112,6 @@ export class Pedido extends Document {
   @Prop({ type: Date })
   fechaRechazo: Date;
 
-  // ✅ NUEVO CAMPO PARA CÓDIGO DE ENTREGA:
   @Prop({ type: Number, default: 0 })
   codigoPedido: number;
 }

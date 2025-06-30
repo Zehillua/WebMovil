@@ -16,39 +16,60 @@ exports.CarritoController = void 0;
 const common_1 = require("@nestjs/common");
 const carrito_service_1 = require("../services/carrito.service");
 const create_comidaCarrito_dto_1 = require("../dtos/create-comidaCarrito.dto");
+const create_promocionCarrito_dto_1 = require("../dtos/create-promocionCarrito.dto");
 const jwt_auth_guard_1 = require("../guards/jwt-auth.guard");
 let CarritoController = class CarritoController {
     constructor(carritoService) {
         this.carritoService = carritoService;
     }
-    // Agregar comida al carrito de un usuario
+    // ✅ MÉTODO EXISTENTE PARA COMIDAS
     async agregarComida(idComprador, dto, req) {
-        // Seguridad: solo el dueño puede modificar su carrito
         if (req.user?.sub !== idComprador) {
             throw new common_1.UnauthorizedException('No puedes modificar el carrito de otro usuario');
         }
         return this.carritoService.agregarComidaAlCarrito(idComprador, dto);
     }
-    //Calcular el total del carrito de un usuario
+    // ✅ NUEVO MÉTODO PARA PROMOCIONES
+    async agregarPromocion(idComprador, dto, req) {
+        if (req.user?.sub !== idComprador) {
+            throw new common_1.UnauthorizedException('No puedes modificar el carrito de otro usuario');
+        }
+        return this.carritoService.agregarPromocionAlCarrito(idComprador, dto);
+    }
+    // ✅ OBTENER TOTAL (ACTUALIZADO)
     async obtenerTotal(idComprador, req) {
         if (req.user?.sub !== idComprador) {
             throw new common_1.UnauthorizedException('No puedes ver el carrito de otro usuario');
         }
         return this.carritoService.calcularTotalCarrito(idComprador);
     }
-    // Eliminar un item del carrito
+    // ✅ OBTENER CARRITO COMPLETO
+    async obtenerCarrito(idComprador, req) {
+        if (req.user?.sub !== idComprador) {
+            throw new common_1.UnauthorizedException('No puedes ver el carrito de otro usuario');
+        }
+        return this.carritoService.obtenerCarrito(idComprador);
+    }
+    // ✅ ELIMINAR COMIDA
     async eliminarItem(idComprador, itemId, req) {
         if (req.user?.sub !== idComprador) {
             throw new common_1.UnauthorizedException('No puedes modificar el carrito de otro usuario');
         }
         return this.carritoService.eliminarItem(idComprador, itemId);
     }
-    // Vaciar el carrito
-    async obtenerCarrito(idComprador, req) {
+    // ✅ NUEVO: ELIMINAR PROMOCIÓN
+    async eliminarPromocion(idComprador, promocionId, req) {
         if (req.user?.sub !== idComprador) {
-            throw new common_1.UnauthorizedException('No puedes ver el carrito de otro usuario');
+            throw new common_1.UnauthorizedException('No puedes modificar el carrito de otro usuario');
         }
-        return this.carritoService.obtenerCarrito(idComprador);
+        return this.carritoService.eliminarPromocion(idComprador, promocionId);
+    }
+    // ✅ VACIAR CARRITO
+    async vaciarCarrito(idComprador, req) {
+        if (req.user?.sub !== idComprador) {
+            throw new common_1.UnauthorizedException('No puedes modificar el carrito de otro usuario');
+        }
+        return this.carritoService.vaciarCarrito(idComprador);
     }
 };
 exports.CarritoController = CarritoController;
@@ -64,6 +85,16 @@ __decorate([
 ], CarritoController.prototype, "agregarComida", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)(':idComprador/agregar-promocion'),
+    __param(0, (0, common_1.Param)('idComprador')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_promocionCarrito_dto_1.CreatePromocionCarritoDto, Object]),
+    __metadata("design:returntype", Promise)
+], CarritoController.prototype, "agregarPromocion", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':idComprador/total'),
     __param(0, (0, common_1.Param)('idComprador')),
     __param(1, (0, common_1.Req)()),
@@ -71,6 +102,15 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], CarritoController.prototype, "obtenerTotal", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)(':idComprador'),
+    __param(0, (0, common_1.Param)('idComprador')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], CarritoController.prototype, "obtenerCarrito", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':idComprador/item/:itemId'),
@@ -83,13 +123,23 @@ __decorate([
 ], CarritoController.prototype, "eliminarItem", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Get)(':idComprador'),
+    (0, common_1.Delete)(':idComprador/promocion/:promocionId'),
+    __param(0, (0, common_1.Param)('idComprador')),
+    __param(1, (0, common_1.Param)('promocionId')),
+    __param(2, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], CarritoController.prototype, "eliminarPromocion", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)(':idComprador/vaciar'),
     __param(0, (0, common_1.Param)('idComprador')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
-], CarritoController.prototype, "obtenerCarrito", null);
+], CarritoController.prototype, "vaciarCarrito", null);
 exports.CarritoController = CarritoController = __decorate([
     (0, common_1.Controller)('carrito'),
     __metadata("design:paramtypes", [carrito_service_1.CarritoService])

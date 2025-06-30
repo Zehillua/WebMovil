@@ -40,6 +40,10 @@ let EntregaResolver = class EntregaResolver {
     async promedioValoracionRepartidor(repartidorId) {
         return this.entregaService.calcularPromedioValoracion(repartidorId);
     }
+    // ✅ NUEVO QUERY PARA TOP REPARTIDORES
+    async topRepartidoresStats() {
+        return this.entregaService.obtenerTopRepartidoresStats();
+    }
 };
 exports.EntregaResolver = EntregaResolver;
 __decorate([
@@ -78,6 +82,12 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], EntregaResolver.prototype, "promedioValoracionRepartidor", null);
+__decorate([
+    (0, graphql_1.Query)(() => [entrega_types_1.RepartidorStatsType]),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], EntregaResolver.prototype, "topRepartidoresStats", null);
 exports.EntregaResolver = EntregaResolver = __decorate([
     (0, graphql_1.Resolver)(() => entrega_types_1.EntregaType),
     __metadata("design:paramtypes", [entrega_service_1.EntregaService])

@@ -111,6 +111,20 @@ __decorate([
     __metadata("design:type", Object)
 ], PedidoRealizado.prototype, "datosLocal", void 0);
 __decorate([
+    (0, mongoose_1.Prop)([{
+            nombrePromocion: { type: String, required: true },
+            cantidad: { type: Number, required: true },
+            precio: { type: Number, required: true },
+            comidas: [{
+                    nombre: { type: String, required: true },
+                    cantidad: { type: Number, required: true },
+                    precioOriginal: { type: Number, required: true }
+                }],
+            tipo: { type: String, default: 'promocion' }
+        }]),
+    __metadata("design:type", Array)
+], PedidoRealizado.prototype, "promociones", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.Mixed }),
     __metadata("design:type", Object)
 ], PedidoRealizado.prototype, "datosRepartidor", void 0);

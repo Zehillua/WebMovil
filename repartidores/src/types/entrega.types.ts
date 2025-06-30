@@ -47,7 +47,6 @@ export class EntregaType {
   @Field()
   fechaEntrega: Date;
 
-  // ✅ CAMPOS DE VALORACIÓN:
   @Field(() => Float, { defaultValue: 0 })
   valoracionRecibida: number;
 
@@ -86,4 +85,35 @@ export class EstadisticasType {
 
   @Field(() => Float, { defaultValue: 0 })
   valoracionPromedio: number;
+}
+
+// ✅ TIPO PARA TOP REPARTIDORES
+@ObjectType()
+export class RepartidorStatsType {
+  @Field()
+  repartidorId: string;
+
+  @Field()
+  nombreRepartidor: string;
+
+  @Field(() => Int)
+  cantidadEntregas: number;
+
+  @Field(() => Float)
+  totalPropinas: number;
+
+  @Field(() => Float)
+  totalGanancias: number;
+
+  @Field(() => Float)
+  valoracionPromedio: number;
+
+  @Field({ nullable: true })
+  vehiculo?: string;
+
+  @Field({ nullable: true })
+  patente?: string;
+
+  @Field(() => Float)
+  promedioPropinasPorEntrega: number;
 }

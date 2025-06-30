@@ -66,10 +66,24 @@ __decorate([
 __decorate([
     (0, mongoose_1.Prop)([{
             nombre: { type: String, required: true },
-            cantidad: { type: Number, required: true }
+            cantidad: { type: Number, required: true },
+            tipo: { type: String, default: 'comida' }
         }]),
     __metadata("design:type", Array)
 ], Pedido.prototype, "comidas", void 0);
+__decorate([
+    (0, mongoose_1.Prop)([{
+            nombrePromocion: { type: String, required: true },
+            cantidad: { type: Number, required: true },
+            precio: { type: Number, required: true },
+            comidas: [{
+                    nombre: { type: String, required: true },
+                    cantidad: { type: Number, required: true }
+                }],
+            tipo: { type: String, default: 'promocion' }
+        }]),
+    __metadata("design:type", Array)
+], Pedido.prototype, "promociones", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Boolean)

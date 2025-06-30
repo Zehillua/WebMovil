@@ -11,9 +11,12 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const jwt_strategy_1 = require("./src/strategies/jwt.strategy");
 const comida_schema_1 = require("./src/schemas/comida.schema");
+const promocion_schema_1 = require("./src/schemas/promocion.schema");
 const comida_service_1 = require("./src/services/comida.service");
+const promocion_service_1 = require("./src/services/promocion.service");
 const config_1 = require("@nestjs/config");
 const comidas_controller_1 = require("./src/controllers/comidas.controller");
+const promociones_controller_1 = require("./src/controllers/promociones.controller");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,9 +34,10 @@ exports.AppModule = AppModule = __decorate([
             }),
             mongoose_1.MongooseModule.forFeature([
                 { name: comida_schema_1.Comida.name, schema: comida_schema_1.ComidaSchema },
+                { name: promocion_schema_1.Promocion.name, schema: promocion_schema_1.PromocionSchema },
             ]),
         ],
-        controllers: [comidas_controller_1.ComidaController],
-        providers: [comida_service_1.ComidaService, jwt_strategy_1.JwtStrategy],
+        controllers: [comidas_controller_1.ComidaController, promociones_controller_1.PromocionesController],
+        providers: [comida_service_1.ComidaService, promocion_service_1.PromocionService, jwt_strategy_1.JwtStrategy],
     })
 ], AppModule);

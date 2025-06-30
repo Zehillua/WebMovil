@@ -10,12 +10,29 @@ export class LocatarioService {
   ) {}
 
   async obtenerLocatarios() {
-    // Solo devuelve _id y nombreLocal
-    return this.usuarioModel.find(
-      { tipoUsuario: 'locatario' },
-      { _id: 1, nombreLocal: 1 }
-    ).lean();
-  }
+  // ✅ DEVOLVER MÁS CAMPOS PARA EL DASHBOARD
+  return this.usuarioModel.find(
+    { tipoUsuario: 'locatario' },
+    { 
+      _id: 1, 
+      nombreLocal: 1,
+      numeroLocal: 1,
+      direccion: 1,
+      valoracion: 1,
+      // Agregar campos que tengas en el schema y necesites mostrar
+    }
+  ).lean().exec().then(locales => 
+    locales.map(local => ({
+      ...local,
+      // Asegurar valores por defecto para el frontend
+      valoracion: local.valoracion || 0,
+      tiempoEntrega: '30-45 min', // Valor por defecto
+      categorias: [],
+      estado: 'abierto',
+      descripcion: `Local de comida - ${local.nombreLocal}`
+    }))
+  );
+}
 
   async obtenerLocatarioPorId(id: string) {
   return this.usuarioModel.findById(id);

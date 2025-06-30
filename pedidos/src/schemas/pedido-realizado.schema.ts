@@ -85,6 +85,29 @@ export class PedidoRealizado extends Document {
     direccion: string;
   };
 
+   @Prop([{
+    nombrePromocion: { type: String, required: true },
+    cantidad: { type: Number, required: true },
+    precio: { type: Number, required: true },
+    comidas: [{
+      nombre: { type: String, required: true },
+      cantidad: { type: Number, required: true },
+      precioOriginal: { type: Number, required: true }
+    }],
+    tipo: { type: String, default: 'promocion' }
+  }])
+  promociones: {
+    nombrePromocion: string;
+    cantidad: number;
+    precio: number;
+    comidas: {
+      nombre: string;
+      cantidad: number;
+      precioOriginal: number;
+    }[];
+    tipo: string;
+  }[];
+
   @Prop({ type: MongooseSchema.Types.Mixed })
   datosRepartidor: {
     nombreUsuario: string;

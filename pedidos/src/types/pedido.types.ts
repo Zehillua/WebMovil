@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID, Int, Float, InputType } from '@nestjs/graphql';
+import { Max, Min } from 'class-validator';
 
 // ✅ 1. DEFINIR TIPOS BÁSICOS PRIMERO:
 @ObjectType()
@@ -130,6 +131,33 @@ export class DatosRepartidorType {
   valoracion: number;
 }
 
+@ObjectType()
+export class ComidaPromocionType {
+  @Field()
+  nombre: string;
+
+  @Field(() => Int)
+  cantidad: number;
+}
+
+@ObjectType()
+export class PromocionPedidoType {
+  @Field()
+  nombrePromocion: string;
+
+  @Field(() => Int)
+  cantidad: number;
+
+  @Field(() => Float)
+  precio: number;
+
+  @Field(() => [ComidaPromocionType])
+  comidas: ComidaPromocionType[];
+
+  @Field({ defaultValue: 'promocion' })
+  tipo: string;
+}
+
 // ✅ 5. AHORA DEFINIR TIPOS DE PEDIDO (que usan los anteriores):
 @ObjectType()
 export class PedidoType {
@@ -168,6 +196,10 @@ export class PedidoType {
 
   @Field(() => [ComidaType])
   comidas: ComidaType[];
+
+  // ✅ SOLO AGREGAR ESTA LÍNEA
+  @Field(() => [PromocionPedidoType], { defaultValue: [] })
+  promociones: PromocionPedidoType[];
 
   @Field(() => LocalType)
   local: LocalType;
@@ -209,6 +241,10 @@ export class PedidoRepartidorType {
   @Field(() => [ComidaType])
   comidas: ComidaType[];
 
+  // ✅ SOLO AGREGAR ESTA LÍNEA
+  @Field(() => [PromocionPedidoType], { defaultValue: [] })
+  promociones: PromocionPedidoType[];
+
   @Field({ nullable: true })
   propina?: boolean;
 
@@ -245,6 +281,10 @@ export class PedidoPendienteRepartidorType {
   @Field(() => [ComidaType])
   comidas: ComidaType[];
 
+  // ✅ SOLO AGREGAR ESTA LÍNEA
+  @Field(() => [PromocionPedidoType], { defaultValue: [] })
+  promociones: PromocionPedidoType[];
+
   @Field()
   enCamino: boolean;
 
@@ -280,6 +320,10 @@ export class PedidoEnCaminoType {
 
   @Field(() => [ComidaType])
   comidas: ComidaType[];
+
+   // ✅ SOLO AGREGAR ESTA LÍNEA
+  @Field(() => [PromocionPedidoType], { defaultValue: [] })
+  promociones: PromocionPedidoType[];
 
   @Field(() => Boolean, { defaultValue: false })
   enCamino: boolean;
@@ -339,6 +383,10 @@ export class PedidoRealizadoType {
   @Field(() => [ComidaType])
   comidas: ComidaType[];
 
+  // ✅ AGREGAR ESTA LÍNEA - PROMOCIONES PARA PEDIDOS REALIZADOS
+  @Field(() => [PromocionRealizadaType], { defaultValue: [] })
+  promociones: PromocionRealizadaType[];
+
   @Field()
   propina: boolean;
 
@@ -377,15 +425,52 @@ export class PedidoRealizadoType {
   datosRepartidor: DatosRepartidorType;
 }
 
+
+@ObjectType()
+export class ComidaPromoRealizadaType {
+  @Field()
+  nombre: string;
+
+  @Field(() => Int)
+  cantidad: number;
+
+  @Field(() => Float)
+  precioOriginal: number;
+}
+
+@ObjectType()
+export class PromocionRealizadaType {
+  @Field()
+  nombrePromocion: string;
+
+  @Field(() => Int)
+  cantidad: number;
+
+  @Field(() => Float)
+  precio: number;
+
+  @Field(() => [ComidaPromoRealizadaType])
+  comidas: ComidaPromoRealizadaType[];
+
+  @Field({ defaultValue: 'promocion' })
+  tipo: string;
+}
+
 // ✅ 7. INPUT TYPES AL FINAL:
 @InputType()
 export class ValoracionInput {
-  @Field(() => Float, { description: 'Valoración del pedido (0-5)' })
+  @Field(() => Float)
+  @Min(0.5, { message: 'La valoración del pedido debe ser al menos 0.5' })
+  @Max(5, { message: 'La valoración del pedido no puede ser mayor a 5' })
   valoracionPedido: number;
 
-  @Field(() => Float, { description: 'Valoración del delivery (0-5)' })
+  @Field(() => Float)
+  @Min(0.5, { message: 'La valoración del delivery debe ser al menos 0.5' })
+  @Max(5, { message: 'La valoración del delivery no puede ser mayor a 5' })
   valoracionDelivery: number;
 
-  @Field(() => Float, { description: 'Valoración del local (0-5)' })
+  @Field(() => Float)
+  @Min(0.5, { message: 'La valoración del local debe ser al menos 0.5' })
+  @Max(5, { message: 'La valoración del local no puede ser mayor a 5' })
   valoracionLocal: number;
 }

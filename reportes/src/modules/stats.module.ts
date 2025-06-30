@@ -8,13 +8,13 @@ import { VentaReporte, VentaReporteSchema } from '../schemas/venta-reporte.schem
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: 'Usuario', schema: {} }, // Schema simple para usuarios
-      { name: PedidoRealizado.name, schema: PedidoRealizadoSchema }, // ✅ CORREGIDO
-      { name: VentaReporte.name, schema: VentaReporteSchema }, // ✅ AGREGADO
+      { name: PedidoRealizado.name, schema: PedidoRealizadoSchema },
+      { name: VentaReporte.name, schema: VentaReporteSchema },
+      // ✅ NO INCLUIR UsuarioModel PORQUE NO EXISTE EN ESTE MICROSERVICIO
     ]),
   ],
   controllers: [StatsController],
   providers: [StatsService],
-  exports: [StatsService], // ✅ EXPORTAR para otros módulos
+  exports: [StatsService],
 })
 export class StatsModule {}

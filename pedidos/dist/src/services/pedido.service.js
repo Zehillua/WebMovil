@@ -212,8 +212,8 @@ let PedidoService = class PedidoService {
         return this.pedidoModel.findByIdAndUpdate(id, { listo: true }, { new: true });
     }
     // ✅ VERSIÓN SIMPLIFICADA de aceptarPorRepartidor:
-    async aceptarPorRepartidor(id, idRepartidor) {
-        console.log(`🚚 Repartidor ${idRepartidor} aceptando pedido ${id}`);
+    async aceptarPedidoRepartidor(id, idRepartidor) {
+        console.log(`🚗 Service: aceptarPedidoRepartidor ${id} por ${idRepartidor}`);
         try {
             const datosRepartidor = await this.obtenerDatosRepartidor(idRepartidor);
             const pedidoActualizado = await this.pedidoModel.findByIdAndUpdate(id, {
@@ -229,11 +229,16 @@ let PedidoService = class PedidoService {
                     telefono: datosRepartidor.telefono
                 }
             }, { new: true });
+            if (!pedidoActualizado) {
+                throw new Error('Pedido no encontrado');
+            }
+            console.log(`✅ Pedido aceptado por repartidor: ${id}`);
             return pedidoActualizado;
         }
         catch (error) {
             console.error('❌ Error aceptando pedido por repartidor:', error);
-            return this.pedidoModel.findByIdAndUpdate(id, {
+            // Fallback básico
+            const pedidoActualizado = await this.pedidoModel.findByIdAndUpdate(id, {
                 dealer: true,
                 repartidor: new mongoose_3.Types.ObjectId(idRepartidor),
                 datosRepartidor: {
@@ -246,6 +251,10 @@ let PedidoService = class PedidoService {
                     telefono: ''
                 }
             }, { new: true });
+            if (!pedidoActualizado) {
+                throw new Error('Pedido no encontrado');
+            }
+            return pedidoActualizado;
         }
     }
     async marcarEnCamino(id) {
@@ -367,12 +376,18 @@ let PedidoService = class PedidoService {
                 fechaEntrega: new Date(),
                 esDelivery: pedido.esDelivery,
                 direccionEntrega: this.normalizarDireccion(pedido.direccionEntrega),
-                comidas: pedido.comidas,
+                comidas: pedido.comidas || [], // ✅ GARANTIZAR ARRAY
+                promociones: pedido.promociones || [], // ✅ AGREGAR PROMOCIONES FALTANTES
                 propina: pedido.propina,
                 cantidadPropina: pedido.cantidadPropina || 0,
                 repartidor: pedido.repartidor,
                 codigoPedido: pedido.codigoPedido,
                 direccionLocal: this.normalizarDireccion(pedido.direccionLocal),
+                // ✅ INICIALIZAR CAMPOS DE VALORACIÓN
+                valoracionPedido: 0,
+                valoracionDelivery: 0,
+                valoracionLocal: 0,
+                valoracionCompletada: false,
                 datosUsuario: {
                     nombre: datosUsuario.nombre || 'N/A',
                     apellido: datosUsuario.apellido || 'N/A',
@@ -390,59 +405,53 @@ let PedidoService = class PedidoService {
                     valoracion: datosRepartidor.valoracion || 0
                 }
             };
+            console.log(`📦 Transfiriendo pedido a realizados:`);
+            console.log(`- Pedido ID: ${pedido._id}`);
+            console.log(`- Nombre: ${pedidoRealizadoData.nombrePedido}`);
+            console.log(`- Comidas: ${pedidoRealizadoData.comidas.length}`);
+            console.log(`- Promociones: ${pedidoRealizadoData.promociones.length}`); // ✅ DEBUG
             const pedidoRealizado = new this.pedidoRealizadoModel(pedidoRealizadoData);
             const pedidoGuardado = await pedidoRealizado.save();
             await this.pedidoModel.findByIdAndDelete(pedido._id);
+            console.log(`✅ Pedido transferido exitosamente: ${pedidoGuardado._id}`);
             return pedidoGuardado.toObject();
         }
         catch (error) {
             console.error('❌ Error transfiriendo pedido:', error);
+            if (error instanceof Error) {
+                console.error('❌ Detalle del error:', error.message);
+                throw new common_1.BadRequestException(`Error procesando la entrega del pedido: ${error.message}`);
+            }
             throw new common_1.BadRequestException('Error procesando la entrega del pedido');
         }
     }
-    async obtenerPedidosRealizadosPorUsuario(idUsuario) {
-        const pedidosRealizados = await this.pedidoRealizadoModel
-            .find({ idComprador: new mongoose_3.Types.ObjectId(idUsuario) })
-            .sort({ fechaEntrega: -1 })
-            .lean()
-            .exec();
-        return pedidosRealizados.map(pedido => ({
-            _id: pedido._id,
-            pedidoOriginalId: pedido.pedidoOriginalId,
-            nombrePedido: pedido.nombrePedido,
-            precioPedido: pedido.precioPedido,
-            pago: pedido.pago,
-            fechaPedido: pedido.fechaPedido ? new Date(pedido.fechaPedido).toISOString() : new Date().toISOString(),
-            fechaEntrega: pedido.fechaEntrega ? new Date(pedido.fechaEntrega).toISOString() : new Date().toISOString(),
-            fechaRegistro: pedido.fechaRegistro ? new Date(pedido.fechaRegistro).toISOString() : new Date().toISOString(),
-            esDelivery: pedido.esDelivery,
-            direccionEntrega: pedido.direccionEntrega,
-            comidas: pedido.comidas,
-            propina: pedido.propina,
-            cantidadPropina: pedido.cantidadPropina,
-            codigoPedido: pedido.codigoPedido,
-            direccionLocal: pedido.direccionLocal,
-            datosUsuario: {
-                nombre: pedido.datosUsuario?.nombre,
-                apellido: pedido.datosUsuario?.apellido,
-                nombreUsuario: pedido.datosUsuario?.nombreUsuario,
-                direccion: pedido.datosUsuario?.direccion
-            },
-            datosLocal: {
-                nombreLocal: pedido.datosLocal?.nombreLocal,
-                direccion: pedido.datosLocal?.direccion
-            },
-            datosRepartidor: pedido.datosRepartidor ? {
-                nombreUsuario: pedido.datosRepartidor.nombreUsuario,
-                vehiculo: pedido.datosRepartidor.vehiculo,
-                patente: pedido.datosRepartidor.patente,
-                valoracion: pedido.datosRepartidor.valoracion
-            } : null,
-            valoracionPedido: pedido.valoracionPedido,
-            valoracionDelivery: pedido.valoracionDelivery,
-            valoracionLocal: pedido.valoracionLocal,
-            valoracionCompletada: pedido.valoracionCompletada,
-        }));
+    async obtenerPedidosRealizadosPorUsuario(userId) {
+        console.log(`🔍 Buscando pedidos realizados para usuario: ${userId}`);
+        try {
+            const pedidos = await this.pedidoRealizadoModel
+                .find({ 'datosUsuario._id': new mongoose_3.Types.ObjectId(userId) })
+                .sort({ fechaEntrega: -1 })
+                .lean()
+                .exec();
+            console.log(`📊 Encontrados ${pedidos.length} pedidos realizados`);
+            return pedidos.map(pedido => ({
+                ...pedido,
+                _id: pedido._id.toString(),
+                fechaPedido: pedido.fechaPedido ? new Date(pedido.fechaPedido).toISOString() : new Date().toISOString(),
+                fechaEntrega: pedido.fechaEntrega ? new Date(pedido.fechaEntrega).toISOString() : new Date().toISOString(),
+                fechaRegistro: pedido.fechaRegistro ? new Date(pedido.fechaRegistro).toISOString() : new Date().toISOString(),
+                comidas: pedido.comidas || [],
+                promociones: pedido.promociones || [], // ✅ INCLUIR PROMOCIONES
+                valoracionPedido: pedido.valoracionPedido || 0,
+                valoracionDelivery: pedido.valoracionDelivery || 0,
+                valoracionLocal: pedido.valoracionLocal || 0,
+                valoracionCompletada: pedido.valoracionCompletada || false
+            }));
+        }
+        catch (error) {
+            console.error('❌ Error obteniendo pedidos realizados:', error);
+            throw new common_1.BadRequestException('Error obteniendo pedidos realizados por usuario');
+        }
     }
     async obtenerTodosPedidosRealizados() {
         return this.pedidoRealizadoModel
@@ -544,8 +553,20 @@ let PedidoService = class PedidoService {
     }
     // ✅ VERSIONES SIMPLIFICADAS - SIN validaciones estrictas:
     async obtenerDatosUsuario(idUsuario) {
+        // ✅ CONVERTIR A STRING Y MANEJAR UNDEFINED
+        const usuarioId = idUsuario ? idUsuario.toString() : null;
+        if (!usuarioId) {
+            console.warn('⚠️ ID de usuario no válido');
+            return {
+                nombre: 'Usuario no disponible',
+                apellido: '',
+                nombreUsuario: 'N/A',
+                direccion: 'Dirección no disponible',
+                _id: 'desconocido'
+            };
+        }
         try {
-            const res = await axios_1.default.get(`http://localhost:3000/usuarios/${idUsuario}`);
+            const res = await axios_1.default.get(`http://localhost:3000/usuarios/${usuarioId}`);
             const data = res.data;
             return {
                 ...data,
@@ -553,7 +574,7 @@ let PedidoService = class PedidoService {
                 apellido: data.apellido || 'N/A',
                 nombreUsuario: data.nombreUsuario || `${data.nombre} ${data.apellido}`,
                 direccion: this.normalizarDireccion(data.direccion),
-                _id: data._id || idUsuario
+                _id: data._id || usuarioId
             };
         }
         catch (error) {
@@ -563,19 +584,29 @@ let PedidoService = class PedidoService {
                 apellido: '',
                 nombreUsuario: 'N/A',
                 direccion: 'Dirección no disponible',
-                _id: idUsuario
+                _id: usuarioId
             };
         }
     }
     async obtenerDatosLocal(idLocal) {
+        // ✅ CONVERTIR A STRING Y MANEJAR UNDEFINED
+        const localId = idLocal ? idLocal.toString() : null;
+        if (!localId) {
+            console.warn('⚠️ ID de local no válido');
+            return {
+                nombreLocal: 'Local no disponible',
+                direccion: 'Dirección no disponible',
+                _id: 'desconocido'
+            };
+        }
         try {
-            const res = await axios_1.default.get(`http://localhost:3000/locatarios/${idLocal}`);
+            const res = await axios_1.default.get(`http://localhost:3000/locatarios/${localId}`);
             const data = res.data;
             return {
                 ...data,
                 nombreLocal: data.nombreLocal || 'Local no disponible',
                 direccion: this.normalizarDireccion(data.direccion),
-                _id: data._id || idLocal
+                _id: data._id || localId
             };
         }
         catch (error) {
@@ -583,16 +614,33 @@ let PedidoService = class PedidoService {
             return {
                 nombreLocal: 'Local no disponible',
                 direccion: 'Dirección no disponible',
-                _id: idLocal
+                _id: localId
             };
         }
     }
     async obtenerDatosRepartidor(idRepartidor) {
+        // ✅ CONVERTIR A STRING Y MANEJAR UNDEFINED
+        const repartidorId = idRepartidor ? idRepartidor.toString() : null;
+        if (!repartidorId) {
+            console.warn('⚠️ ID de repartidor no válido');
+            return {
+                _id: 'desconocido',
+                nombre: 'N/A',
+                apellido: 'N/A',
+                nombreUsuario: 'Repartidor no disponible',
+                usuarioRepartidor: 'Repartidor no disponible',
+                vehiculo: 'Vehículo no especificado',
+                patente: 'Patente no especificada',
+                valoracion: 0,
+                telefono: '',
+                correo: ''
+            };
+        }
         try {
-            const res = await axios_1.default.get(`http://localhost:3000/usuarios/${idRepartidor}`);
+            const res = await axios_1.default.get(`http://localhost:3000/usuarios/${repartidorId}`);
             const data = res.data;
             return {
-                _id: data._id || idRepartidor,
+                _id: data._id || repartidorId,
                 nombre: data.nombre || 'N/A',
                 apellido: data.apellido || 'N/A',
                 nombreUsuario: data.nombreUsuario || data.usuarioRepartidor || `${data.nombre} ${data.apellido}`,
@@ -607,7 +655,7 @@ let PedidoService = class PedidoService {
         catch (error) {
             console.error('❌ Error obteniendo datos de repartidor:', error);
             return {
-                _id: idRepartidor,
+                _id: repartidorId,
                 nombre: 'N/A',
                 apellido: 'N/A',
                 nombreUsuario: 'Repartidor no disponible',
@@ -679,27 +727,103 @@ let PedidoService = class PedidoService {
     }
     async valorarPedidoRealizado(pedidoRealizadoId, valoraciones) {
         const { valoracionPedido, valoracionDelivery, valoracionLocal } = valoraciones;
+        // ✅ VALIDAR RANGOS
         if (valoracionPedido < 0 || valoracionPedido > 5 ||
             valoracionDelivery < 0 || valoracionDelivery > 5 ||
             valoracionLocal < 0 || valoracionLocal > 5) {
             throw new common_1.BadRequestException('Las valoraciones deben estar entre 0 y 5');
         }
         try {
-            const pedidoActualizado = await this.pedidoRealizadoModel.findByIdAndUpdate(pedidoRealizadoId, {
-                valoracionPedido,
-                valoracionDelivery,
-                valoracionLocal,
-                valoracionCompletada: true
-            }, { new: true }).lean().exec();
-            if (!pedidoActualizado) {
+            console.log(`🌟 Valorando pedido realizado: ${pedidoRealizadoId}`);
+            console.log(`📊 Valoraciones: Pedido=${valoracionPedido}, Delivery=${valoracionDelivery}, Local=${valoracionLocal}`);
+            // ✅ BUSCAR EL PEDIDO PRIMERO PARA DEBUG
+            const pedidoExistente = await this.pedidoRealizadoModel.findById(pedidoRealizadoId).lean().exec();
+            if (!pedidoExistente) {
+                console.error(`❌ Pedido realizado no encontrado: ${pedidoRealizadoId}`);
                 throw new common_1.BadRequestException('Pedido realizado no encontrado');
             }
-            await this.enviarValoracionesAMicroservicios(pedidoActualizado);
-            return pedidoActualizado;
+            console.log(`✅ Pedido encontrado: ${pedidoExistente.nombrePedido}`);
+            console.log(`📦 Comidas: ${pedidoExistente.comidas?.length || 0}`);
+            console.log(`🎉 Promociones: ${pedidoExistente.promociones?.length || 0}`);
+            // ✅ VERIFICAR SI YA ESTÁ VALORADO
+            if (pedidoExistente.valoracionCompletada) {
+                console.warn(`⚠️ Pedido ya valorado: ${pedidoRealizadoId}`);
+                throw new common_1.BadRequestException('Este pedido ya ha sido valorado');
+            }
+            // ✅ ACTUALIZAR CON VALIDACIÓN
+            const pedidoActualizado = await this.pedidoRealizadoModel.findByIdAndUpdate(pedidoRealizadoId, {
+                $set: {
+                    valoracionPedido: Number(valoracionPedido),
+                    valoracionDelivery: Number(valoracionDelivery),
+                    valoracionLocal: Number(valoracionLocal),
+                    valoracionCompletada: true
+                }
+            }, {
+                new: true,
+                runValidators: true,
+                lean: true
+            }).exec();
+            if (!pedidoActualizado) {
+                console.error(`❌ Error actualizando pedido: ${pedidoRealizadoId}`);
+                throw new common_1.BadRequestException('Error actualizando el pedido');
+            }
+            console.log(`✅ Pedido valorado exitosamente: ${pedidoRealizadoId}`);
+            // ✅ ENVIAR VALORACIONES A OTROS MICROSERVICIOS (SIN AWAIT PARA NO BLOQUEAR)
+            this.enviarValoracionesAMicroservicios(pedidoActualizado).catch(error => {
+                console.error('❌ Error enviando valoraciones a microservicios (no crítico):', error);
+            });
+            // ✅ RETORNAR ESTRUCTURA CONSISTENTE
+            return {
+                _id: pedidoActualizado._id.toString(),
+                pedidoOriginalId: pedidoActualizado.pedidoOriginalId || pedidoActualizado._id.toString(),
+                nombrePedido: pedidoActualizado.nombrePedido || 'Pedido sin nombre',
+                idComprador: pedidoActualizado.idComprador ? pedidoActualizado.idComprador.toString() : '',
+                idLocal: pedidoActualizado.idLocal ? pedidoActualizado.idLocal.toString() : '',
+                precioPedido: pedidoActualizado.precioPedido || 0,
+                pago: pedidoActualizado.pago || 'No especificado',
+                fechaPedido: pedidoActualizado.fechaPedido ? new Date(pedidoActualizado.fechaPedido).toISOString() : new Date().toISOString(),
+                fechaEntrega: pedidoActualizado.fechaEntrega ? new Date(pedidoActualizado.fechaEntrega).toISOString() : new Date().toISOString(),
+                fechaRegistro: pedidoActualizado.fechaRegistro ? new Date(pedidoActualizado.fechaRegistro).toISOString() : new Date().toISOString(),
+                esDelivery: pedidoActualizado.esDelivery || false,
+                direccionEntrega: pedidoActualizado.direccionEntrega || null,
+                comidas: pedidoActualizado.comidas || [],
+                promociones: pedidoActualizado.promociones || [], // ✅ INCLUIR PROMOCIONES
+                propina: pedidoActualizado.propina || false,
+                cantidadPropina: pedidoActualizado.cantidadPropina || 0,
+                repartidor: pedidoActualizado.repartidor ? pedidoActualizado.repartidor.toString() : '',
+                codigoPedido: pedidoActualizado.codigoPedido || 0,
+                direccionLocal: pedidoActualizado.direccionLocal || null,
+                valoracionPedido: pedidoActualizado.valoracionPedido,
+                valoracionDelivery: pedidoActualizado.valoracionDelivery,
+                valoracionLocal: pedidoActualizado.valoracionLocal,
+                valoracionCompletada: pedidoActualizado.valoracionCompletada,
+                datosUsuario: {
+                    nombre: pedidoActualizado.datosUsuario?.nombre || 'Usuario',
+                    apellido: pedidoActualizado.datosUsuario?.apellido || 'Desconocido',
+                    nombreUsuario: pedidoActualizado.datosUsuario?.nombreUsuario || 'N/A',
+                    direccion: pedidoActualizado.datosUsuario?.direccion || 'Sin dirección'
+                },
+                datosLocal: {
+                    nombreLocal: pedidoActualizado.datosLocal?.nombreLocal || 'Local desconocido',
+                    direccion: pedidoActualizado.datosLocal?.direccion || 'Sin dirección'
+                },
+                datosRepartidor: {
+                    nombreUsuario: pedidoActualizado.datosRepartidor?.nombreUsuario || 'Repartidor',
+                    vehiculo: pedidoActualizado.datosRepartidor?.vehiculo || 'N/A',
+                    patente: pedidoActualizado.datosRepartidor?.patente || 'N/A',
+                    valoracion: pedidoActualizado.datosRepartidor?.valoracion || 0
+                }
+            };
         }
         catch (error) {
-            console.error('❌ Error guardando valoraciones:', error);
-            throw new common_1.BadRequestException('Error guardando las valoraciones');
+            console.error('❌ Error completo valorando pedido:', error);
+            if (error instanceof common_1.BadRequestException) {
+                throw error;
+            }
+            if (error instanceof Error) {
+                throw new common_1.BadRequestException(`Error guardando valoraciones: ${error.message}`);
+            }
+            throw new common_1.BadRequestException(`Error desconocido guardando las valoraciones: ${String(error)}`);
         }
     }
     async enviarValoracionesAMicroservicios(pedido) {
@@ -713,9 +837,15 @@ let PedidoService = class PedidoService {
         }
     }
     async actualizarValoracionRepartidor(idRepartidor, nuevaValoracion) {
+        // ✅ CONVERTIR A STRING Y MANEJAR UNDEFINED
+        const repartidorId = idRepartidor ? idRepartidor.toString() : null;
+        if (!repartidorId) {
+            console.warn('⚠️ ID de repartidor no válido para valoración');
+            return;
+        }
         try {
-            await this.guardarValoracionEnEntrega(idRepartidor, nuevaValoracion);
-            await this.actualizarPromedioRepartidor(idRepartidor, nuevaValoracion);
+            await this.guardarValoracionEnEntrega(repartidorId, nuevaValoracion);
+            await this.actualizarPromedioRepartidor(repartidorId, nuevaValoracion);
         }
         catch (error) {
             console.error(`❌ Error actualizando valoración del repartidor:`, error);
@@ -724,18 +854,18 @@ let PedidoService = class PedidoService {
     async guardarValoracionEnEntrega(idRepartidor, valoracion) {
         try {
             const mutation = `
-        mutation ActualizarValoracionEntrega($repartidorId: String!, $valoracion: Float!) {
-          actualizarValoracionEntrega(repartidorId: $repartidorId, valoracion: $valoracion) {
-            _id
-            valoracionRecibida
-            fechaValoracion
-          }
+      mutation ActualizarValoracionEntrega($repartidorId: String!, $valoracion: Float!) {
+        actualizarValoracionEntrega(repartidorId: $repartidorId, valoracion: $valoracion) {
+          _id
+          valoracionRecibida
+          fechaValoracion
         }
-      `;
+      }
+    `;
             const response = await axios_1.default.post('http://localhost:3003/graphql', {
                 query: mutation,
                 variables: {
-                    repartidorId: idRepartidor.toString(),
+                    repartidorId: idRepartidor, // ✅ YA ES STRING
                     valoracion: valoracion
                 }
             });
@@ -767,8 +897,14 @@ let PedidoService = class PedidoService {
         }
     }
     async actualizarValoracionLocal(idLocal, nuevaValoracion) {
+        // ✅ CONVERTIR A STRING Y MANEJAR UNDEFINED
+        const localId = idLocal ? idLocal.toString() : null;
+        if (!localId) {
+            console.warn('⚠️ ID de local no válido para valoración');
+            return;
+        }
         try {
-            await axios_1.default.patch(`http://localhost:3000/locatarios/${idLocal}/valoracion`, {
+            await axios_1.default.patch(`http://localhost:3000/locatarios/${localId}/valoracion`, {
                 nuevaValoracion
             });
         }
@@ -822,52 +958,64 @@ let PedidoService = class PedidoService {
         }
     }
     // ✅ AGREGAR MÉTODO FALTANTE:
-    async obtenerPedidosPendientesValoracion(idUsuario) {
-        const pedidosPendientes = await this.pedidoRealizadoModel
-            .find({
-            idComprador: new mongoose_3.Types.ObjectId(idUsuario),
-            valoracionCompletada: false
-        })
-            .sort({ fechaEntrega: -1 })
-            .lean()
-            .exec();
-        return pedidosPendientes.map(pedido => ({
-            _id: pedido._id,
-            pedidoOriginalId: pedido.pedidoOriginalId,
-            nombrePedido: pedido.nombrePedido,
-            precioPedido: pedido.precioPedido,
-            pago: pedido.pago,
-            fechaPedido: pedido.fechaPedido ? new Date(pedido.fechaPedido).toISOString() : new Date().toISOString(),
-            fechaEntrega: pedido.fechaEntrega ? new Date(pedido.fechaEntrega).toISOString() : new Date().toISOString(),
-            fechaRegistro: pedido.fechaRegistro ? new Date(pedido.fechaRegistro).toISOString() : new Date().toISOString(),
-            esDelivery: pedido.esDelivery,
-            direccionEntrega: pedido.direccionEntrega,
-            comidas: pedido.comidas,
-            propina: pedido.propina,
-            cantidadPropina: pedido.cantidadPropina,
-            codigoPedido: pedido.codigoPedido,
-            direccionLocal: pedido.direccionLocal,
-            datosUsuario: {
-                nombre: pedido.datosUsuario?.nombre,
-                apellido: pedido.datosUsuario?.apellido,
-                nombreUsuario: pedido.datosUsuario?.nombreUsuario,
-                direccion: pedido.datosUsuario?.direccion
-            },
-            datosLocal: {
-                nombreLocal: pedido.datosLocal?.nombreLocal,
-                direccion: pedido.datosLocal?.direccion
-            },
-            datosRepartidor: pedido.datosRepartidor ? {
-                nombreUsuario: pedido.datosRepartidor.nombreUsuario,
-                vehiculo: pedido.datosRepartidor.vehiculo,
-                patente: pedido.datosRepartidor.patente,
-                valoracion: pedido.datosRepartidor.valoracion
-            } : null,
-            valoracionPedido: pedido.valoracionPedido || 0,
-            valoracionDelivery: pedido.valoracionDelivery || 0,
-            valoracionLocal: pedido.valoracionLocal || 0,
-            valoracionCompletada: pedido.valoracionCompletada || false
-        }));
+    async obtenerPedidosPendientesValoracion(userId) {
+        console.log(`🔍 Buscando pedidos pendientes de valoración para usuario: ${userId}`);
+        try {
+            const pedidos = await this.pedidoRealizadoModel
+                .find({
+                idComprador: new mongoose_3.Types.ObjectId(userId), // ✅ USAR CAMPO CORRECTO
+                valoracionCompletada: { $ne: true }
+            })
+                .lean()
+                .exec();
+            console.log(`📊 Encontrados ${pedidos.length} pedidos pendientes de valoración`);
+            return pedidos.map(pedido => ({
+                _id: pedido._id.toString(),
+                pedidoOriginalId: pedido.pedidoOriginalId || pedido._id.toString(),
+                nombrePedido: pedido.nombrePedido || 'Pedido sin nombre',
+                idComprador: pedido.idComprador ? pedido.idComprador.toString() : userId,
+                idLocal: pedido.idLocal ? pedido.idLocal.toString() : '',
+                precioPedido: pedido.precioPedido || 0,
+                pago: pedido.pago || 'No especificado',
+                fechaPedido: pedido.fechaPedido ? new Date(pedido.fechaPedido).toISOString() : new Date().toISOString(),
+                fechaEntrega: pedido.fechaEntrega ? new Date(pedido.fechaEntrega).toISOString() : new Date().toISOString(),
+                fechaRegistro: pedido.fechaRegistro ? new Date(pedido.fechaRegistro).toISOString() : new Date().toISOString(),
+                esDelivery: pedido.esDelivery || false,
+                direccionEntrega: pedido.direccionEntrega || null,
+                comidas: pedido.comidas || [],
+                promociones: pedido.promociones || [], // ✅ SIEMPRE ARRAY
+                propina: pedido.propina || false,
+                cantidadPropina: pedido.cantidadPropina || 0,
+                repartidor: pedido.repartidor ? pedido.repartidor.toString() : '',
+                codigoPedido: pedido.codigoPedido || 0,
+                direccionLocal: pedido.direccionLocal || null,
+                valoracionPedido: pedido.valoracionPedido || 0,
+                valoracionDelivery: pedido.valoracionDelivery || 0,
+                valoracionLocal: pedido.valoracionLocal || 0,
+                valoracionCompletada: pedido.valoracionCompletada || false,
+                // ✅ DATOS DENORMALIZADOS CON VALORES POR DEFECTO
+                datosUsuario: {
+                    nombre: pedido.datosUsuario?.nombre || 'Usuario',
+                    apellido: pedido.datosUsuario?.apellido || 'Desconocido',
+                    nombreUsuario: pedido.datosUsuario?.nombreUsuario || 'N/A',
+                    direccion: pedido.datosUsuario?.direccion || 'Sin dirección'
+                },
+                datosLocal: {
+                    nombreLocal: pedido.datosLocal?.nombreLocal || 'Local desconocido',
+                    direccion: pedido.datosLocal?.direccion || 'Sin dirección'
+                },
+                datosRepartidor: {
+                    nombreUsuario: pedido.datosRepartidor?.nombreUsuario || 'Repartidor',
+                    vehiculo: pedido.datosRepartidor?.vehiculo || 'N/A',
+                    patente: pedido.datosRepartidor?.patente || 'N/A',
+                    valoracion: pedido.datosRepartidor?.valoracion || 0
+                }
+            }));
+        }
+        catch (error) {
+            console.error('❌ Error obteniendo pedidos pendientes de valoración:', error);
+            throw new common_1.BadRequestException('Error obteniendo pedidos pendientes de valoración');
+        }
     }
 };
 exports.PedidoService = PedidoService;

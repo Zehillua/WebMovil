@@ -44,6 +44,46 @@ export class UsuarioController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('me/admin-check')
+  async getAdminCheck(@Req() req: Request) {
+    console.log('🔍 Admin check - Usuario autenticado:', req.user);
+    
+    // Obtener información completa del usuario desde la base de datos
+    const userId = (req.user as any).sub || (req.user as any).userId;
+    console.log('🔍 ID del usuario para admin check:', userId);
+    
+    const usuario = await this.usuarioService.obtenerUsuarioPorId(userId);
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    
+    console.log('👤 Usuario encontrado para admin check:', {
+      id: usuario._id,
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      correo: usuario.correo,
+      tipoUsuario: usuario.tipoUsuario,
+      isAdmin: usuario.isAdmin // ✅ DEBUG IMPORTANTE
+    });
+    
+    // Retornar información específica para verificación de admin
+    return {
+      _id: usuario._id,
+      userId: usuario._id,
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      correo: usuario.correo,
+      tipoUsuario: usuario.tipoUsuario,
+      isAdmin: usuario.isAdmin, // ✅ CAMPO CLAVE PARA ADMIN
+      // Campos adicionales si es necesario
+      nombreUsuario: usuario.nombreUsuario,
+      nombreLocal: usuario.nombreLocal,
+      usuarioRepartidor: usuario.usuarioRepartidor
+    };
+  }
+
+
+  @UseGuards(JwtAuthGuard)
   @Get('me/saldo')
   async getSaldo(@Req() req: Request) {
     // req.user.userId viene del JWT payload

@@ -9,8 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ValoracionInput = exports.PedidoRealizadoType = exports.PedidoEnCaminoType = exports.PedidoPendienteRepartidorType = exports.PedidoRepartidorType = exports.PedidoType = exports.DatosRepartidorType = exports.DatosLocalType = exports.DatosUsuarioType = exports.DatosRepartidorPedidoType = exports.RepartidorType = exports.UsuarioType = exports.LocalType = exports.ComidaType = void 0;
+exports.ValoracionInput = exports.PromocionRealizadaType = exports.ComidaPromoRealizadaType = exports.PedidoRealizadoType = exports.PedidoEnCaminoType = exports.PedidoPendienteRepartidorType = exports.PedidoRepartidorType = exports.PedidoType = exports.PromocionPedidoType = exports.ComidaPromocionType = exports.DatosRepartidorType = exports.DatosLocalType = exports.DatosUsuarioType = exports.DatosRepartidorPedidoType = exports.RepartidorType = exports.UsuarioType = exports.LocalType = exports.ComidaType = void 0;
 const graphql_1 = require("@nestjs/graphql");
+const class_validator_1 = require("class-validator");
 // ✅ 1. DEFINIR TIPOS BÁSICOS PRIMERO:
 let ComidaType = class ComidaType {
 };
@@ -199,6 +200,46 @@ __decorate([
 exports.DatosRepartidorType = DatosRepartidorType = __decorate([
     (0, graphql_1.ObjectType)()
 ], DatosRepartidorType);
+let ComidaPromocionType = class ComidaPromocionType {
+};
+exports.ComidaPromocionType = ComidaPromocionType;
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], ComidaPromocionType.prototype, "nombre", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], ComidaPromocionType.prototype, "cantidad", void 0);
+exports.ComidaPromocionType = ComidaPromocionType = __decorate([
+    (0, graphql_1.ObjectType)()
+], ComidaPromocionType);
+let PromocionPedidoType = class PromocionPedidoType {
+};
+exports.PromocionPedidoType = PromocionPedidoType;
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], PromocionPedidoType.prototype, "nombrePromocion", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], PromocionPedidoType.prototype, "cantidad", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], PromocionPedidoType.prototype, "precio", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [ComidaPromocionType]),
+    __metadata("design:type", Array)
+], PromocionPedidoType.prototype, "comidas", void 0);
+__decorate([
+    (0, graphql_1.Field)({ defaultValue: 'promocion' }),
+    __metadata("design:type", String)
+], PromocionPedidoType.prototype, "tipo", void 0);
+exports.PromocionPedidoType = PromocionPedidoType = __decorate([
+    (0, graphql_1.ObjectType)()
+], PromocionPedidoType);
 // ✅ 5. AHORA DEFINIR TIPOS DE PEDIDO (que usan los anteriores):
 let PedidoType = class PedidoType {
 };
@@ -251,6 +292,10 @@ __decorate([
     (0, graphql_1.Field)(() => [ComidaType]),
     __metadata("design:type", Array)
 ], PedidoType.prototype, "comidas", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [PromocionPedidoType], { defaultValue: [] }),
+    __metadata("design:type", Array)
+], PedidoType.prototype, "promociones", void 0);
 __decorate([
     (0, graphql_1.Field)(() => LocalType),
     __metadata("design:type", LocalType)
@@ -306,6 +351,10 @@ __decorate([
     __metadata("design:type", Array)
 ], PedidoRepartidorType.prototype, "comidas", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => [PromocionPedidoType], { defaultValue: [] }),
+    __metadata("design:type", Array)
+], PedidoRepartidorType.prototype, "promociones", void 0);
+__decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", Boolean)
 ], PedidoRepartidorType.prototype, "propina", void 0);
@@ -356,6 +405,10 @@ __decorate([
     __metadata("design:type", Array)
 ], PedidoPendienteRepartidorType.prototype, "comidas", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => [PromocionPedidoType], { defaultValue: [] }),
+    __metadata("design:type", Array)
+], PedidoPendienteRepartidorType.prototype, "promociones", void 0);
+__decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", Boolean)
 ], PedidoPendienteRepartidorType.prototype, "enCamino", void 0);
@@ -405,6 +458,10 @@ __decorate([
     (0, graphql_1.Field)(() => [ComidaType]),
     __metadata("design:type", Array)
 ], PedidoEnCaminoType.prototype, "comidas", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [PromocionPedidoType], { defaultValue: [] }),
+    __metadata("design:type", Array)
+], PedidoEnCaminoType.prototype, "promociones", void 0);
 __decorate([
     (0, graphql_1.Field)(() => Boolean, { defaultValue: false }),
     __metadata("design:type", Boolean)
@@ -485,6 +542,10 @@ __decorate([
     __metadata("design:type", Array)
 ], PedidoRealizadoType.prototype, "comidas", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => [PromocionRealizadaType], { defaultValue: [] }),
+    __metadata("design:type", Array)
+], PedidoRealizadoType.prototype, "promociones", void 0);
+__decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", Boolean)
 ], PedidoRealizadoType.prototype, "propina", void 0);
@@ -535,20 +596,70 @@ __decorate([
 exports.PedidoRealizadoType = PedidoRealizadoType = __decorate([
     (0, graphql_1.ObjectType)()
 ], PedidoRealizadoType);
+let ComidaPromoRealizadaType = class ComidaPromoRealizadaType {
+};
+exports.ComidaPromoRealizadaType = ComidaPromoRealizadaType;
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], ComidaPromoRealizadaType.prototype, "nombre", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], ComidaPromoRealizadaType.prototype, "cantidad", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], ComidaPromoRealizadaType.prototype, "precioOriginal", void 0);
+exports.ComidaPromoRealizadaType = ComidaPromoRealizadaType = __decorate([
+    (0, graphql_1.ObjectType)()
+], ComidaPromoRealizadaType);
+let PromocionRealizadaType = class PromocionRealizadaType {
+};
+exports.PromocionRealizadaType = PromocionRealizadaType;
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], PromocionRealizadaType.prototype, "nombrePromocion", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], PromocionRealizadaType.prototype, "cantidad", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], PromocionRealizadaType.prototype, "precio", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [ComidaPromoRealizadaType]),
+    __metadata("design:type", Array)
+], PromocionRealizadaType.prototype, "comidas", void 0);
+__decorate([
+    (0, graphql_1.Field)({ defaultValue: 'promocion' }),
+    __metadata("design:type", String)
+], PromocionRealizadaType.prototype, "tipo", void 0);
+exports.PromocionRealizadaType = PromocionRealizadaType = __decorate([
+    (0, graphql_1.ObjectType)()
+], PromocionRealizadaType);
 // ✅ 7. INPUT TYPES AL FINAL:
 let ValoracionInput = class ValoracionInput {
 };
 exports.ValoracionInput = ValoracionInput;
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Float, { description: 'Valoración del pedido (0-5)' }),
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    (0, class_validator_1.Min)(0.5, { message: 'La valoración del pedido debe ser al menos 0.5' }),
+    (0, class_validator_1.Max)(5, { message: 'La valoración del pedido no puede ser mayor a 5' }),
     __metadata("design:type", Number)
 ], ValoracionInput.prototype, "valoracionPedido", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Float, { description: 'Valoración del delivery (0-5)' }),
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    (0, class_validator_1.Min)(0.5, { message: 'La valoración del delivery debe ser al menos 0.5' }),
+    (0, class_validator_1.Max)(5, { message: 'La valoración del delivery no puede ser mayor a 5' }),
     __metadata("design:type", Number)
 ], ValoracionInput.prototype, "valoracionDelivery", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Float, { description: 'Valoración del local (0-5)' }),
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    (0, class_validator_1.Min)(0.5, { message: 'La valoración del local debe ser al menos 0.5' }),
+    (0, class_validator_1.Max)(5, { message: 'La valoración del local no puede ser mayor a 5' }),
     __metadata("design:type", Number)
 ], ValoracionInput.prototype, "valoracionLocal", void 0);
 exports.ValoracionInput = ValoracionInput = __decorate([

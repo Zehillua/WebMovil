@@ -1,6 +1,16 @@
 export class ComidaPedidoDto {
   nombre: string;
   cantidad: number;
+  tipo?: string;
+}
+
+// ✅ NUEVO DTO PARA PROMOCIONES EN PEDIDOS
+export class PromocionPedidoDto {
+  nombrePromocion: string;
+  cantidad: number;
+  precio: number;
+  comidas: { nombre: string; cantidad: number }[];
+  tipo?: string;
 }
 
 export class CreatePedidoDto {
@@ -10,6 +20,7 @@ export class CreatePedidoDto {
   pago: 'efectivo' | 'tarjeta';
   precioPedido: number;
   comidas: ComidaPedidoDto[];
+  promociones?: PromocionPedidoDto[]; // ✅ NUEVO CAMPO
   esDelivery: boolean;
   direccionEntrega?: string;
   direccionLocal?: string;

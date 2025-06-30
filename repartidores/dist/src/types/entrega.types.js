@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EstadisticasType = exports.EntregaType = exports.LocalType = exports.ClienteType = void 0;
+exports.RepartidorStatsType = exports.EstadisticasType = exports.EntregaType = exports.LocalType = exports.ClienteType = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let ClienteType = class ClienteType {
 };
@@ -135,3 +135,46 @@ __decorate([
 exports.EstadisticasType = EstadisticasType = __decorate([
     (0, graphql_1.ObjectType)()
 ], EstadisticasType);
+// ✅ TIPO PARA TOP REPARTIDORES
+let RepartidorStatsType = class RepartidorStatsType {
+};
+exports.RepartidorStatsType = RepartidorStatsType;
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], RepartidorStatsType.prototype, "repartidorId", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], RepartidorStatsType.prototype, "nombreRepartidor", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], RepartidorStatsType.prototype, "cantidadEntregas", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], RepartidorStatsType.prototype, "totalPropinas", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], RepartidorStatsType.prototype, "totalGanancias", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], RepartidorStatsType.prototype, "valoracionPromedio", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], RepartidorStatsType.prototype, "vehiculo", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], RepartidorStatsType.prototype, "patente", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], RepartidorStatsType.prototype, "promedioPropinasPorEntrega", void 0);
+exports.RepartidorStatsType = RepartidorStatsType = __decorate([
+    (0, graphql_1.ObjectType)()
+], RepartidorStatsType);

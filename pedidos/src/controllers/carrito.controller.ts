@@ -1,13 +1,14 @@
 import { Controller, Post, Body, Param, Get, Delete, Req, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { CarritoService } from '../services/carrito.service';
 import { CreateComidaCarritoDto } from '../dtos/create-comidaCarrito.dto';
+import { CreatePromocionCarritoDto } from '../dtos/create-promocionCarrito.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('carrito')
 export class CarritoController {
   constructor(private readonly carritoService: CarritoService) {}
 
-  // Agregar comida al carrito de un usuario
+  // ✅ MÉTODO EXISTENTE PARA COMIDAS
   @UseGuards(JwtAuthGuard)
   @Post(':idComprador/agregar')
   async agregarComida(
@@ -15,14 +16,27 @@ export class CarritoController {
     @Body() dto: CreateComidaCarritoDto,
     @Req() req: any
   ) {
-    // Seguridad: solo el dueño puede modificar su carrito
     if (req.user?.sub !== idComprador) {
       throw new UnauthorizedException('No puedes modificar el carrito de otro usuario');
     }
     return this.carritoService.agregarComidaAlCarrito(idComprador, dto);
   }
 
-  //Calcular el total del carrito de un usuario
+  // ✅ NUEVO MÉTODO PARA PROMOCIONES
+  @UseGuards(JwtAuthGuard)
+  @Post(':idComprador/agregar-promocion')
+  async agregarPromocion(
+    @Param('idComprador') idComprador: string,
+    @Body() dto: CreatePromocionCarritoDto,
+    @Req() req: any
+  ) {
+    if (req.user?.sub !== idComprador) {
+      throw new UnauthorizedException('No puedes modificar el carrito de otro usuario');
+    }
+    return this.carritoService.agregarPromocionAlCarrito(idComprador, dto);
+  }
+
+  // ✅ OBTENER TOTAL (ACTUALIZADO)
   @UseGuards(JwtAuthGuard)
   @Get(':idComprador/total')
   async obtenerTotal(@Param('idComprador') idComprador: string, @Req() req: any) {
@@ -32,7 +46,17 @@ export class CarritoController {
     return this.carritoService.calcularTotalCarrito(idComprador);
   }
 
-  // Eliminar un item del carrito
+  // ✅ OBTENER CARRITO COMPLETO
+  @UseGuards(JwtAuthGuard)
+  @Get(':idComprador')
+  async obtenerCarrito(@Param('idComprador') idComprador: string, @Req() req: any) {
+    if (req.user?.sub !== idComprador) {
+      throw new UnauthorizedException('No puedes ver el carrito de otro usuario');
+    }
+    return this.carritoService.obtenerCarrito(idComprador);
+  }
+
+  // ✅ ELIMINAR COMIDA
   @UseGuards(JwtAuthGuard)
   @Delete(':idComprador/item/:itemId')
   async eliminarItem(
@@ -46,13 +70,27 @@ export class CarritoController {
     return this.carritoService.eliminarItem(idComprador, itemId);
   }
 
-  // Vaciar el carrito
+  // ✅ NUEVO: ELIMINAR PROMOCIÓN
   @UseGuards(JwtAuthGuard)
-  @Get(':idComprador')
-  async obtenerCarrito(@Param('idComprador') idComprador: string, @Req() req: any) {
+  @Delete(':idComprador/promocion/:promocionId')
+  async eliminarPromocion(
+    @Param('idComprador') idComprador: string,
+    @Param('promocionId') promocionId: string,
+    @Req() req: any
+  ) {
     if (req.user?.sub !== idComprador) {
-      throw new UnauthorizedException('No puedes ver el carrito de otro usuario');
+      throw new UnauthorizedException('No puedes modificar el carrito de otro usuario');
     }
-    return this.carritoService.obtenerCarrito(idComprador);
+    return this.carritoService.eliminarPromocion(idComprador, promocionId);
+  }
+
+  // ✅ VACIAR CARRITO
+  @UseGuards(JwtAuthGuard)
+  @Delete(':idComprador/vaciar')
+  async vaciarCarrito(@Param('idComprador') idComprador: string, @Req() req: any) {
+    if (req.user?.sub !== idComprador) {
+      throw new UnauthorizedException('No puedes modificar el carrito de otro usuario');
+    }
+    return this.carritoService.vaciarCarrito(idComprador);
   }
 }

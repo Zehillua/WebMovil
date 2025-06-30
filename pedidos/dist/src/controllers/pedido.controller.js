@@ -48,16 +48,15 @@ let PedidoController = class PedidoController {
     async obtenerPedidosDeliveryDisponibles() {
         return this.pedidoService.obtenerPedidosDeliveryDisponibles();
     }
-    // NUEVO ENDPOINT - Pedidos pendientes de un repartidor específico
     async obtenerPedidosPendientesRepartidor(idRepartidor, req) {
-        // Verificar que el repartidor solo puede ver sus propios pedidos
         if (req.user?.sub !== idRepartidor) {
             throw new common_1.UnauthorizedException('No puedes ver pedidos de otro repartidor');
         }
         return this.pedidoService.obtenerPedidosPendientesRepartidor(idRepartidor);
     }
+    // ✅ CORREGIR LÍNEA 70 - CAMBIAR NOMBRE DEL MÉTODO
     async aceptarPorRepartidor(id, body) {
-        return this.pedidoService.aceptarPorRepartidor(id, body.idRepartidor);
+        return this.pedidoService.aceptarPedidoRepartidor(id, body.idRepartidor); // ✅ CAMBIAR AQUÍ
     }
     async marcarEnCamino(id) {
         return this.pedidoService.marcarEnCamino(id);
@@ -72,15 +71,12 @@ let PedidoController = class PedidoController {
             timestamp: new Date().toISOString()
         };
     }
-    // ✅ ENDPOINT PARA VALORAR PEDIDO REALIZADO:
     async valorarPedidoRealizado(id, valoraciones) {
         return this.pedidoService.valorarPedidoRealizado(id, valoraciones);
     }
-    // ✅ ENDPOINT PARA OBTENER PEDIDOS REALIZADOS:
     async obtenerPedidosRealizadosPorUsuario(idUsuario) {
         return this.pedidoService.obtenerPedidosRealizadosPorUsuario(idUsuario);
     }
-    // ✅ ENDPOINT PARA ENTREGAR PEDIDO CON CÓDIGO:
     async entregarPedido(id, body) {
         return this.pedidoService.entregarPedido(id, body.codigoPedido);
     }

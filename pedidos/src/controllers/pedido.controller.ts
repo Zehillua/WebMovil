@@ -16,6 +16,7 @@ export class PedidoController {
   async obtenerTodos() {
     return this.pedidoService.obtenerPedidos();
   }
+  
   @Get('usuario/:idComprador')
   async obtenerPorUsuario(@Param('idComprador') idComprador: string) {
     return this.pedidoService.obtenerPedidosPorUsuario(idComprador);
@@ -51,23 +52,22 @@ export class PedidoController {
     return this.pedidoService.obtenerPedidosDeliveryDisponibles();
   }
 
-  // NUEVO ENDPOINT - Pedidos pendientes de un repartidor específico
   @UseGuards(JwtAuthGuard)
   @Get('repartidor/:idRepartidor/pendientes')
   async obtenerPedidosPendientesRepartidor(
     @Param('idRepartidor') idRepartidor: string,
     @Req() req: any
   ) {
-    // Verificar que el repartidor solo puede ver sus propios pedidos
     if (req.user?.sub !== idRepartidor) {
       throw new UnauthorizedException('No puedes ver pedidos de otro repartidor');
     }
     return this.pedidoService.obtenerPedidosPendientesRepartidor(idRepartidor);
   }
 
+  // ✅ CORREGIR LÍNEA 70 - CAMBIAR NOMBRE DEL MÉTODO
   @Patch(':id/aceptar-repartidor')
   async aceptarPorRepartidor(@Param('id') id: string, @Body() body: { idRepartidor: string }) {
-    return this.pedidoService.aceptarPorRepartidor(id, body.idRepartidor);
+    return this.pedidoService.aceptarPedidoRepartidor(id, body.idRepartidor); // ✅ CAMBIAR AQUÍ
   }
 
   @Patch(':id/en-camino')
@@ -80,7 +80,7 @@ export class PedidoController {
     return this.pedidoService.marcarEntregado(id);
   }
 
- @Get('admin/migrar-datos-repartidor')
+  @Get('admin/migrar-datos-repartidor')
   async migrarDatosRepartidor() {
     await this.pedidoService.migrarDatosRepartidorExistentes();
     return { 
@@ -89,7 +89,6 @@ export class PedidoController {
     };
   }
 
-  // ✅ ENDPOINT PARA VALORAR PEDIDO REALIZADO:
   @Post('realizado/:id/valorar')
   async valorarPedidoRealizado(
     @Param('id') id: string,
@@ -102,13 +101,11 @@ export class PedidoController {
     return this.pedidoService.valorarPedidoRealizado(id, valoraciones);
   }
 
-  // ✅ ENDPOINT PARA OBTENER PEDIDOS REALIZADOS:
   @Get('usuario/:idUsuario/realizados')
   async obtenerPedidosRealizadosPorUsuario(@Param('idUsuario') idUsuario: string) {
     return this.pedidoService.obtenerPedidosRealizadosPorUsuario(idUsuario);
   }
 
-  // ✅ ENDPOINT PARA ENTREGAR PEDIDO CON CÓDIGO:
   @Post(':id/entregar')
   async entregarPedido(
     @Param('id') id: string,

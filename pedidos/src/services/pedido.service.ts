@@ -236,54 +236,67 @@ export class PedidoService {
   }
 
   // ✅ VERSIÓN SIMPLIFICADA de aceptarPorRepartidor:
-  async aceptarPorRepartidor(id: string, idRepartidor: string) {
-    console.log(`🚚 Repartidor ${idRepartidor} aceptando pedido ${id}`);
+  async aceptarPedidoRepartidor(id: string, idRepartidor: string) {
+  console.log(`🚗 Service: aceptarPedidoRepartidor ${id} por ${idRepartidor}`);
+  
+  try {
+    const datosRepartidor = await this.obtenerDatosRepartidor(idRepartidor);
     
-    try {
-      const datosRepartidor = await this.obtenerDatosRepartidor(idRepartidor);
-      
-      const pedidoActualizado = await this.pedidoModel.findByIdAndUpdate(
-        id, 
-        { 
-          dealer: true,
-          repartidor: new Types.ObjectId(idRepartidor),
-          datosRepartidor: {
-            _id: datosRepartidor._id,
-            nombreUsuario: datosRepartidor.nombreUsuario,
-            usuarioRepartidor: datosRepartidor.usuarioRepartidor,
-            vehiculo: datosRepartidor.vehiculo,
-            patente: datosRepartidor.patente,
-            valoracion: datosRepartidor.valoracion,
-            telefono: datosRepartidor.telefono
-          }
-        }, 
-        { new: true }
-      );
-      
-      return pedidoActualizado;
-      
-    } catch (error: unknown) {
-      console.error('❌ Error aceptando pedido por repartidor:', error);
-      
-      return this.pedidoModel.findByIdAndUpdate(
-        id, 
-        { 
-          dealer: true,
-          repartidor: new Types.ObjectId(idRepartidor),
-          datosRepartidor: {
-            _id: idRepartidor,
-            nombreUsuario: 'Repartidor',
-            usuarioRepartidor: 'Repartidor',
-            vehiculo: 'Vehículo no especificado',
-            patente: 'Patente no especificada',
-            valoracion: 0,
-            telefono: ''
-          }
-        }, 
-        { new: true }
-      );
+    const pedidoActualizado = await this.pedidoModel.findByIdAndUpdate(
+      id, 
+      { 
+        dealer: true,
+        repartidor: new Types.ObjectId(idRepartidor),
+        datosRepartidor: {
+          _id: datosRepartidor._id,
+          nombreUsuario: datosRepartidor.nombreUsuario,
+          usuarioRepartidor: datosRepartidor.usuarioRepartidor,
+          vehiculo: datosRepartidor.vehiculo,
+          patente: datosRepartidor.patente,
+          valoracion: datosRepartidor.valoracion,
+          telefono: datosRepartidor.telefono
+        }
+      }, 
+      { new: true }
+    );
+    
+    if (!pedidoActualizado) {
+      throw new Error('Pedido no encontrado');
     }
+    
+    console.log(`✅ Pedido aceptado por repartidor: ${id}`);
+    return pedidoActualizado;
+    
+  } catch (error: unknown) {
+    console.error('❌ Error aceptando pedido por repartidor:', error);
+    
+    // Fallback básico
+    const pedidoActualizado = await this.pedidoModel.findByIdAndUpdate(
+      id, 
+      { 
+        dealer: true,
+        repartidor: new Types.ObjectId(idRepartidor),
+        datosRepartidor: {
+          _id: idRepartidor,
+          nombreUsuario: 'Repartidor',
+          usuarioRepartidor: 'Repartidor',
+          vehiculo: 'Vehículo no especificado',
+          patente: 'Patente no especificada',
+          valoracion: 0,
+          telefono: ''
+        }
+      }, 
+      { new: true }
+    );
+    
+    if (!pedidoActualizado) {
+      throw new Error('Pedido no encontrado');
+    }
+    
+    return pedidoActualizado;
   }
+}
+
 
   async marcarEnCamino(id: string) {
     const codigoPedido = Math.floor(1000 + Math.random() * 9000);
@@ -409,106 +422,112 @@ export class PedidoService {
   }
 
   private async transferirAPedidosRealizados(pedido: any): Promise<any> {
-    try {
-      const [datosUsuario, datosLocal, datosRepartidor] = await Promise.all([
-        this.obtenerDatosUsuario(pedido.idComprador),
-        this.obtenerDatosLocal(pedido.idLocal),
-        this.obtenerDatosRepartidor(pedido.repartidor)
-      ]);
+  try {
+    const [datosUsuario, datosLocal, datosRepartidor] = await Promise.all([
+      this.obtenerDatosUsuario(pedido.idComprador),
+      this.obtenerDatosLocal(pedido.idLocal),
+      this.obtenerDatosRepartidor(pedido.repartidor)
+    ]);
 
-      const pedidoRealizadoData = {
-        pedidoOriginalId: pedido._id,
-        nombrePedido: pedido.nombrePedido,
-        idComprador: pedido.idComprador,
-        idLocal: pedido.idLocal,
-        precioPedido: pedido.precioPedido,
-        pago: pedido.pago,
-        fechaPedido: pedido.fechaPedido,
-        fechaEntrega: new Date(),
-        esDelivery: pedido.esDelivery,
-        direccionEntrega: this.normalizarDireccion(pedido.direccionEntrega),
-        comidas: pedido.comidas,
-        propina: pedido.propina,
-        cantidadPropina: pedido.cantidadPropina || 0,
-        repartidor: pedido.repartidor,
-        codigoPedido: pedido.codigoPedido,
-        direccionLocal: this.normalizarDireccion(pedido.direccionLocal),
-        datosUsuario: {
-          nombre: datosUsuario.nombre || 'N/A',
-          apellido: datosUsuario.apellido || 'N/A',
-          nombreUsuario: datosUsuario.nombreUsuario || 'N/A',
-          direccion: datosUsuario.direccion
-        },
-        datosLocal: {
-          nombreLocal: datosLocal.nombreLocal || 'N/A',
-          direccion: datosLocal.direccion
-        },
-        datosRepartidor: {
-          nombreUsuario: datosRepartidor.nombreUsuario || 'N/A',
-          vehiculo: datosRepartidor.vehiculo || 'N/A',
-          patente: datosRepartidor.patente || 'N/A',
-          valoracion: datosRepartidor.valoracion || 0
-        }
-      };
+    const pedidoRealizadoData = {
+      pedidoOriginalId: pedido._id,
+      nombrePedido: pedido.nombrePedido,
+      idComprador: pedido.idComprador,
+      idLocal: pedido.idLocal,
+      precioPedido: pedido.precioPedido,
+      pago: pedido.pago,
+      fechaPedido: pedido.fechaPedido,
+      fechaEntrega: new Date(),
+      esDelivery: pedido.esDelivery,
+      direccionEntrega: this.normalizarDireccion(pedido.direccionEntrega),
+      comidas: pedido.comidas || [], // ✅ GARANTIZAR ARRAY
+      promociones: pedido.promociones || [], // ✅ AGREGAR PROMOCIONES FALTANTES
+      propina: pedido.propina,
+      cantidadPropina: pedido.cantidadPropina || 0,
+      repartidor: pedido.repartidor,
+      codigoPedido: pedido.codigoPedido,
+      direccionLocal: this.normalizarDireccion(pedido.direccionLocal),
+      // ✅ INICIALIZAR CAMPOS DE VALORACIÓN
+      valoracionPedido: 0,
+      valoracionDelivery: 0,
+      valoracionLocal: 0,
+      valoracionCompletada: false,
+      datosUsuario: {
+        nombre: datosUsuario.nombre || 'N/A',
+        apellido: datosUsuario.apellido || 'N/A',
+        nombreUsuario: datosUsuario.nombreUsuario || 'N/A',
+        direccion: datosUsuario.direccion
+      },
+      datosLocal: {
+        nombreLocal: datosLocal.nombreLocal || 'N/A',
+        direccion: datosLocal.direccion
+      },
+      datosRepartidor: {
+        nombreUsuario: datosRepartidor.nombreUsuario || 'N/A',
+        vehiculo: datosRepartidor.vehiculo || 'N/A',
+        patente: datosRepartidor.patente || 'N/A',
+        valoracion: datosRepartidor.valoracion || 0
+      }
+    };
 
-      const pedidoRealizado = new this.pedidoRealizadoModel(pedidoRealizadoData);
-      const pedidoGuardado = await pedidoRealizado.save();
+    console.log(`📦 Transfiriendo pedido a realizados:`);
+    console.log(`- Pedido ID: ${pedido._id}`);
+    console.log(`- Nombre: ${pedidoRealizadoData.nombrePedido}`);
+    console.log(`- Comidas: ${pedidoRealizadoData.comidas.length}`);
+    console.log(`- Promociones: ${pedidoRealizadoData.promociones.length}`); // ✅ DEBUG
 
-      await this.pedidoModel.findByIdAndDelete(pedido._id);
+    const pedidoRealizado = new this.pedidoRealizadoModel(pedidoRealizadoData);
+    const pedidoGuardado = await pedidoRealizado.save();
 
-      return pedidoGuardado.toObject();
+    await this.pedidoModel.findByIdAndDelete(pedido._id);
 
-    } catch (error: unknown) {
-      console.error('❌ Error transfiriendo pedido:', error);
-      throw new BadRequestException('Error procesando la entrega del pedido');
+    console.log(`✅ Pedido transferido exitosamente: ${pedidoGuardado._id}`);
+
+    return pedidoGuardado.toObject();
+
+  } catch (error: unknown) {
+    console.error('❌ Error transfiriendo pedido:', error);
+    
+    if (error instanceof Error) {
+      console.error('❌ Detalle del error:', error.message);
+      throw new BadRequestException(`Error procesando la entrega del pedido: ${error.message}`);
     }
+    
+    throw new BadRequestException('Error procesando la entrega del pedido');
   }
+}
 
-  async obtenerPedidosRealizadosPorUsuario(idUsuario: string): Promise<any[]> {
-    const pedidosRealizados = await this.pedidoRealizadoModel
-      .find({ idComprador: new Types.ObjectId(idUsuario) })
+  async obtenerPedidosRealizadosPorUsuario(userId: string): Promise<any[]> {
+  console.log(`🔍 Buscando pedidos realizados para usuario: ${userId}`);
+  
+  try {
+    const pedidos = await this.pedidoRealizadoModel
+      .find({ 'datosUsuario._id': new Types.ObjectId(userId) })
       .sort({ fechaEntrega: -1 })
       .lean()
       .exec();
 
-    return pedidosRealizados.map(pedido => ({
-      _id: pedido._id,
-      pedidoOriginalId: pedido.pedidoOriginalId,
-      nombrePedido: pedido.nombrePedido,
-      precioPedido: pedido.precioPedido,
-      pago: pedido.pago,
+    console.log(`📊 Encontrados ${pedidos.length} pedidos realizados`);
+    
+    return pedidos.map(pedido => ({
+      ...pedido,
+      _id: pedido._id.toString(),
       fechaPedido: pedido.fechaPedido ? new Date(pedido.fechaPedido).toISOString() : new Date().toISOString(),
       fechaEntrega: pedido.fechaEntrega ? new Date(pedido.fechaEntrega).toISOString() : new Date().toISOString(),
       fechaRegistro: pedido.fechaRegistro ? new Date(pedido.fechaRegistro).toISOString() : new Date().toISOString(),
-      esDelivery: pedido.esDelivery,
-      direccionEntrega: pedido.direccionEntrega,
-      comidas: pedido.comidas,
-      propina: pedido.propina,
-      cantidadPropina: pedido.cantidadPropina,
-      codigoPedido: pedido.codigoPedido,
-      direccionLocal: pedido.direccionLocal,
-      datosUsuario: {
-        nombre: pedido.datosUsuario?.nombre,
-        apellido: pedido.datosUsuario?.apellido,
-        nombreUsuario: pedido.datosUsuario?.nombreUsuario,
-        direccion: pedido.datosUsuario?.direccion
-      },
-      datosLocal: {
-        nombreLocal: pedido.datosLocal?.nombreLocal,
-        direccion: pedido.datosLocal?.direccion
-      },
-      datosRepartidor: pedido.datosRepartidor ? {
-        nombreUsuario: pedido.datosRepartidor.nombreUsuario,
-        vehiculo: pedido.datosRepartidor.vehiculo,
-        patente: pedido.datosRepartidor.patente,
-        valoracion: pedido.datosRepartidor.valoracion
-      } : null,
-      valoracionPedido: pedido.valoracionPedido,
-      valoracionDelivery: pedido.valoracionDelivery,
-      valoracionLocal: pedido.valoracionLocal,
-      valoracionCompletada: pedido.valoracionCompletada,
+      comidas: pedido.comidas || [],
+      promociones: pedido.promociones || [], // ✅ INCLUIR PROMOCIONES
+      valoracionPedido: pedido.valoracionPedido || 0,
+      valoracionDelivery: pedido.valoracionDelivery || 0,
+      valoracionLocal: pedido.valoracionLocal || 0,
+      valoracionCompletada: pedido.valoracionCompletada || false
     }));
+    
+  } catch (error) {
+    console.error('❌ Error obteniendo pedidos realizados:', error);
+    throw new BadRequestException('Error obteniendo pedidos realizados por usuario');
   }
+}
 
   async obtenerTodosPedidosRealizados(): Promise<any[]> {
     return this.pedidoRealizadoModel
@@ -621,85 +640,130 @@ export class PedidoService {
   }
 
   // ✅ VERSIONES SIMPLIFICADAS - SIN validaciones estrictas:
-  private async obtenerDatosUsuario(idUsuario: any) {
-    try {
-      const res = await axios.get(`http://localhost:3000/usuarios/${idUsuario}`);
-      const data = res.data;
-      
-      return {
-        ...data,
-        nombre: data.nombre || 'N/A',
-        apellido: data.apellido || 'N/A',
-        nombreUsuario: data.nombreUsuario || `${data.nombre} ${data.apellido}`,
-        direccion: this.normalizarDireccion(data.direccion),
-        _id: data._id || idUsuario
-      };
-    } catch (error: unknown) {
-      console.error('❌ Error obteniendo datos de usuario:', error);
-      return { 
-        nombre: 'Usuario no disponible', 
-        apellido: '',
-        nombreUsuario: 'N/A',
-        direccion: 'Dirección no disponible',
-        _id: idUsuario
-      };
-    }
+  private async obtenerDatosUsuario(idUsuario: string | Types.ObjectId | undefined) {
+  // ✅ CONVERTIR A STRING Y MANEJAR UNDEFINED
+  const usuarioId = idUsuario ? idUsuario.toString() : null;
+  
+  if (!usuarioId) {
+    console.warn('⚠️ ID de usuario no válido');
+    return { 
+      nombre: 'Usuario no disponible', 
+      apellido: '',
+      nombreUsuario: 'N/A',
+      direccion: 'Dirección no disponible',
+      _id: 'desconocido'
+    };
   }
+  
+  try {
+    const res = await axios.get(`http://localhost:3000/usuarios/${usuarioId}`);
+    const data = res.data;
+    
+    return {
+      ...data,
+      nombre: data.nombre || 'N/A',
+      apellido: data.apellido || 'N/A',
+      nombreUsuario: data.nombreUsuario || `${data.nombre} ${data.apellido}`,
+      direccion: this.normalizarDireccion(data.direccion),
+      _id: data._id || usuarioId
+    };
+  } catch (error: unknown) {
+    console.error('❌ Error obteniendo datos de usuario:', error);
+    return { 
+      nombre: 'Usuario no disponible', 
+      apellido: '',
+      nombreUsuario: 'N/A',
+      direccion: 'Dirección no disponible',
+      _id: usuarioId
+    };
+  }
+}
 
-  private async obtenerDatosLocal(idLocal: any) {
-    try {
-      const res = await axios.get(`http://localhost:3000/locatarios/${idLocal}`);
-      const data = res.data;
-      
-      return {
-        ...data,
-        nombreLocal: data.nombreLocal || 'Local no disponible',
-        direccion: this.normalizarDireccion(data.direccion),
-        _id: data._id || idLocal
-      };
-    } catch (error: unknown) {
-      console.error('❌ Error obteniendo datos de local:', error);
-      return { 
-        nombreLocal: 'Local no disponible', 
-        direccion: 'Dirección no disponible',
-        _id: idLocal
-      };
-    }
+  private async obtenerDatosLocal(idLocal: string | Types.ObjectId | undefined) {
+  // ✅ CONVERTIR A STRING Y MANEJAR UNDEFINED
+  const localId = idLocal ? idLocal.toString() : null;
+  
+  if (!localId) {
+    console.warn('⚠️ ID de local no válido');
+    return { 
+      nombreLocal: 'Local no disponible', 
+      direccion: 'Dirección no disponible',
+      _id: 'desconocido'
+    };
   }
+  
+  try {
+    const res = await axios.get(`http://localhost:3000/locatarios/${localId}`);
+    const data = res.data;
+    
+    return {
+      ...data,
+      nombreLocal: data.nombreLocal || 'Local no disponible',
+      direccion: this.normalizarDireccion(data.direccion),
+      _id: data._id || localId
+    };
+  } catch (error: unknown) {
+    console.error('❌ Error obteniendo datos de local:', error);
+    return { 
+      nombreLocal: 'Local no disponible', 
+      direccion: 'Dirección no disponible',
+      _id: localId
+    };
+  }
+}
 
-  private async obtenerDatosRepartidor(idRepartidor: any) {
-    try {
-      const res = await axios.get(`http://localhost:3000/usuarios/${idRepartidor}`);
-      const data = res.data;
-      
-      return {
-        _id: data._id || idRepartidor,
-        nombre: data.nombre || 'N/A',
-        apellido: data.apellido || 'N/A',
-        nombreUsuario: data.nombreUsuario || data.usuarioRepartidor || `${data.nombre} ${data.apellido}`,
-        usuarioRepartidor: data.usuarioRepartidor || data.nombreUsuario || `${data.nombre} ${data.apellido}`,
-        vehiculo: data.vehiculo || 'Vehículo no especificado',
-        patente: data.patente || 'Patente no especificada',
-        valoracion: data.valoracionRepartidor || 0,
-        telefono: data.telefono || '',
-        correo: data.correo || ''
-      };
-    } catch (error: unknown) {
-      console.error('❌ Error obteniendo datos de repartidor:', error);
-      return { 
-        _id: idRepartidor,
-        nombre: 'N/A',
-        apellido: 'N/A',
-        nombreUsuario: 'Repartidor no disponible',
-        usuarioRepartidor: 'Repartidor no disponible',
-        vehiculo: 'Vehículo no disponible',
-        patente: 'Patente no disponible',
-        valoracion: 0,
-        telefono: '',
-        correo: ''
-      };
-    }
+   private async obtenerDatosRepartidor(idRepartidor: string | Types.ObjectId | undefined) {
+  // ✅ CONVERTIR A STRING Y MANEJAR UNDEFINED
+  const repartidorId = idRepartidor ? idRepartidor.toString() : null;
+  
+  if (!repartidorId) {
+    console.warn('⚠️ ID de repartidor no válido');
+    return {
+      _id: 'desconocido',
+      nombre: 'N/A',
+      apellido: 'N/A',
+      nombreUsuario: 'Repartidor no disponible',
+      usuarioRepartidor: 'Repartidor no disponible',
+      vehiculo: 'Vehículo no especificado',
+      patente: 'Patente no especificada',
+      valoracion: 0,
+      telefono: '',
+      correo: ''
+    };
   }
+  
+  try {
+    const res = await axios.get(`http://localhost:3000/usuarios/${repartidorId}`);
+    const data = res.data;
+    
+    return {
+      _id: data._id || repartidorId,
+      nombre: data.nombre || 'N/A',
+      apellido: data.apellido || 'N/A',
+      nombreUsuario: data.nombreUsuario || data.usuarioRepartidor || `${data.nombre} ${data.apellido}`,
+      usuarioRepartidor: data.usuarioRepartidor || data.nombreUsuario || `${data.nombre} ${data.apellido}`,
+      vehiculo: data.vehiculo || 'Vehículo no especificado',
+      patente: data.patente || 'Patente no especificada',
+      valoracion: data.valoracionRepartidor || 0,
+      telefono: data.telefono || '',
+      correo: data.correo || ''
+    };
+  } catch (error: unknown) {
+    console.error('❌ Error obteniendo datos de repartidor:', error);
+    return { 
+      _id: repartidorId,
+      nombre: 'N/A',
+      apellido: 'N/A',
+      nombreUsuario: 'Repartidor no disponible',
+      usuarioRepartidor: 'Repartidor no disponible',
+      vehiculo: 'Vehículo no disponible',
+      patente: 'Patente no disponible',
+      valoracion: 0,
+      telefono: '',
+      correo: ''
+    };
+  }
+}
 
   private async guardarEnReportes(pedido: any) {
     try {
@@ -759,46 +823,131 @@ export class PedidoService {
   }
 
   async valorarPedidoRealizado(
-    pedidoRealizadoId: string, 
-    valoraciones: {
-      valoracionPedido: number;
-      valoracionDelivery: number;
-      valoracionLocal: number;
-    }
-  ): Promise<any> {
-    const { valoracionPedido, valoracionDelivery, valoracionLocal } = valoraciones;
-    
-    if (valoracionPedido < 0 || valoracionPedido > 5 ||
-        valoracionDelivery < 0 || valoracionDelivery > 5 ||
-        valoracionLocal < 0 || valoracionLocal > 5) {
-      throw new BadRequestException('Las valoraciones deben estar entre 0 y 5');
-    }
-
-    try {
-      const pedidoActualizado = await this.pedidoRealizadoModel.findByIdAndUpdate(
-        pedidoRealizadoId,
-        {
-          valoracionPedido,
-          valoracionDelivery,
-          valoracionLocal,
-          valoracionCompletada: true
-        },
-        { new: true }
-      ).lean().exec();
-
-      if (!pedidoActualizado) {
-        throw new BadRequestException('Pedido realizado no encontrado');
-      }
-
-      await this.enviarValoracionesAMicroservicios(pedidoActualizado);
-
-      return pedidoActualizado;
-
-    } catch (error) {
-      console.error('❌ Error guardando valoraciones:', error);
-      throw new BadRequestException('Error guardando las valoraciones');
-    }
+  pedidoRealizadoId: string, 
+  valoraciones: {
+    valoracionPedido: number;
+    valoracionDelivery: number;
+    valoracionLocal: number;
   }
+): Promise<any> {
+  const { valoracionPedido, valoracionDelivery, valoracionLocal } = valoraciones;
+  
+  // ✅ VALIDAR RANGOS
+  if (valoracionPedido < 0 || valoracionPedido > 5 ||
+      valoracionDelivery < 0 || valoracionDelivery > 5 ||
+      valoracionLocal < 0 || valoracionLocal > 5) {
+    throw new BadRequestException('Las valoraciones deben estar entre 0 y 5');
+  }
+
+  try {
+    console.log(`🌟 Valorando pedido realizado: ${pedidoRealizadoId}`);
+    console.log(`📊 Valoraciones: Pedido=${valoracionPedido}, Delivery=${valoracionDelivery}, Local=${valoracionLocal}`);
+
+    // ✅ BUSCAR EL PEDIDO PRIMERO PARA DEBUG
+    const pedidoExistente = await this.pedidoRealizadoModel.findById(pedidoRealizadoId).lean().exec();
+    
+    if (!pedidoExistente) {
+      console.error(`❌ Pedido realizado no encontrado: ${pedidoRealizadoId}`);
+      throw new BadRequestException('Pedido realizado no encontrado');
+    }
+
+    console.log(`✅ Pedido encontrado: ${pedidoExistente.nombrePedido}`);
+    console.log(`📦 Comidas: ${pedidoExistente.comidas?.length || 0}`);
+    console.log(`🎉 Promociones: ${pedidoExistente.promociones?.length || 0}`);
+
+    // ✅ VERIFICAR SI YA ESTÁ VALORADO
+    if (pedidoExistente.valoracionCompletada) {
+      console.warn(`⚠️ Pedido ya valorado: ${pedidoRealizadoId}`);
+      throw new BadRequestException('Este pedido ya ha sido valorado');
+    }
+
+    // ✅ ACTUALIZAR CON VALIDACIÓN
+    const pedidoActualizado = await this.pedidoRealizadoModel.findByIdAndUpdate(
+      pedidoRealizadoId,
+      {
+        $set: {
+          valoracionPedido: Number(valoracionPedido),
+          valoracionDelivery: Number(valoracionDelivery), 
+          valoracionLocal: Number(valoracionLocal),
+          valoracionCompletada: true
+        }
+      },
+      { 
+        new: true,
+        runValidators: true,
+        lean: true
+      }
+    ).exec();
+
+    if (!pedidoActualizado) {
+      console.error(`❌ Error actualizando pedido: ${pedidoRealizadoId}`);
+      throw new BadRequestException('Error actualizando el pedido');
+    }
+
+    console.log(`✅ Pedido valorado exitosamente: ${pedidoRealizadoId}`);
+
+    // ✅ ENVIAR VALORACIONES A OTROS MICROSERVICIOS (SIN AWAIT PARA NO BLOQUEAR)
+    this.enviarValoracionesAMicroservicios(pedidoActualizado).catch(error => {
+      console.error('❌ Error enviando valoraciones a microservicios (no crítico):', error);
+    });
+
+    // ✅ RETORNAR ESTRUCTURA CONSISTENTE
+    return {
+      _id: pedidoActualizado._id.toString(),
+      pedidoOriginalId: pedidoActualizado.pedidoOriginalId || pedidoActualizado._id.toString(),
+      nombrePedido: pedidoActualizado.nombrePedido || 'Pedido sin nombre',
+      idComprador: pedidoActualizado.idComprador ? pedidoActualizado.idComprador.toString() : '',
+      idLocal: pedidoActualizado.idLocal ? pedidoActualizado.idLocal.toString() : '',
+      precioPedido: pedidoActualizado.precioPedido || 0,
+      pago: pedidoActualizado.pago || 'No especificado',
+      fechaPedido: pedidoActualizado.fechaPedido ? new Date(pedidoActualizado.fechaPedido).toISOString() : new Date().toISOString(),
+      fechaEntrega: pedidoActualizado.fechaEntrega ? new Date(pedidoActualizado.fechaEntrega).toISOString() : new Date().toISOString(),
+      fechaRegistro: pedidoActualizado.fechaRegistro ? new Date(pedidoActualizado.fechaRegistro).toISOString() : new Date().toISOString(),
+      esDelivery: pedidoActualizado.esDelivery || false,
+      direccionEntrega: pedidoActualizado.direccionEntrega || null,
+      comidas: pedidoActualizado.comidas || [],
+      promociones: pedidoActualizado.promociones || [], // ✅ INCLUIR PROMOCIONES
+      propina: pedidoActualizado.propina || false,
+      cantidadPropina: pedidoActualizado.cantidadPropina || 0,
+      repartidor: pedidoActualizado.repartidor ? pedidoActualizado.repartidor.toString() : '',
+      codigoPedido: pedidoActualizado.codigoPedido || 0,
+      direccionLocal: pedidoActualizado.direccionLocal || null,
+      valoracionPedido: pedidoActualizado.valoracionPedido,
+      valoracionDelivery: pedidoActualizado.valoracionDelivery,
+      valoracionLocal: pedidoActualizado.valoracionLocal,
+      valoracionCompletada: pedidoActualizado.valoracionCompletada,
+      datosUsuario: {
+        nombre: pedidoActualizado.datosUsuario?.nombre || 'Usuario',
+        apellido: pedidoActualizado.datosUsuario?.apellido || 'Desconocido',
+        nombreUsuario: pedidoActualizado.datosUsuario?.nombreUsuario || 'N/A',
+        direccion: pedidoActualizado.datosUsuario?.direccion || 'Sin dirección'
+      },
+      datosLocal: {
+        nombreLocal: pedidoActualizado.datosLocal?.nombreLocal || 'Local desconocido',
+        direccion: pedidoActualizado.datosLocal?.direccion || 'Sin dirección'
+      },
+      datosRepartidor: {
+        nombreUsuario: pedidoActualizado.datosRepartidor?.nombreUsuario || 'Repartidor',
+        vehiculo: pedidoActualizado.datosRepartidor?.vehiculo || 'N/A',
+        patente: pedidoActualizado.datosRepartidor?.patente || 'N/A',
+        valoracion: pedidoActualizado.datosRepartidor?.valoracion || 0
+      }
+    };
+
+  } catch (error: unknown) {
+    console.error('❌ Error completo valorando pedido:', error);
+    
+    if (error instanceof BadRequestException) {
+      throw error;
+    }
+    
+    if (error instanceof Error) {
+      throw new BadRequestException(`Error guardando valoraciones: ${error.message}`);
+    }
+    
+    throw new BadRequestException(`Error desconocido guardando las valoraciones: ${String(error)}`);
+  }
+}
 
   private async enviarValoracionesAMicroservicios(pedido: any) {
     try {
@@ -819,74 +968,88 @@ export class PedidoService {
     }
   }
 
-  private async actualizarValoracionRepartidor(idRepartidor: any, nuevaValoracion: number) {
-    try {
-      await this.guardarValoracionEnEntrega(idRepartidor, nuevaValoracion);
-      await this.actualizarPromedioRepartidor(idRepartidor, nuevaValoracion);
-    } catch (error) {
-      console.error(`❌ Error actualizando valoración del repartidor:`, error);
-    }
+  private async actualizarValoracionRepartidor(idRepartidor: string | Types.ObjectId | undefined, nuevaValoracion: number) {
+  // ✅ CONVERTIR A STRING Y MANEJAR UNDEFINED
+  const repartidorId = idRepartidor ? idRepartidor.toString() : null;
+  
+  if (!repartidorId) {
+    console.warn('⚠️ ID de repartidor no válido para valoración');
+    return;
   }
+  
+  try {
+    await this.guardarValoracionEnEntrega(repartidorId, nuevaValoracion);
+    await this.actualizarPromedioRepartidor(repartidorId, nuevaValoracion);
+  } catch (error) {
+    console.error(`❌ Error actualizando valoración del repartidor:`, error);
+  }
+}
 
-  private async guardarValoracionEnEntrega(idRepartidor: any, valoracion: number) {
-    try {
-      const mutation = `
-        mutation ActualizarValoracionEntrega($repartidorId: String!, $valoracion: Float!) {
-          actualizarValoracionEntrega(repartidorId: $repartidorId, valoracion: $valoracion) {
-            _id
-            valoracionRecibida
-            fechaValoracion
-          }
+private async guardarValoracionEnEntrega(idRepartidor: string, valoracion: number) {
+  try {
+    const mutation = `
+      mutation ActualizarValoracionEntrega($repartidorId: String!, $valoracion: Float!) {
+        actualizarValoracionEntrega(repartidorId: $repartidorId, valoracion: $valoracion) {
+          _id
+          valoracionRecibida
+          fechaValoracion
         }
-      `;
-
-      const response = await axios.post('http://localhost:3003/graphql', {
-        query: mutation,
-        variables: {
-          repartidorId: idRepartidor.toString(),
-          valoracion: valoracion
-        }
-      });
-
-      if (response.data.errors) {
-        console.error('❌ Errores GraphQL:', response.data.errors);
-        throw new Error(response.data.errors[0].message);
       }
+    `;
 
-      return response.data.data.actualizarValoracionEntrega;
-
-    } catch (error: unknown) {
-      console.error('❌ Error guardando valoración en entrega:', error);
-      
-      if (error instanceof Error) {
-        throw new BadRequestException(`Error guardando valoración: ${error.message}`);
-      } else {
-        throw new BadRequestException('Error desconocido guardando valoración en entrega');
+    const response = await axios.post('http://localhost:3003/graphql', {
+      query: mutation,
+      variables: {
+        repartidorId: idRepartidor, // ✅ YA ES STRING
+        valoracion: valoracion
       }
+    });
+
+    if (response.data.errors) {
+      console.error('❌ Errores GraphQL:', response.data.errors);
+      throw new Error(response.data.errors[0].message);
+    }
+
+    return response.data.data.actualizarValoracionEntrega;
+
+  } catch (error: unknown) {
+    console.error('❌ Error guardando valoración en entrega:', error);
+    
+    if (error instanceof Error) {
+      throw new BadRequestException(`Error guardando valoración: ${error.message}`);
+    } else {
+      throw new BadRequestException('Error desconocido guardando valoración en entrega');
     }
   }
-
-  private async actualizarPromedioRepartidor(idRepartidor: any, nuevaValoracion: number) {
-    try {
-      await axios.patch(`http://localhost:3000/usuarios/${idRepartidor}/valoracion`, {
-        nuevaValoracion: nuevaValoracion,
-        tipo: 'repartidor'
-      });
-    } catch (error) {
-      console.error(`❌ Error actualizando promedio del repartidor:`, error);
-    }
+}
+  private async actualizarPromedioRepartidor(idRepartidor: string, nuevaValoracion: number) {
+  try {
+    await axios.patch(`http://localhost:3000/usuarios/${idRepartidor}/valoracion`, {
+      nuevaValoracion: nuevaValoracion,
+      tipo: 'repartidor'
+    });
+  } catch (error) {
+    console.error(`❌ Error actualizando promedio del repartidor:`, error);
   }
+}
 
-  private async actualizarValoracionLocal(idLocal: any, nuevaValoracion: number) {
-    try {
-      await axios.patch(`http://localhost:3000/locatarios/${idLocal}/valoracion`, {
-        nuevaValoracion
-      });
-    } catch (error) {
-      console.error(`❌ Error actualizando valoración del local:`, error);
-    }
+private async actualizarValoracionLocal(idLocal: string | Types.ObjectId | undefined, nuevaValoracion: number) {
+  // ✅ CONVERTIR A STRING Y MANEJAR UNDEFINED
+  const localId = idLocal ? idLocal.toString() : null;
+  
+  if (!localId) {
+    console.warn('⚠️ ID de local no válido para valoración');
+    return;
   }
-
+  
+  try {
+    await axios.patch(`http://localhost:3000/locatarios/${localId}/valoracion`, {
+      nuevaValoracion
+    });
+  } catch (error) {
+    console.error(`❌ Error actualizando valoración del local:`, error);
+  }
+}
   private async enviarValoracionesAReportes(pedido: any) {
     try {
       await axios.post('http://localhost:3004/stats/valoracion', {
@@ -936,53 +1099,67 @@ export class PedidoService {
   }
 
   // ✅ AGREGAR MÉTODO FALTANTE:
-  async obtenerPedidosPendientesValoracion(idUsuario: string): Promise<any[]> {
-    const pedidosPendientes = await this.pedidoRealizadoModel
+  async obtenerPedidosPendientesValoracion(userId: string): Promise<any[]> {
+  console.log(`🔍 Buscando pedidos pendientes de valoración para usuario: ${userId}`);
+  
+  try {
+    const pedidos = await this.pedidoRealizadoModel
       .find({ 
-        idComprador: new Types.ObjectId(idUsuario),
-        valoracionCompletada: false
+        idComprador: new Types.ObjectId(userId), // ✅ USAR CAMPO CORRECTO
+        valoracionCompletada: { $ne: true }
       })
-      .sort({ fechaEntrega: -1 })
       .lean()
       .exec();
 
-    return pedidosPendientes.map(pedido => ({
-      _id: pedido._id,
-      pedidoOriginalId: pedido.pedidoOriginalId,
-      nombrePedido: pedido.nombrePedido,
-      precioPedido: pedido.precioPedido,
-      pago: pedido.pago,
+    console.log(`📊 Encontrados ${pedidos.length} pedidos pendientes de valoración`);
+    
+    return pedidos.map(pedido => ({
+      _id: pedido._id.toString(),
+      pedidoOriginalId: pedido.pedidoOriginalId || pedido._id.toString(),
+      nombrePedido: pedido.nombrePedido || 'Pedido sin nombre',
+      idComprador: pedido.idComprador ? pedido.idComprador.toString() : userId,
+      idLocal: pedido.idLocal ? pedido.idLocal.toString() : '',
+      precioPedido: pedido.precioPedido || 0,
+      pago: pedido.pago || 'No especificado',
       fechaPedido: pedido.fechaPedido ? new Date(pedido.fechaPedido).toISOString() : new Date().toISOString(),
       fechaEntrega: pedido.fechaEntrega ? new Date(pedido.fechaEntrega).toISOString() : new Date().toISOString(),
       fechaRegistro: pedido.fechaRegistro ? new Date(pedido.fechaRegistro).toISOString() : new Date().toISOString(),
-      esDelivery: pedido.esDelivery,
-      direccionEntrega: pedido.direccionEntrega,
-      comidas: pedido.comidas,
-      propina: pedido.propina,
-      cantidadPropina: pedido.cantidadPropina,
-      codigoPedido: pedido.codigoPedido,
-      direccionLocal: pedido.direccionLocal,
-      datosUsuario: {
-        nombre: pedido.datosUsuario?.nombre,
-        apellido: pedido.datosUsuario?.apellido,
-        nombreUsuario: pedido.datosUsuario?.nombreUsuario,
-        direccion: pedido.datosUsuario?.direccion
-      },
-      datosLocal: {
-        nombreLocal: pedido.datosLocal?.nombreLocal,
-        direccion: pedido.datosLocal?.direccion
-      },
-      datosRepartidor: pedido.datosRepartidor ? {
-        nombreUsuario: pedido.datosRepartidor.nombreUsuario,
-        vehiculo: pedido.datosRepartidor.vehiculo,
-        patente: pedido.datosRepartidor.patente,
-        valoracion: pedido.datosRepartidor.valoracion
-      } : null,
+      esDelivery: pedido.esDelivery || false,
+      direccionEntrega: pedido.direccionEntrega || null,
+      comidas: pedido.comidas || [],
+      promociones: pedido.promociones || [], // ✅ SIEMPRE ARRAY
+      propina: pedido.propina || false,
+      cantidadPropina: pedido.cantidadPropina || 0,
+      repartidor: pedido.repartidor ? pedido.repartidor.toString() : '',
+      codigoPedido: pedido.codigoPedido || 0,
+      direccionLocal: pedido.direccionLocal || null,
       valoracionPedido: pedido.valoracionPedido || 0,
       valoracionDelivery: pedido.valoracionDelivery || 0,
       valoracionLocal: pedido.valoracionLocal || 0,
-      valoracionCompletada: pedido.valoracionCompletada || false
+      valoracionCompletada: pedido.valoracionCompletada || false,
+      // ✅ DATOS DENORMALIZADOS CON VALORES POR DEFECTO
+      datosUsuario: {
+        nombre: pedido.datosUsuario?.nombre || 'Usuario',
+        apellido: pedido.datosUsuario?.apellido || 'Desconocido',
+        nombreUsuario: pedido.datosUsuario?.nombreUsuario || 'N/A',
+        direccion: pedido.datosUsuario?.direccion || 'Sin dirección'
+      },
+      datosLocal: {
+        nombreLocal: pedido.datosLocal?.nombreLocal || 'Local desconocido',
+        direccion: pedido.datosLocal?.direccion || 'Sin dirección'
+      },
+      datosRepartidor: {
+        nombreUsuario: pedido.datosRepartidor?.nombreUsuario || 'Repartidor',
+        vehiculo: pedido.datosRepartidor?.vehiculo || 'N/A',
+        patente: pedido.datosRepartidor?.patente || 'N/A',
+        valoracion: pedido.datosRepartidor?.valoracion || 0
+      }
     }));
+    
+  } catch (error) {
+    console.error('❌ Error obteniendo pedidos pendientes de valoración:', error);
+    throw new BadRequestException('Error obteniendo pedidos pendientes de valoración');
   }
+}
 
 }

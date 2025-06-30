@@ -20,13 +20,13 @@ exports.StatsModule = StatsModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([
-                { name: 'Usuario', schema: {} }, // Schema simple para usuarios
-                { name: pedido_realizado_schema_1.PedidoRealizado.name, schema: pedido_realizado_schema_1.PedidoRealizadoSchema }, // ✅ CORREGIDO
-                { name: venta_reporte_schema_1.VentaReporte.name, schema: venta_reporte_schema_1.VentaReporteSchema }, // ✅ AGREGADO
+                { name: pedido_realizado_schema_1.PedidoRealizado.name, schema: pedido_realizado_schema_1.PedidoRealizadoSchema },
+                { name: venta_reporte_schema_1.VentaReporte.name, schema: venta_reporte_schema_1.VentaReporteSchema },
+                // ✅ NO INCLUIR UsuarioModel PORQUE NO EXISTE EN ESTE MICROSERVICIO
             ]),
         ],
         controllers: [stats_controller_1.StatsController],
         providers: [stats_service_1.StatsService],
-        exports: [stats_service_1.StatsService], // ✅ EXPORTAR para otros módulos
+        exports: [stats_service_1.StatsService],
     })
 ], StatsModule);

@@ -52,6 +52,38 @@ let UsuarioController = class UsuarioController {
         console.log('Usuario autenticado en /usuarios/me:', req.user);
         return req.user;
     }
+    async getAdminCheck(req) {
+        console.log('🔍 Admin check - Usuario autenticado:', req.user);
+        // Obtener información completa del usuario desde la base de datos
+        const userId = req.user.sub || req.user.userId;
+        console.log('🔍 ID del usuario para admin check:', userId);
+        const usuario = await this.usuarioService.obtenerUsuarioPorId(userId);
+        if (!usuario) {
+            throw new common_1.NotFoundException('Usuario no encontrado');
+        }
+        console.log('👤 Usuario encontrado para admin check:', {
+            id: usuario._id,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            correo: usuario.correo,
+            tipoUsuario: usuario.tipoUsuario,
+            isAdmin: usuario.isAdmin // ✅ DEBUG IMPORTANTE
+        });
+        // Retornar información específica para verificación de admin
+        return {
+            _id: usuario._id,
+            userId: usuario._id,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            correo: usuario.correo,
+            tipoUsuario: usuario.tipoUsuario,
+            isAdmin: usuario.isAdmin, // ✅ CAMPO CLAVE PARA ADMIN
+            // Campos adicionales si es necesario
+            nombreUsuario: usuario.nombreUsuario,
+            nombreLocal: usuario.nombreLocal,
+            usuarioRepartidor: usuario.usuarioRepartidor
+        };
+    }
     async getSaldo(req) {
         // req.user.userId viene del JWT payload
         const userId = req.user.userId;
@@ -118,6 +150,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "getMe", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me/admin-check'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "getAdminCheck", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('me/saldo'),
