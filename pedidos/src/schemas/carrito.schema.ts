@@ -1,10 +1,29 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-// ✅ SCHEMA PARA COMIDAS (ACTUALIZADO)
+// ✅ SCHEMA PARA COMIDAS EN PROMOCIONES
 @Schema()
-export class ComidaCarrito {
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Locatario' })
+export class ComidaPromocion {
+  @Prop({ required: true })
+  comidaId: string;
+
+  @Prop({ required: true })
+  nombre: string;
+
+  @Prop({ required: true })
+  cantidad: number;
+
+  @Prop({ required: true })
+  precioOriginal: number;
+}
+
+// ✅ SCHEMA PARA ITEMS DE COMIDA
+@Schema()
+export class ItemCarrito {
+  @Prop({ required: true })
+  idComida: string;
+
+  @Prop({ type: Types.ObjectId, required: true })
   idLocatario: Types.ObjectId;
 
   @Prop({ required: true })
@@ -22,9 +41,6 @@ export class ComidaCarrito {
   @Prop()
   imagenUrl?: string;
 
-  @Prop({ required: true }) // ✅ AHORA ES REQUERIDO
-  idComida: string;
-
   @Prop({ default: 'comida' })
   tipo: string;
 }
@@ -32,7 +48,10 @@ export class ComidaCarrito {
 // ✅ SCHEMA PARA PROMOCIONES
 @Schema()
 export class PromocionCarrito {
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Locatario' })
+  @Prop({ required: true })
+  idPromocion: string;
+
+  @Prop({ type: Types.ObjectId, required: true })
   idLocatario: Types.ObjectId;
 
   @Prop({ required: true })
@@ -50,40 +69,27 @@ export class PromocionCarrito {
   @Prop()
   imagenUrl?: string;
 
-  @Prop({ required: true })
-  idPromocion: string;
-
   @Prop({ default: 'promocion' })
   tipo: string;
 
-  @Prop([{
-    comidaId: { type: String, required: true },
-    nombre: { type: String, required: true },
-    cantidad: { type: Number, required: true },
-    precioOriginal: { type: Number, required: true }
-  }])
-  comidas: {
-    comidaId: string;
-    nombre: string;
-    cantidad: number;
-    precioOriginal: number;
-  }[];
+  @Prop({ type: [ComidaPromocion] })
+  comidas?: ComidaPromocion[];
 }
 
-export const ComidaCarritoSchema = SchemaFactory.createForClass(ComidaCarrito);
-export const PromocionCarritoSchema = SchemaFactory.createForClass(PromocionCarrito);
-
-// ✅ CARRITO ACTUALIZADO
-@Schema()
+// ✅ SCHEMA PRINCIPAL DEL CARRITO
+@Schema({ timestamps: true })
 export class Carrito extends Document {
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Usuario', unique: true })
+  @Prop({ type: Types.ObjectId, required: true, unique: true })
   idComprador: Types.ObjectId;
 
-  @Prop({ type: [ComidaCarritoSchema], default: [] })
-  items: ComidaCarrito[];
+  @Prop({ type: [ItemCarrito], default: [] })
+  items: ItemCarrito[];
 
-  @Prop({ type: [PromocionCarritoSchema], default: [] })
+  @Prop({ type: [PromocionCarrito], default: [] })
   promociones: PromocionCarrito[];
 }
 
 export const CarritoSchema = SchemaFactory.createForClass(Carrito);
+export const ItemCarritoSchema = SchemaFactory.createForClass(ItemCarrito);
+export const PromocionCarritoSchema = SchemaFactory.createForClass(PromocionCarrito);
+export const ComidaPromocionSchema = SchemaFactory.createForClass(ComidaPromocion);

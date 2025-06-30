@@ -1,6 +1,9 @@
-/* CarritoView.css - Unificado y adaptado al diseño de CompradorDashboard */
+/* CarritoView.css (Adaptado a la paleta Pastel/Marrón) */
 
-/* Variables de Color (Importadas/Duplicadas del CompradorDashboard.css para consistencia) */
+/* Importar fuentes de Google Fonts para consistencia */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;700&display=swap');
+
+/* Variables de Color (Centralizadas para consistencia) */
 :root {
     --color-dark-brown: #532a14;
     --color-light-orange-pastel: #fef4e8;
@@ -9,525 +12,1019 @@
     --color-subtitle-orange: #8d5c3d;
     --color-card-border: #d1a38d;
     --color-text-brown-dark: #5a3a28;
-    --color-text-brown-light: #7a5540;
-    --color-info-text: #6d4b3c;
-    --color-card-shadow: rgba(0,0,0,0.08);
-    --color-general-shadow: rgba(0,0,0,0.05);
-    --logo-color: #ffffff; /* Color para el logo y algunos íconos en la navbar */
-    --color-success: #27ae60; /* Verde para éxito/confirmar */
-    --color-danger: #fa314a; /* Rojo para eliminar */
+    --color-text-brown-light: #9b7d69;
+    --color-general-shadow: rgba(0, 0, 0, 0.08);
+    --color-card-shadow: rgba(0, 0, 0, 0.12);
 
-    /* Nuevas variables para un placeholder más estilizado */
-    --color-placeholder-bg: #e0e0e0; /* Un gris claro para el fondo */
-    --color-placeholder-border: #bdbdbd; /* Gris un poco más oscuro para el borde */
-    --color-placeholder-text: #757575; /* Gris medio para el texto */
+    /* Colores específicos para Carrito/Promociones */
+    --color-promo-accent: #e74c3c; /* Un rojo más apagado para ofertas */
+    --color-promo-light-bg: #fff0ec; /* Fondo muy claro para detalles de promo */
+    --color-promo-border: #ff6b6b; /* Borde para promociones */
+    --color-promo-gradient-start: #ff6b6b;
+    --color-promo-gradient-end: #ee5a24;
+    --color-ahorro-bg: rgba(39, 174, 96, 0.1); /* Fondo para ahorro */
+    --color-ahorro-border: rgba(39, 174, 96, 0.2);
+    --color-ahorro-text: #27ae60;
+
+    /* Colores para mensajes de estado */
+    --color-success-message: #28a745; /* Verde para éxito */
+    --color-error-message: #dc3545; /* Rojo para error */
+    --color-info-message: #007bff; /* Azul para información */
+    --color-success-bg-light: #d4edda;
+    --color-error-bg-light: #f8d7da;
+    --color-info-bg-light: #cfe2ff;
+
+    /* Fuentes */
+    --font-primary: 'Quicksand', sans-serif;
+    --font-heading: 'Comfortaa', cursive;
 }
 
-/* Estilos globales del body/html si no están ya en un CSS global */
+/* Estilos globales del body/html */
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-primary);
     background-color: var(--color-light-orange-pastel);
     color: var(--color-text-brown-dark);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Contenedor principal del Carrito (similar a .comprador-dashboard) */
+/* --- Contenedor Principal del Carrito --- */
 .carrito-root {
-    width: 100%;
     min-height: 100vh;
+    background: var(--color-light-orange-pastel); /* Fondo consistente */
     display: flex;
     flex-direction: column;
-    align-items: center;
     box-sizing: border-box;
-    background-color: var(--color-light-orange-pastel); /* Asegura el fondo */
 }
 
-/* Navbar (usando la clase existente de comprador) */
-.navbar-dashboard {
+/* --- Header del Carrito (Barra Superior) --- */
+.carrito-header {
     width: 100%;
-    background-color: var(--color-title-brown); /* Color de la navbar principal */
+    padding: 1.5rem 2.5rem; /* Más padding */
+    font-size: 1.8rem; /* Más grande */
+    font-weight: 700;
     color: white;
-    padding: 0.8rem 2rem;
-    border-radius: 0 0 16px 16px;
-    box-shadow: 0 2px 10px var(--color-card-shadow);
-    display: flex;
-    justify-content: flex-start; /* Alinea los elementos al inicio */
-    align-items: center;
-    gap: 1rem;
-    box-sizing: border-box; /* Añadido para un mejor manejo del padding/width */
-}
-
-.navbar-dashboard .logo {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--logo-color); /* Blanco para el logo en la navbar */
+    background: linear-gradient(90deg, var(--color-title-brown) 0%, var(--color-subtitle-orange) 100%); /* Gradiente marrón/naranja */
+    border-radius: 0 0 20px 20px; /* Más redondeado */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15); /* Sombra más pronunciada */
     letter-spacing: 1px;
-    margin-left: auto; /* Centra el logo */
-    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; /* Header pegajoso */
+    top: 0;
+    z-index: 1000;
+    font-family: var(--font-heading);
 }
 
-/* Botón de ícono (como el de volver o carrito en el comprador dashboard) */
-.icon-btn {
+.carrito-volver {
     background: none;
     border: none;
+    font-size: 1.8rem; /* Tamaño del emoji */
+    color: white; /* Color del emoji */
     cursor: pointer;
-    padding: 0.3rem;
+    margin-right: 1.5rem; /* Más margen */
+    transition: background 0.3s ease, transform 0.2s ease;
     border-radius: 50%;
-    transition: background 0.2s ease-in-out;
+    width: 48px; /* Tamaño del botón */
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
-.icon-btn:hover {
-    background-color: rgba(255,255,255,0.15); /* Efecto hover sutil */
+.carrito-volver:hover {
+    background: rgba(255,255,255,0.25); /* Efecto hover más notorio */
+    transform: scale(1.1);
+}
+.carrito-volver:active {
+    transform: scale(0.95);
 }
 
-.icon-btn img {
-    width: 28px;
-    height: 28px;
-    filter: brightness(0) invert(1); /* Hace que los iconos sean blancos para la navbar oscura */
-}
-
-/* Cuerpo principal del contenido (similar al dashboard-body del comprador) */
-.dashboard-body {
+.carrito-header-right {
+    flex: 1;
     display: flex;
+    justify-content: center; /* Centrar el texto "Mi Carrito" */
+    align-items: center;
+    font-size: 1.8rem; /* Consistente con el header */
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* --- Contenido Principal del Carrito --- */
+.carrito-content {
+    flex: 1;
+    padding: 2.5rem 1.5rem 8rem 1.5rem; /* Más padding para el footer fijo */
+    max-width: 900px; /* Aumentar ancho máximo */
+    margin: 0 auto;
     width: 100%;
-    max-width: 1200px; /* Ancho máximo para el contenido */
-    padding: 2rem;
-    gap: 2rem; /* Espacio entre las columnas */
     box-sizing: border-box;
-    flex-wrap: wrap; /* Permite que las columnas se envuelvan en pantallas pequeñas */
 }
 
-/* Columna de la lista de productos (similar a .productos-section) */
-.carrito-product-list-column {
-    flex: 3;
-    min-width: 450px; /* Mantiene un ancho mínimo */
-    background-color: var(--color-card-bg-light); /* Fondo de tarjeta */
-    border-radius: 12px; /* Border-radius de las tarjetas del comprador */
-    box-shadow: 0 6px 12px var(--color-card-shadow); /* Sombra de tarjeta */
-    border: 1.5px solid var(--color-card-border); /* Borde de tarjeta */
-    padding: 2rem;
-    box-sizing: border-box;
-    min-height: 400px; /* Para que no se colapse si está vacío */
-}
-
-/* Título de la lista de productos (reutiliza .productos-title) */
-.productos-title {
-    font-size: 2rem;
-    color: var(--color-title-brown);
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-/* Mensajes de estado (reutiliza .no-data-message, .loading-message, .error-message) */
-.no-data-message,
-.loading-message,
-.error-message,
-.success-message {
-    text-align: center;
+.carrito-loading,
+.carrito-empty {
     color: var(--color-text-brown-light);
-    font-size: 1.1em;
-    padding: 20px;
+    margin-top: 3rem;
+    text-align: center;
+    font-size: 1.2rem;
+    background-color: var(--color-card-bg-light);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px var(--color-general-shadow);
+    border: 1px solid var(--color-card-border);
 }
 
-.error-message {
-    color: var(--color-danger); /* Rojo para errores */
-    font-weight: bold;
+.carrito-loading::before {
+    content: '⏳';
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
 }
 
-.success-message {
-    color: var(--color-success); /* Verde para éxito */
-    font-weight: bold;
+.carrito-empty::before {
+    content: '😔';
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
 }
 
-/* --- AJUSTES PARA LAS CARDS DE PRODUCTO --- */
 .carrito-list {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem; /* Espacio entre items del carrito */
+    gap: 2rem; /* Más espacio entre items */
 }
 
-/* Ítem del carrito (reutiliza .producto-card) */
-.producto-card {
+/* --- Encabezados de Sección (Comidas/Promociones) --- */
+.carrito-section-header {
+    padding: 1.2rem 0 0.8rem 0; /* Más padding */
+    border-bottom: 2px solid var(--color-card-border); /* Borde consistente */
+    margin-bottom: 1.5rem; /* Más margen */
+}
+
+.carrito-section-header h3 {
+    margin: 0;
+    color: var(--color-title-brown); /* Color de título */
+    font-size: 1.6rem; /* Más grande */
+    font-weight: 700;
     display: flex;
-    flex-direction: row; /* Asegura que la imagen esté a la izquierda */
     align-items: center;
-    justify-content: space-between; /* Espacio entre imagen e info */
-    padding: 1rem;
-    background-color: white;
-    border-radius: 10px;
-    border: 1px solid var(--color-card-border);
-    box-shadow: 0 4px 8px var(--color-general-shadow);
-    transition: transform 0.2s, box-shadow 0.2s;
+    gap: 0.8rem; /* Más espacio para el emoji */
+    font-family: var(--font-heading);
 }
 
-.producto-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px var(--color-card-shadow);
+.carrito-section-header.promo-section h3 {
+    color: var(--color-promo-accent); /* Color de acento para promociones */
+    background: linear-gradient(135deg, var(--color-promo-gradient-start) 0%, var(--color-promo-gradient-end) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-.producto-imagen {
-    width: 120px;
-    height: 120px;
-    border-radius: 8px;
+/* --- Item del Carrito (Base) --- */
+.carrito-item {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--color-card-border); /* Borde más grueso */
+    border-radius: 18px; /* Más redondeado */
+    padding: 1.2rem 1.5rem; /* Más padding */
+    box-shadow: 0 6px 20px var(--color-card-shadow); /* Sombra más prominente */
+    background: var(--color-card-bg-light);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    will-change: transform;
+    position: relative;
+}
+.carrito-item:hover {
+    transform: translateY(-5px); /* Efecto de elevación notorio */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); /* Sombra más fuerte al hover */
+    border-color: var(--color-subtitle-orange); /* Borde se vuelve naranja en hover */
+}
+
+/* --- Imagen/Icono del Item --- */
+.carrito-img {
+    width: 80px; /* Más grande */
+    height: 80px;
+    margin-right: 1.5rem; /* Más margen */
+    flex-shrink: 0;
+    border-radius: 12px; /* Más redondeado */
+    overflow: hidden;
+    background: var(--color-light-orange-pastel); /* Fondo pastel */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-card-border); /* Borde sutil */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+.carrito-img img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    background-color: var(--color-placeholder-bg);
-    border: 1px dashed var(--color-placeholder-border);
-    flex-shrink: 0; /* No se reduce aunque haya poco espacio */
+}
+.food-icon, .promo-main-icon {
+    font-size: 3.5rem; /* Tamaño del emoji */
+    color: var(--color-subtitle-orange); /* Color del emoji */
 }
 
-/* Si la imagen es el ícono genérico, hazla más grande dentro del placeholder */
-.producto-imagen[src*="meal.png"] {
-    object-fit: contain; /* Para que el ícono no se corte */
-    padding: 10px; /* Para que no se pegue a los bordes del círculo */
-}
-
-
-.producto-info {
-    flex: 1; /* Toma el resto del espacio */
+/* --- Información del Item --- */
+.carrito-info {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    margin-left: 1rem; /* Separación de la imagen */
-    justify-content: center;
+    gap: 0.4rem; /* Más espacio entre líneas */
 }
-
-.producto-nombre {
-    font-size: 1.15em; /* Ligeramente más pequeño para optimizar espacio */
-    color: var(--color-text-brown-dark);
-    font-weight: 700; /* Más negrita */
-    margin: 0;
-    margin-bottom: 0.2rem; /* Espacio debajo del nombre, reducido */
-    line-height: 1.2; /* Mejora la legibilidad */
-    white-space: nowrap; /* Evita que el nombre se rompa en varias líneas */
-    overflow: hidden; /* Oculta el texto que desborda */
-    text-overflow: ellipsis; /* Añade puntos suspensivos al texto desbordado */
-    max-width: 100%; /* Asegura que el ellipsis funcione correctamente */
-}
-
-.producto-local-info {
-    font-size: 0.85em; /* Un poco más pequeño */
-    color: var(--color-text-brown-light);
-    margin-bottom: 0.4rem; /* Más espacio debajo del local, reducido */
-    white-space: nowrap; /* Evita que el nombre del local se rompa */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-}
-
-.carrito-cantidad-precio {
-    display: flex;
-    /* Ajustado para mejor espaciado entre Cantidad y Precio unitario */
-    gap: 0.8rem; /* Espacio fijo entre los dos spans, reducido */
-    font-size: 0.9em; /* Ligeramente más pequeño */
-    color: var(--color-text-brown-dark);
-    width: 100%;
-    flex-wrap: wrap; /* Permite que "Cantidad" y "Precio" se envuelvan si el espacio es muy pequeño */
-}
-
-.carrito-cantidad-precio span {
-    white-space: nowrap; /* Evita que los textos se rompan */
-}
-
-
-.carrito-total-item-price {
-    font-weight: bold;
-    font-size: 1.1em; /* Total más resaltado */
+.carrito-nombre {
+    font-weight: 700;
+    font-size: 1.3rem; /* Más grande */
     color: var(--color-title-brown);
-    margin-top: 0.5rem; /* Más espacio arriba del total, reducido */
-    margin-bottom: 0.8rem; /* Más espacio debajo del total, reducido */
+    margin-bottom: 0.2rem;
+    font-family: var(--font-heading);
+}
+.carrito-local,
+.carrito-cantidad,
+.carrito-precio-unit {
+    color: var(--color-text-brown-light);
+    font-size: 1rem; /* Más grande */
+}
+.carrito-total {
+    color: var(--color-subtitle-orange); /* Naranja de acento */
+    font-weight: 700;
+    font-size: 1.25rem; /* Más grande */
+    margin-top: 0.5rem; /* Más margen */
 }
 
-/* Botón de eliminar (reutiliza .add-to-cart-button y le cambia el color) */
-.add-to-cart-button {
-    background-color: var(--color-subtitle-orange);
-    color: white;
+/* --- Botón Eliminar --- */
+.carrito-eliminar {
+    position: relative;
+    background: none;
     border: none;
-    padding: 0.6rem 1rem; /* Padding reducido */
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 0.9em; /* Tamaño de fuente reducido */
+    margin-left: 1.5rem; /* Más margen */
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    width: fit-content; /* Se ajusta al contenido */
-    margin-top: auto; /* Empuja el botón hacia abajo si la card es más alta */
-    align-self: flex-start; /* Alinea a la izquierda en flex-direction column */
+    padding: 0;
+    outline: none;
+    z-index: 1;
+    width: 48px; /* Más grande */
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem; /* Tamaño del emoji */
+    color: var(--color-promo-accent); /* Rojo de acento */
+    transition: background 0.2s ease, transform 0.2s ease;
+    border-radius: 50%;
+}
+.carrito-eliminar:hover {
+    background: rgba(231, 76, 60, 0.15); /* Fondo rojo claro en hover */
+    transform: scale(1.1);
+}
+.carrito-eliminar:active {
+    transform: scale(0.95);
 }
 
-.add-to-cart-button:hover {
-    background-color: var(--color-title-brown);
-    transform: translateY(-2px);
+/* --- ESTILOS ESPECIALES PARA ITEMS DE PROMOCIÓN --- */
+.carrito-item.promocion-item {
+    border: 2px solid var(--color-promo-border); /* Borde rojo */
+    background: linear-gradient(135deg, var(--color-promo-light-bg) 0%, var(--color-card-bg-light) 100%); /* Gradiente sutil */
+    position: relative;
 }
 
-/* Estilo específico para el botón de eliminar rojo */
-.add-to-cart-button[style*="background-color: var(--color-danger)"] {
-    background-color: var(--color-danger);
+.carrito-item.promocion-item::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(135deg, var(--color-promo-gradient-start), var(--color-promo-gradient-end));
+    border-radius: 20px; /* Más redondeado */
+    z-index: -1;
+    opacity: 0.08; /* Más sutil */
 }
-.add-to-cart-button[style*="background-color: var(--color-danger)"]:hover {
-    background-color: #c00; /* Un rojo más oscuro al hover */
+
+.carrito-item.promocion-item:hover {
+    transform: translateY(-5px); /* Consistente con otros hover */
+    box-shadow: 0 10px 25px rgba(255, 107, 107, 0.25); /* Sombra más pronunciada */
+    border-color: var(--color-promo-accent);
 }
-/* --- FIN AJUSTES PARA LAS CARDS DE PRODUCTO --- */
 
+/* --- BADGE PROMOCIONAL EN LA IMAGEN --- */
+.promo-badge {
+    position: absolute;
+    top: -8px; /* Más arriba */
+    right: -8px; /* Más a la derecha */
+    background: linear-gradient(135deg, var(--color-promo-gradient-start) 0%, var(--color-promo-gradient-end) 100%);
+    color: white;
+    border-radius: 50%;
+    width: 32px; /* Más grande */
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem; /* Tamaño del emoji */
+    font-weight: bold;
+    box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4); /* Sombra más fuerte */
+    animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1); /* Animación más suave */
+    border: 2px solid white; /* Borde blanco para destacar */
+}
 
-/* Columna de resumen (reutiliza .sidebar) */
-.sidebar {
-    flex: 2; /* Ocupa menos espacio que la lista de productos */
-    min-width: 300px; /* Ancho mínimo para la sidebar */
-    background-color: var(--color-card-bg-light);
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 1.5px solid var(--color-card-border);
-    box-shadow: 0 6px 12px var(--color-card-shadow);
-    height: fit-content; /* Se ajusta al contenido */
-    position: sticky; /* Se queda pegado al scroll */
-    top: 2rem; /* Distancia desde arriba */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.8; } /* Más grande y ligeramente transparente */
+}
+
+/* --- NOMBRE DE PROMOCIÓN CON TAG --- */
+.carrito-nombre.promo-nombre {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem; /* Más espacio */
+    font-size: 1.4rem; /* Más grande */
+    color: var(--color-promo-accent); /* Color de acento */
+}
+
+.promo-tag {
+    background: linear-gradient(135deg, var(--color-promo-gradient-start) 0%, var(--color-promo-gradient-end) 100%);
+    color: white;
+    font-size: 0.8rem; /* Más grande */
+    font-weight: 700;
+    padding: 0.3rem 0.8rem; /* Más padding */
+    border-radius: 15px; /* Más redondeado */
+    align-self: flex-start;
+    text-transform: uppercase;
+    letter-spacing: 0.8px; /* Más espaciado */
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+/* --- COMIDAS INCLUIDAS EN LA PROMOCIÓN --- */
+.promo-comidas-incluidas {
+    background: rgba(102, 126, 234, 0.08); /* Color azul/púrpura pastel más sutil */
+    padding: 0.8rem; /* Más padding */
+    border-radius: 10px; /* Más redondeado */
+    margin: 0.8rem 0; /* Más margen */
+    border: 1px solid rgba(102, 126, 234, 0.15);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.promo-comidas-incluidas strong {
+    color: #667eea;
+    font-size: 1rem; /* Más grande */
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.comida-incluida-item {
+    color: var(--color-text-brown-dark); /* Color de texto consistente */
+    font-size: 0.9rem; /* Más grande */
+    margin-left: 0.8rem; /* Más indentado */
+    line-height: 1.4;
+}
+
+/* --- PRECIO PROMOCIONAL DESTACADO --- */
+.carrito-precio-unit.promo-precio {
+    color: var(--color-promo-accent);
+    font-weight: 700;
+    font-size: 1.15rem; /* Más grande */
+    margin-top: 0.5rem;
+}
+
+/* --- MOSTRAR AHORRO --- */
+.promo-ahorro {
+    background: var(--color-ahorro-bg); /* Fondo verde pastel */
+    padding: 0.8rem; /* Más padding */
+    border-radius: 10px; /* Más redondeado */
+    margin: 0.8rem 0;
+    border: 1px solid var(--color-ahorro-border);
+    color: var(--color-ahorro-text);
+    font-size: 0.95rem; /* Más grande */
+    text-align: center;
+    font-weight: 500;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.ahorro-amount {
+    display: block;
+    font-weight: 700;
+    color: var(--color-ahorro-text);
+    font-size: 1.1rem; /* Más grande */
+    margin-top: 0.4rem;
+}
+
+/* --- TOTAL DE PROMOCIÓN DESTACADO --- */
+.carrito-total.promo-total {
+    color: var(--color-promo-accent);
+    font-size: 1.3rem; /* Más grande */
+    font-weight: 700;
+    margin-top: 0.8rem;
+}
+
+/* --- Footer del Carrito (Barra Inferior) --- */
+.carrito-footer {
+    position: fixed;
+    left: 50%;
+    bottom: 0; /* Pegado al fondo */
+    transform: translateX(-50%);
+    width: 100vw;
+    max-width: 900px; /* Consistente con el content */
+    background: var(--color-card-bg-light); /* Fondo de tarjeta */
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.15); /* Sombra hacia arriba */
+    display: flex;
+    justify-content: space-between; /* Espacio entre pagar y total */
+    align-items: center;
+    padding: 1.5rem 2.5rem; /* Más padding */
+    z-index: 10;
+    border-radius: 20px 20px 0 0; /* Más redondeado arriba */
+    border-top: 2px solid var(--color-card-border); /* Borde superior */
     box-sizing: border-box;
 }
 
-.sidebar-title {
-    font-size: 1.8rem; /* Título ligeramente más grande */
-    color: var(--color-title-brown);
-    margin: 0 0 1.5rem 0;
-    text-align: center;
+.carrito-pagar {
+    background: linear-gradient(135deg, var(--color-subtitle-orange), var(--color-dark-brown)); /* Gradiente */
+    color: white;
+    font-size: 1.25rem; /* Más grande */
+    font-weight: 700;
+    border: none;
+    border-radius: 12px; /* Más redondeado */
+    padding: 1rem 2.5rem; /* Más padding */
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Sombra al botón */
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+.carrito-pagar:hover {
+    background: linear-gradient(135deg, var(--color-dark-brown), var(--color-subtitle-orange)); /* Invertir gradiente en hover */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+}
+.carrito-pagar:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.sidebar-subtitle {
-    font-size: 1.3rem; /* Subtítulo para secciones de pago/delivery */
+.carrito-total-footer {
+    font-size: 1.25rem; /* Más grande */
+    font-weight: 600;
     color: var(--color-text-brown-dark);
-    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column; /* Apilar desglose y total principal */
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.total-desglose {
+    font-size: 0.95rem; /* Más grande */
+    color: var(--color-text-brown-light);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed rgba(0,0,0,0.1); /* Separador sutil */
+    width: 100%; /* Ocupa el ancho para el borde */
+    text-align: right;
+}
+
+.subtotal-line {
+    text-align: right;
+}
+
+.subtotal-line.promo-line {
+    color: var(--color-promo-accent); /* Rojo de acento */
     font-weight: 600;
 }
 
-.sidebar-label {
-    display: block; /* Cada label en su propia línea */
-    margin-bottom: 0.5rem;
+.total-principal {
+    display: flex;
+    align-items: baseline; /* Alinear por la base del texto */
+    gap: 1rem; /* Más espacio */
+    font-size: 1.4rem; /* Más grande */
+    font-weight: 700;
+    color: var(--color-title-brown); /* Marrón oscuro */
+    padding-top: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.carrito-total-num {
+    color: var(--color-subtitle-orange); /* Naranja de acento */
+    font-size: 1.6rem; /* Más grande */
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+/* --- MODAL DE PAGO --- */
+.modal-pago-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); /* Fondo más oscuro */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(5px); /* Efecto de desenfoque */
+}
+.modal-pago {
+    background: var(--color-card-bg-light);
+    border-radius: 20px; /* Más redondeado */
+    padding: 2.5rem 2rem; /* Más padding */
+    min-width: 350px; /* Ancho mínimo */
+    max-width: 500px; /* Ancho máximo */
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Sombra más pronunciada */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid var(--color-card-border); /* Borde consistente */
+    animation: modalFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1.2) forwards; /* Animación con rebote */
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-50px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-pago h3 {
+    color: var(--color-title-brown);
+    font-size: 1.8rem; /* Más grande */
+    margin-bottom: 1.5rem;
+    font-family: var(--font-heading);
+    text-align: center;
+}
+
+.modal-pago h2 { /* Para el modal de éxito */
+    color: var(--color-success-message) !important;
+    font-size: 2rem;
+    font-family: var(--font-heading);
+}
+
+.pago-metodos {
+    display: flex;
+    gap: 1.5rem; /* Más espacio */
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.pago-btn {
+    background: var(--color-light-orange-pastel);
+    border: 2px solid var(--color-subtitle-orange);
+    color: var(--color-subtitle-orange);
+    font-weight: 600;
+    border-radius: 12px; /* Más redondeado */
+    padding: 0.8rem 1.8rem; /* Más padding */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.05rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    min-width: 120px; /* Ancho mínimo para botones */
+}
+.pago-btn.selected, .pago-btn:hover {
+    background: var(--color-subtitle-orange);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.pago-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* Inputs del Modal */
+.modal-pago label {
+    display: inline-flex; /* Para alinear label e input */
+    align-items: center;
+    margin-bottom: 0.8rem;
     font-size: 1rem;
     color: var(--color-text-brown-dark);
     font-weight: 500;
 }
 
-/* Input de texto en la sidebar (reutiliza .sidebar-search-input) */
-.sidebar-search-input {
-    width: 100%;
-    padding: 0.6rem 1rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.8rem;
+.modal-input {
+    margin-left: 0.8rem;
+    border-radius: 8px; /* Más redondeado */
     border: 1.5px solid var(--color-card-border);
-    border-radius: 8px;
-    font-size: 1em;
+    padding: 0.5rem 0.8rem;
+    font-size: 1rem;
     color: var(--color-text-brown-dark);
-    background-color: white;
-    box-sizing: border-box;
-    transition: box-shadow 0.2s, border-color 0.2s;
     outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background-color: #fcfcfc;
 }
 
-.sidebar-search-input:focus {
+.modal-input:focus {
     border-color: var(--color-subtitle-orange);
-    box-shadow: 0 0 6px rgba(141, 92, 61, 0.2);
+    box-shadow: 0 0 0 3px rgba(141, 92, 61, 0.2);
 }
 
-.sidebar-search-input.small-input {
-    width: 80px; /* Ancho más pequeño para números */
-    display: inline-block; /* Para que quede al lado del label */
-    margin-left: 0.5rem;
+.modal-input.small-input {
+    width: 80px; /* Ancho más pequeño para número de casa */
 }
 
-/* Grupo de botones (delivery, pago, propina) */
-.sidebar-buttons-group {
-    display: flex;
-    gap: 0.8rem; /* Espacio entre botones */
-    margin-bottom: 1.5rem;
-    justify-content: center; /* Centra los botones en el grupo */
+.modal-input.tip-input {
+    width: 100px; /* Ancho para input de propina */
 }
 
-/* Botones en la sidebar (reutiliza .local-button) */
-.local-button {
-    flex: 1; /* Para que ocupen el espacio disponible */
-    padding: 0.8rem 1rem;
-    background-color: white;
-    border: 2px solid var(--color-subtitle-orange);
-    border-radius: 8px;
-    color: var(--color-subtitle-orange);
-    font-weight: 600;
-    font-size: 1.1em;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s, transform 0.2s;
-    text-align: center;
+.modal-input:disabled {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
-.local-button:hover {
-    background-color: var(--color-subtitle-orange);
-    color: white;
-    transform: translateY(-2px);
-}
-
-.local-button.selected {
-    background-color: var(--color-title-brown);
-    color: white;
-    border-color: var(--color-title-brown);
-}
-
-.delivery-details, .propina-input-group {
-    margin-top: 1rem;
-    margin-bottom: 1.5rem;
-}
-.delivery-details label, .propina-input-group label {
-    margin-bottom: 0.8rem;
-    display: flex; /* Para alinear label e input */
-    align-items: center;
-    flex-wrap: wrap; /* Permite que el input vaya a la siguiente línea si no hay espacio */
-}
-
-
-/* Resumen de carrito en la sidebar */
-.carrito-summary-section {
-    margin-bottom: 1.5rem;
-}
-.carrito-summary-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.4rem 0;
-    font-size: 1.05rem;
+/* Desglose de Totales en el Modal */
+.modal-desglose-total {
+    margin: 1.5rem 0;
+    padding: 1.2rem;
+    background: var(--color-light-orange-pastel);
+    border-radius: 10px;
+    border: 1px solid var(--color-card-border);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
     color: var(--color-text-brown-dark);
+    font-size: 1rem;
 }
 
-.carrito-summary-row.total {
+.modal-desglose-total strong {
+    color: var(--color-title-brown);
+}
+
+.modal-desglose-total hr {
+    margin: 0.8rem 0;
+    border: none;
+    border-top: 1px dashed var(--color-card-border);
+}
+
+.modal-total-final {
     font-size: 1.3rem;
-    font-weight: bold;
-    border-top: 1px solid var(--color-card-border); /* Separador */
-    padding-top: 1rem;
+    font-weight: 700;
+    color: var(--color-subtitle-orange);
+    text-align: right;
     margin-top: 0.5rem;
 }
 
-.carrito-summary-row.total span:last-child {
-    color: var(--color-success); /* Color verde para el total final */
-    font-size: 1.5rem;
-}
-
-.carrito-security-text {
-    font-size: 0.9em;
-    color: var(--color-info-text);
-    text-align: center;
-    margin-top: 1.5rem;
-}
-
-/* Modal Overlay (para confirmación de eliminación) */
-.carrito-modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Asegura que esté por encima de todo */
-}
-
-.carrito-modal-content {
-    background: var(--color-card-bg-light); /* Fondo de tarjeta */
-    border: 2px solid var(--color-card-border);
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    width: 90%;
-    max-width: 400px;
-}
-
-.carrito-modal-content h3 {
-    font-size: 1.4rem;
+.modal-total-final strong {
     color: var(--color-title-brown);
-    margin-bottom: 1.5rem;
 }
 
-.carrito-modal-actions {
+
+.pago-modal-btns {
     display: flex;
+    gap: 1.2rem; /* Más espacio */
+    margin-top: 1.8rem; /* Más margen */
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 1.2rem;
-    margin-top: 1.5rem;
 }
-
-.confirm-button {
-    background-color: var(--color-danger);
+.pago-btn-confirm {
+    background: linear-gradient(135deg, var(--color-subtitle-orange), var(--color-dark-brown));
     color: white;
-    padding: 0.8rem 1.5rem;
     border: none;
-    border-radius: 8px;
-    font-weight: bold;
+    border-radius: 10px;
+    padding: 0.9rem 2rem; /* Más padding */
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
-
-.confirm-button:hover {
-    background-color: #c00;
+.pago-btn-confirm:hover {
+    background: linear-gradient(135deg, var(--color-dark-brown), var(--color-subtitle-orange));
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
 }
-
-.cancel-button {
-    background-color: #aaa;
-    color: white;
-    padding: 0.8rem 1.5rem;
+.pago-btn-confirm:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+.pago-btn-cancel {
+    background: var(--color-card-border);
+    color: var(--color-text-brown-dark);
     border: none;
-    border-radius: 8px;
-    font-weight: bold;
+    border-radius: 10px;
+    padding: 0.9rem 2rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.pago-btn-cancel:hover {
+    background: #bb9782; /* Tono ligeramente más oscuro */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-.cancel-button:hover {
-    background-color: #852929;
+.pago-error, .pago-ok {
+    margin-top: 1.2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.pago-error {
+    color: var(--color-error-message);
+    background-color: var(--color-error-bg-light);
+    border: 1px solid var(--color-error-message);
+}
+.pago-ok {
+    color: var(--color-success-message);
+    background-color: var(--color-success-bg-light);
+    border: 1px solid var(--color-success-message);
 }
 
 
-/* Responsive */
+/* --- RESPONSIVE DESIGN --- */
 @media (max-width: 768px) {
-    .navbar-dashboard {
-        flex-wrap: wrap;
-        justify-content: center;
-        padding: 1rem;
+    .carrito-header {
+        padding: 1rem 1.5rem;
+        font-size: 1.5rem;
+        border-radius: 0 0 16px 16px;
+    }
+    .carrito-volver {
+        width: 42px;
+        height: 42px;
+        font-size: 1.6rem;
+        margin-right: 1rem;
+    }
+    .carrito-header-right {
+        font-size: 1.5rem;
+    }
+    .carrito-content {
+        padding: 2rem 1rem 7rem 1rem;
+    }
+    .carrito-section-header h3 {
+        font-size: 1.3rem;
+        gap: 0.6rem;
+    }
+    .carrito-item {
+        padding: 1rem 1.2rem;
+        border-radius: 15px;
         gap: 1rem;
     }
-    .dashboard-body {
-        flex-direction: column; /* Las columnas se apilan */
-        padding: 1.5rem;
-    }
-    .carrito-product-list-column,
-    .sidebar {
-        width: 100%; /* Ocupan todo el ancho */
-        min-width: auto;
-        padding: 1.5rem;
-    }
-    .producto-card {
-        flex-direction: row; /* Mantener imagen y texto en fila */
-        align-items: center; /* Centrar verticalmente */
-        text-align: left; /* Alineación del texto a la izquierda */
-        /* Reducir padding si es necesario en móviles */
-        padding: 0.8rem;
-    }
-    .producto-imagen {
-        margin-right: 0.8rem; /* Reducir margen en móviles */
-        margin-bottom: 0; /* Eliminar margen inferior en móviles */
-        width: 70px; /* Reducir tamaño de imagen en móviles */
+    .carrito-img {
+        width: 70px;
         height: 70px;
-        min-width: 70px;
+        margin-right: 1rem;
     }
-    .producto-info {
-        /* Asegurar que la info ocupe el resto del espacio */
-        flex: 1;
+    .food-icon, .promo-main-icon {
+        font-size: 3rem;
     }
-    .add-to-cart-button {
-        align-self: flex-start; /* Alinea a la izquierda en flex-direction column */
-        /* Puedes considerar que el botón esté a la derecha del todo en móviles con auto-margin */
-        /* margin-left: auto; */
+    .carrito-nombre {
+        font-size: 1.15rem;
     }
+    .carrito-local, .carrito-cantidad, .carrito-precio-unit {
+        font-size: 0.95rem;
+    }
+    .carrito-total {
+        font-size: 1.1rem;
+    }
+    .carrito-eliminar {
+        width: 42px;
+        height: 42px;
+        font-size: 1.6rem;
+        margin-left: 1rem;
+    }
+    .promo-badge {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+        top: -6px;
+        right: -6px;
+    }
+    .carrito-nombre.promo-nombre {
+        font-size: 1.2rem;
+    }
+    .promo-tag {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.6rem;
+    }
+    .promo-comidas-incluidas {
+        padding: 0.6rem;
+        margin: 0.6rem 0;
+    }
+    .promo-comidas-incluidas strong, .comida-incluida-item {
+        font-size: 0.85rem;
+    }
+    .carrito-precio-unit.promo-precio {
+        font-size: 1.05rem;
+    }
+    .promo-ahorro {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+    .ahorro-amount {
+        font-size: 1rem;
+    }
+    .carrito-total.promo-total {
+        font-size: 1.15rem;
+    }
+    .carrito-footer {
+        padding: 1rem 1.5rem;
+        border-radius: 16px 16px 0 0;
+    }
+    .carrito-pagar {
+        font-size: 1.1rem;
+        padding: 0.8rem 2rem;
+    }
+    .carrito-total-footer {
+        font-size: 1.1rem;
+    }
+    .total-desglose {
+        font-size: 0.9rem;
+    }
+    .total-principal {
+        font-size: 1.2rem;
+    }
+    .carrito-total-num {
+        font-size: 1.4rem;
+    }
+    .modal-pago {
+        padding: 2rem 1.5rem;
+        border-radius: 18px;
+    }
+    .modal-pago h3 {
+        font-size: 1.5rem;
+    }
+    .modal-pago h2 {
+        font-size: 1.8rem;
+    }
+    .pago-metodos {
+        gap: 1rem;
+        margin: 1.2rem 0;
+    }
+    .pago-btn {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.95rem;
+    }
+    .modal-input {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.95rem;
+    }
+    .modal-desglose-total {
+        padding: 1rem;
+        font-size: 0.95rem;
+    }
+    .modal-total-final {
+        font-size: 1.15rem;
+    }
+    .pago-modal-btns {
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    .pago-btn-confirm, .pago-btn-cancel {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    .pago-error, .pago-ok {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+}
 
-    /* Ajustes específicos para el texto dentro de la card en móviles */
-    .producto-nombre {
-        font-size: 1em;
+@media (max-width: 480px) {
+    .carrito-header {
+        padding: 0.8rem 1rem;
+        font-size: 1.3rem;
+        border-radius: 0 0 12px 12px;
     }
-    .producto-local-info, .carrito-cantidad-precio, .carrito-total-item-price {
-        font-size: 0.85em;
+    .carrito-volver {
+        width: 38px;
+        height: 38px;
+        font-size: 1.4rem;
+        margin-right: 0.8rem;
+    }
+    .carrito-header-right {
+        font-size: 1.3rem;
+    }
+    .carrito-content {
+        padding: 1.5rem 0.5rem 6.5rem 0.5rem;
+    }
+    .carrito-section-header h3 {
+        font-size: 1.1rem;
+        gap: 0.5rem;
+    }
+    .carrito-item {
+        padding: 0.8rem 1rem;
+        border-radius: 12px;
+        gap: 0.8rem;
+    }
+    .carrito-img {
+        width: 60px;
+        height: 60px;
+        margin-right: 0.8rem;
+    }
+    .food-icon, .promo-main-icon {
+        font-size: 2.5rem;
+    }
+    .carrito-nombre {
+        font-size: 1rem;
+    }
+    .carrito-local, .carrito-cantidad, .carrito-precio-unit {
+        font-size: 0.85rem;
+    }
+    .carrito-total {
+        font-size: 1rem;
+    }
+    .carrito-eliminar {
+        width: 38px;
+        height: 38px;
+        font-size: 1.4rem;
+        margin-left: 0.8rem;
+    }
+    .promo-badge {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+        top: -4px;
+        right: -4px;
+    }
+    .carrito-nombre.promo-nombre {
+        font-size: 1.1rem;
+    }
+    .promo-tag {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+    .promo-comidas-incluidas {
+        padding: 0.5rem;
+        margin: 0.5rem 0;
+    }
+    .promo-comidas-incluidas strong, .comida-incluida-item {
+        font-size: 0.8rem;
+    }
+    .carrito-precio-unit.promo-precio {
+        font-size: 0.95rem;
+    }
+    .promo-ahorro {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+    .ahorro-amount {
+        font-size: 0.9rem;
+    }
+    .carrito-total.promo-total {
+        font-size: 1.05rem;
+    }
+    .carrito-footer {
+        padding: 0.8rem 1rem;
+        border-radius: 12px 12px 0 0;
+    }
+    .carrito-pagar {
+        font-size: 1rem;
+        padding: 0.7rem 1.5rem;
+    }
+    .carrito-total-footer {
+        font-size: 1rem;
+    }
+    .total-desglose {
+        font-size: 0.8rem;
+    }
+    .total-principal {
+        font-size: 1.1rem;
+    }
+    .carrito-total-num {
+        font-size: 1.2rem;
+    }
+    .modal-pago {
+        padding: 1.8rem 1.2rem;
+        border-radius: 16px;
+    }
+    .modal-pago h3 {
+        font-size: 1.3rem;
+    }
+    .modal-pago h2 {
+        font-size: 1.6rem;
+    }
+    .pago-metodos {
+        gap: 0.8rem;
+        margin: 1rem 0;
+    }
+    .pago-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    .modal-input {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.85rem;
+    }
+    .modal-desglose-total {
+        padding: 0.8rem;
+        font-size: 0.85rem;
+    }
+    .modal-total-final {
+        font-size: 1rem;
+    }
+    .pago-modal-btns {
+        gap: 0.8rem;
+        margin-top: 1.2rem;
+    }
+    .pago-btn-confirm, .pago-btn-cancel {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    .pago-error, .pago-ok {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.8rem;
     }
 }

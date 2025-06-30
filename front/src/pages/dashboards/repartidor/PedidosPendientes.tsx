@@ -1,9 +1,8 @@
-// PedidosPendientes.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_PEDIDOS_PENDIENTES_REPARTIDOR, MARCAR_PEDIDO_EN_CAMINO } from '../../../apollo/queries'; // Asegúrate que la ruta sea correcta
-import './PedidosPendientes.css'; // Asegúrate que la ruta sea correcta
+import { GET_PEDIDOS_PENDIENTES_REPARTIDOR, MARCAR_PEDIDO_EN_CAMINO } from '../../../apollo/queries';
+import './PedidosPendientes.css';
 
 interface Usuario {
   nombre: string;
@@ -51,7 +50,6 @@ const PedidosPendientes: React.FC = () => {
     },
     onError: (error) => {
       console.error('Error marcando en camino:', error);
-      alert('Error al marcar pedido en camino. Inténtalo de nuevo.'); // Notificación al usuario
     }
   });
 
@@ -64,7 +62,6 @@ const PedidosPendientes: React.FC = () => {
       }
       
       try {
-        // IMPORTANTE: Asegúrate de que el puerto del backend sea correcto (3000 o 3001)
         const resUser = await fetch('http://localhost:3000/usuarios/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -95,72 +92,66 @@ const PedidosPendientes: React.FC = () => {
     }
   };
 
-  // Asumimos que los estilos de loading/empty ya están definidos globalmente o en PedidosRepartidor.css
-  if (loading) return <div className="loading">Cargando pedidos pendientes...</div>;
-  if (error) return <div className="error">Error: {error.message}</div>; // Cambiado a clase error genérica
+  if (loading) return <div className="pedidos-pendientes-loading">Cargando pedidos pendientes...</div>;
+  if (error) return <div className="pedidos-pendientes-error">Error: {error.message}</div>;
 
   const pedidos: Pedido[] = data?.pedidosPendientesRepartidor || [];
 
   return (
     <div className="pedidos-pendientes-root">
-      {/* Header adaptado al estilo top-banner */}
-      <div className="top-banner">
-        <button className="icon-btn" onClick={() => navigate(-1)} title="Volver">
-          <img src="https://img.icons8.com/ios-filled/28/ffffff/left.png" alt="Volver" />
-        </button>
-        <span className="top-banner-text">Mis Pedidos Pendientes</span>
-        <div style={{ width: 28, height: 28 }}></div> {/* Espaciador para centrar el título */}
+      <div className="pedidos-pendientes-header">
+        <button className="pedidos-pendientes-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
+        <span className="pedidos-pendientes-title">Mis Pedidos Pendientes</span>
+        <div style={{ width: 32 }}></div>
       </div>
       
-      <main className="pedidos-pendientes-main-content"> {/* Nuevo contenedor para el contenido principal */}
-        {pedidos.length === 0 ? (
-          <div className="no-pedidos">No tienes pedidos pendientes.</div>
-        ) : (
-          <div className="pedidos-grid"> 
-            {pedidos.map((pedido) => (
-              <div className="pedido-card" key={pedido._id}> {/* Reutilizar clase pedido-card */}
-                <h3>{pedido.nombrePedido}</h3>
-                <span className={`estado ${pedido.enCamino ? 'en-camino' : 'pendiente'}`}> {/* Clase 'estado' y sub-clases */}
+      {pedidos.length === 0 ? (
+        <div className="pedidos-pendientes-empty">No tienes pedidos pendientes.</div>
+      ) : (
+        <div className="pedidos-pendientes-list">
+          {pedidos.map((pedido) => (
+            <div className="pedido-pendiente-card" key={pedido._id}>
+              <div className="pedido-pendiente-header">
+                <span className="pedido-pendiente-nombre">{pedido.nombrePedido}</span>
+                <span className={`pedido-pendiente-estado ${pedido.enCamino ? 'en-camino' : 'pendiente'}`}>
                   {pedido.enCamino ? 'En Camino' : 'Pendiente'}
                 </span>
-                
-                <div className="pedido-info-sections"> {/* Contenedor para las secciones de info */}
-                  <div className="seccion-cliente info-section-card"> {/* Clase general y especifica */}
-                    <h4>👤 Cliente</h4>
-                    <p><strong>Nombre:</strong> {pedido.usuario.nombreUsuario || `${pedido.usuario.nombre} ${pedido.usuario.apellido}`}</p>
-                    <p><strong>Dirección:</strong> {pedido.usuario.direccion} {pedido.usuario.numeroCasaDepto}</p>
-                    <p><strong>Entrega:</strong> {pedido.direccionEntrega}</p>
-                  </div>
+              </div>
+              
+              <div className="pedido-pendiente-info">
+                <div className="seccion-cliente">
+                  <h4>👤 Cliente</h4>
+                  <span><b>Nombre:</b> {pedido.usuario.nombreUsuario || `${pedido.usuario.nombre} ${pedido.usuario.apellido}`}</span>
+                  <span><b>Dirección:</b> {pedido.usuario.direccion} {pedido.usuario.numeroCasaDepto}</span>
+                  <span><b>Entregar en:</b> {pedido.direccionEntrega}</span>
+                </div>
 
-                  <div className="seccion-local info-section-card"> {/* Clase general y especifica */}
-                    <h4>🏪 Local</h4>
-                    <p><strong>Nombre:</strong> {pedido.local.nombreLocal}</p>
-                    <p><strong>Retiro:</strong> {pedido.local.direccion}</p>
-                  </div>
+                <div className="seccion-local">
+                  <h4>🏪 Local</h4>
+                  <span><b>Retirar en:</b> {pedido.local.nombreLocal}</span>
+                  <span><b>Dirección:</b> {pedido.local.direccion}</span>
+                </div>
 
-                  <div className="seccion-pedido info-section-card"> {/* Clase general y especifica */}
-                    <h4>📦 Detalles del Pedido</h4>
-                    <p><strong>Total:</strong> ${pedido.precioPedido.toLocaleString('es-CL')}</p>
-                    {pedido.propina && pedido.cantidadPropina && (
-                      <p><strong>Propina:</strong> ${pedido.cantidadPropina.toLocaleString('es-CL')}</p>
-                    )}
-                    
-                    <div className="comidas-lista">
-                      <p><strong>Comidas:</strong></p>
-                      <ul>
-                        {pedido.comidas.map((c, idx) => (
-                          <li key={idx}>
-                            {c.nombre} x{c.cantidad}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                <div className="seccion-pedido">
+                  <h4>📦 Pedido</h4>
+                  <span><b>Total:</b> ${pedido.precioPedido.toLocaleString()}</span>
+                  {pedido.propina && pedido.cantidadPropina && (
+                    <span><b>Propina:</b> ${pedido.cantidadPropina.toLocaleString()}</span>
+                  )}
+                  
+                  <div className="comidas-lista">
+                    <b>Comidas:</b>
+                    {pedido.comidas.map((c, idx) => (
+                      <div key={idx} className="comida-item">
+                        {c.nombre} x{c.cantidad}
+                      </div>
+                    ))}
                   </div>
-                </div> {/* Fin de pedido-info-sections */}
+                </div>
 
                 {!pedido.enCamino && (
                   <button
-                    className="card-button primary-button" // Usar card-button y una clase adicional para color
+                    className="btn-en-camino"
                     onClick={() => handleMarcarEnCamino(pedido._id)}
                   >
                     🚚 Marcar En Camino
@@ -168,10 +159,10 @@ const PedidosPendientes: React.FC = () => {
                 )}
 
                 {pedido.enCamino && (
-                  <div className="estado-en-camino-accion"> {/* Nueva clase para el div */}
-                    <p className="en-camino-message">🚚 Pedido en camino - Puedes marcar como entregado cuando llegues</p>
+                  <div className="estado-en-camino">
+                    <span>🚚 Pedido en camino - Puedes marcar como entregado cuando llegues</span>
                     <button
-                      className="card-button secondary-button" // Usar card-button y una clase adicional para color
+                      className="btn-entregado"
                       onClick={() => {/* TODO: Implementar con GraphQL también */}}
                     >
                       ✅ Marcar Entregado
@@ -179,10 +170,10 @@ const PedidosPendientes: React.FC = () => {
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-        )}
-      </main>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

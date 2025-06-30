@@ -1,449 +1,910 @@
-.historial-entregas-root {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem 1rem 4rem 1rem;
-  background: #f7fafd;
-  min-height: 100vh;
+/* HistorialEntregas.css (Adaptado a la paleta Pastel/Marrón con acentos Rosa/Verde/Amarillo/Azul) */
+
+/* Importar fuentes de Google Fonts para consistencia */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;700&display=swap');
+
+/* Variables de Color (Centralizadas para consistencia) */
+:root {
+    --color-dark-brown: #532a14;
+    --color-light-orange-pastel: #fef4e8;
+    --color-card-bg-light: #fff8f2;
+    --color-title-brown: #6b3e26;
+    --color-subtitle-orange: #8d5c3d;
+    --color-card-border: #d1a38d;
+    --color-text-brown-dark: #5a3a28;
+    --color-text-brown-light: #9b7d69;
+    --color-general-shadow: rgba(0, 0, 0, 0.08);
+    --color-card-shadow: rgba(0, 0, 0, 0.12);
+
+    /* Colores específicos para Pedidos En Camino (ya definidos) */
+    --color-en-camino-orange-primary: #FF9800;
+    --color-en-camino-orange-dark: #f57c00;
+    --color-en-camino-orange-light-bg: #fff3e0;
+
+    /* Colores específicos para Historial Entregas (nuevos acentos) */
+    --color-historial-pink-primary: #d87a9c; /* Rosa/Púrpura principal */
+    --color-historial-pink-light: rgba(216, 122, 156, 0.1); /* Rosa/Púrpura claro para fondos/sombras */
+    --color-historial-pink-dark-hover: #b05c7a; /* Rosa/Púrpura más oscuro para hover */
+
+    --color-stat-green: #28a745; /* Verde para entregas */
+    --color-stat-yellow: #ffc107; /* Amarillo para valoración */
+    --color-stat-blue: #17a2b8; /* Azul para ganancias */
+    --color-stat-red: #dc3545; /* Rojo para errores */
+
+    --color-bg-light-grey: #f8f9fa; /* Fondo gris claro */
+    --color-border-light-grey: #e9ecef; /* Borde gris claro */
+    --color-valoracion-bg-light: #fff8e1; /* Fondo amarillo claro para valoración */
+    --color-valoracion-accent: #ffcc02; /* Amarillo más oscuro para números de valoración */
+
+    /* Colores para mensajes (success, error, info) */
+    --color-message-success-bg: #d4edda;
+    --color-message-success-text: #155724;
+    --color-message-error-bg: #f8d7da;
+    --color-message-error-text: #721c24;
+    --color-message-info-bg: #cfe2ff;
+    --color-message-info-text: #055160;
+
+    /* Fuentes */
+    --font-primary: 'Quicksand', sans-serif;
+    --font-heading: 'Comfortaa', cursive;
 }
 
-/* ✅ HEADER */
+/* ========== ESTILOS BASE ========== */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: var(--font-primary);
+    background-color: var(--color-light-orange-pastel);
+    color: var(--color-text-brown-dark);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.historial-entregas-root {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 1rem 4rem 1rem;
+    background: var(--color-light-orange-pastel); /* Usar variable de fondo claro */
+    min-height: 100vh;
+    font-family: var(--font-primary);
+    box-sizing: border-box;
+}
+
+/* ========== HEADER DE LA PÁGINA ========== */
 .historial-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2rem 0 1.5rem 0;
-  background: #fff;
-  border-radius: 0 0 18px 18px;
-  box-shadow: 0 2px 12px rgba(216, 122, 156, 0.15);
-  margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2.5rem 1.2rem 2.5rem; /* Ajuste de padding */
+    background: white;
+    border-radius: 0 0 20px 20px; /* Redondeo consistente */
+    box-shadow: 0 4px 15px var(--color-historial-pink-light); /* Sombra con acento */
+    margin-bottom: 2rem;
+    position: sticky; /* Sticky header */
+    top: 0;
+    z-index: 1000;
 }
 
 .btn-volver {
-  background: #f7fafd;
-  border: 1px solid #d87a9c;
-  color: #d87a9c;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
+    background: var(--color-light-orange-pastel); /* Fondo pastel de la paleta */
+    border: 1px solid var(--color-historial-pink-primary); /* Borde con acento */
+    color: var(--color-historial-pink-primary); /* Color de texto con acento */
+    padding: 0.6rem 1.2rem; /* Ajuste de padding */
+    border-radius: 10px; /* Redondeo consistente */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 }
 
 .btn-volver:hover {
-  background: #d87a9c;
-  color: white;
+    background: var(--color-historial-pink-primary); /* Fondo con acento en hover */
+    color: white;
+    transform: translateX(-3px);
+    box-shadow: 0 4px 12px var(--color-historial-pink-light);
 }
 
 .historial-title {
-  color: #d87a9c;
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  flex: 1;
-  margin: 0;
+    color: var(--color-historial-pink-primary); /* Color de título con acento */
+    font-size: 2rem; /* Tamaño de título consistente */
+    font-weight: 700;
+    font-family: var(--font-heading); /* Fuente de título de la paleta */
+    text-align: center;
+    flex: 1;
+    margin: 0;
+    letter-spacing: 0.5px;
 }
 
-/* ✅ ESTADÍSTICAS PRINCIPALES */
+/* ========== ESTADOS DE CARGA, ERROR Y VACÍO ========== */
+.loading-state,
+.error-state,
+.no-entregas {
+    color: var(--color-text-brown-light);
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    padding: 3rem;
+    background: var(--color-card-bg-light); /* Fondo claro de la paleta */
+    border-radius: 20px; /* Redondeo consistente */
+    box-shadow: 0 8px 25px var(--color-card-shadow); /* Sombra consistente */
+    border: 2px solid var(--color-card-border); /* Borde consistente */
+    font-family: var(--font-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    width: 90%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.loading-state .loading-spinner {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    animation: spin 1.5s linear infinite;
+    color: var(--color-subtitle-orange);
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.error-state .error-icon,
+.no-entregas .no-entregas-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+    color: var(--color-stat-red); /* Rojo para error */
+}
+
+.no-entregas .no-entregas-icon {
+    color: var(--color-subtitle-orange); /* Naranja para vacío */
+}
+
+.loading-state h3,
+.error-state h3,
+.no-entregas h3 {
+    margin: 1rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    color: var(--color-title-brown);
+}
+
+.loading-state p,
+.error-state p,
+.no-entregas p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-brown-dark);
+}
+
+.error-state .btn-volver-dashboard {
+    background: linear-gradient(135deg, var(--color-subtitle-orange) 0%, var(--color-dark-brown) 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(141, 92, 61, 0.3);
+}
+
+.error-state .btn-volver-dashboard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(141, 92, 61, 0.4);
+}
+
+/* ========== ESTADÍSTICAS PRINCIPALES ========== */
 .estadisticas-container {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 20px rgba(216, 122, 156, 0.1);
+    background: white;
+    border-radius: 20px; /* Redondeo consistente */
+    padding: 2.5rem; /* Ajuste de padding */
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 30px var(--color-card-shadow); /* Sombra consistente */
+    border: 2px solid var(--color-card-border); /* Borde consistente */
 }
 
 .estadisticas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* Ajuste de minmax */
+    gap: 1.8rem; /* Ajuste de gap */
+    margin-bottom: 2.5rem; /* Ajuste de margen */
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  border-radius: 12px;
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  border: 1px solid #e9ecef;
-  transition: all 0.3s ease;
+    background: linear-gradient(135deg, white 0%, var(--color-bg-light-grey) 100%); /* Fondo con gradiente sutil */
+    border-radius: 15px; /* Redondeo consistente */
+    padding: 1.8rem; /* Ajuste de padding */
+    display: flex;
+    align-items: center;
+    gap: 1.2rem; /* Ajuste de gap */
+    border: 1px solid var(--color-border-light-grey); /* Borde consistente */
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Sombra sutil */
 }
 
 .stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transform: translateY(-5px); /* Efecto de elevación más pronunciado */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Sombra más pronunciada */
 }
 
 .stat-card.entregas {
-  border-left: 4px solid #28a745;
+    border-left: 5px solid var(--color-stat-green); /* Verde */
 }
 
 .stat-card.valoracion {
-  border-left: 4px solid #ffc107;
+    border-left: 5px solid var(--color-stat-yellow); /* Amarillo */
 }
 
 .stat-card.ganancias {
-  border-left: 4px solid #17a2b8;
+    border-left: 5px solid var(--color-stat-blue); /* Azul */
 }
 
 .stat-card.propinas {
-  border-left: 4px solid #d87a9c;
+    border-left: 5px solid var(--color-historial-pink-primary); /* Rosa/Púrpura */
 }
 
 .stat-icon {
-  font-size: 2.5rem;
-  opacity: 0.8;
+    font-size: 3rem; /* Tamaño más grande */
+    opacity: 0.85; /* Opacidad ligeramente mayor */
 }
 
+.stat-card.entregas .stat-icon { color: var(--color-stat-green); }
+.stat-card.valoracion .stat-icon { color: var(--color-stat-yellow); }
+.stat-card.ganancias .stat-icon { color: var(--color-stat-blue); }
+.stat-card.propinas .stat-icon { color: var(--color-historial-pink-primary); }
+
+
 .stat-content h3 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #333;
+    margin: 0;
+    font-size: 2.2rem; /* Tamaño más grande */
+    font-weight: 700;
+    color: var(--color-title-brown); /* Color de título de la paleta */
+    font-family: var(--font-heading);
 }
 
 .stat-content p {
-  margin: 0.2rem 0 0 0;
-  color: #666;
-  font-size: 0.9rem;
+    margin: 0.3rem 0 0 0; /* Ajuste de margen */
+    color: var(--color-text-brown-dark); /* Color de texto de la paleta */
+    font-size: 1rem; /* Tamaño ligeramente más grande */
 }
 
 .stars-display {
-  margin-top: 0.5rem;
+    margin-top: 0.6rem; /* Ajuste de margen */
+    white-space: nowrap; /* Evitar que las estrellas se rompan */
 }
 
 .stars-display .star-filled {
-  color: #ffc107;
-  font-size: 1rem;
+    color: var(--color-stat-yellow); /* Amarillo */
+    font-size: 1.1rem; /* Tamaño ligeramente más grande */
+    margin-right: 0.1rem;
 }
 
 .stars-display .star-half-filled {
-  color: #ffc107;
-  opacity: 0.6;
-  font-size: 1rem;
+    color: var(--color-stat-yellow); /* Amarillo */
+    opacity: 0.6;
+    font-size: 1.1rem;
+    margin-right: 0.1rem;
 }
 
 .stars-display .star-empty {
-  color: #ddd;
-  font-size: 1rem;
+    color: var(--color-border-light-grey); /* Gris claro */
+    font-size: 1.1rem;
+    margin-right: 0.1rem;
 }
 
-/* ✅ ESTADÍSTICAS ADICIONALES */
+/* ========== ESTADÍSTICAS ADICIONALES ========== */
 .estadisticas-adicionales {
-  display: flex;
-  justify-content: space-around;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e9ecef;
-  gap: 2rem;
+    display: flex;
+    justify-content: space-around;
+    padding-top: 2rem; /* Ajuste de padding */
+    border-top: 1px dashed var(--color-card-border); /* Borde punteado consistente */
+    gap: 2rem;
+    flex-wrap: wrap; /* Permitir que los elementos se envuelvan */
 }
 
 .stat-adicional {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1; /* Para que ocupen espacio equitativo */
+    min-width: 180px; /* Asegurar que no se hagan demasiado pequeños */
 }
 
 .stat-adicional .label {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 0.3rem;
+    color: var(--color-text-brown-light); /* Color de texto claro de la paleta */
+    font-size: 1rem; /* Tamaño ligeramente más grande */
+    margin-bottom: 0.5rem; /* Ajuste de margen */
 }
 
 .stat-adicional .value {
-  color: #333;
-  font-weight: bold;
-  font-size: 1.1rem;
+    color: var(--color-title-brown); /* Color de título de la paleta */
+    font-weight: 700; /* Más bold */
+    font-size: 1.3rem; /* Tamaño más grande */
 }
 
-/* ✅ SECCIÓN DE ENTREGAS */
+/* ========== SECCIÓN DE ENTREGAS ========== */
 .entregas-section {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(216, 122, 156, 0.1);
+    background: white;
+    border-radius: 20px; /* Redondeo consistente */
+    padding: 2.5rem; /* Ajuste de padding */
+    box-shadow: 0 8px 30px var(--color-card-shadow); /* Sombra consistente */
+    border: 2px solid var(--color-card-border); /* Borde consistente */
 }
 
 .section-title {
-  color: #d87a9c;
-  font-size: 1.3rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid #f8f9fa;
-  padding-bottom: 0.5rem;
-}
-
-/* ✅ NO HAY ENTREGAS */
-.no-entregas {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #666;
-}
-
-.no-entregas-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
-}
-
-.no-entregas h3 {
-  color: #333;
-  margin-bottom: 0.5rem;
+    color: var(--color-historial-pink-primary); /* Color de título con acento */
+    font-size: 1.8rem; /* Tamaño de título más grande */
+    font-weight: 700;
+    font-family: var(--font-heading);
+    margin-bottom: 1.8rem; /* Ajuste de margen */
+    border-bottom: 1px dashed var(--color-card-border); /* Borde punteado consistente */
+    padding-bottom: 0.8rem; /* Ajuste de padding */
 }
 
 /* ✅ LISTA DE ENTREGAS */
 .entregas-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem; /* Ajuste de gap */
 }
 
 .entrega-card {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 1.5rem;
-  border-left: 4px solid #d87a9c;
-  transition: all 0.3s ease;
+    background: var(--color-card-bg-light); /* Fondo claro de la paleta */
+    border-radius: 15px; /* Redondeo consistente */
+    padding: 1.8rem; /* Ajuste de padding */
+    border-left: 5px solid var(--color-historial-pink-primary); /* Borde con acento */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Sombra sutil */
 }
 
 .entrega-card:hover {
-  box-shadow: 0 4px 15px rgba(216, 122, 156, 0.15);
-  transform: translateX(5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1); /* Sombra más pronunciada */
+    transform: translateX(8px); /* Efecto de deslizamiento más pronunciado */
+    border-color: var(--color-historial-pink-dark-hover); /* Borde más oscuro en hover */
 }
 
 .entrega-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem; /* Ajuste de margen */
+    padding-bottom: 0.8rem; /* Ajuste de padding */
+    border-bottom: 1px solid var(--color-border-light-grey); /* Borde consistente */
 }
 
 .pedido-nombre {
-  color: #d87a9c;
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin: 0;
+    color: var(--color-title-brown); /* Color de título de la paleta */
+    font-size: 1.4rem; /* Tamaño más grande */
+    font-weight: 700;
+    margin: 0;
+    font-family: var(--font-heading);
 }
 
 .entrega-fecha {
-  color: #666;
-  font-size: 0.9rem;
-  background: rgba(216, 122, 156, 0.1);
-  padding: 0.3rem 0.6rem;
-  border-radius: 15px;
+    color: var(--color-text-brown-dark); /* Color de texto de la paleta */
+    font-size: 0.95rem; /* Tamaño ligeramente más grande */
+    background: var(--color-historial-pink-light); /* Fondo con acento claro */
+    padding: 0.4rem 0.8rem; /* Ajuste de padding */
+    border-radius: 20px; /* Redondeo más pronunciado */
+    font-weight: 500;
 }
 
 /* ✅ DETALLES DE LA ENTREGA */
 .entrega-detalles {
-  display: grid;
-  gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Columnas responsivas */
+    gap: 1.5rem; /* Ajuste de gap */
+}
+
+.detalle-cliente,
+.detalle-local,
+.detalle-valores,
+.valoracion-recibida,
+.sin-valoracion,
+.info-adicional {
+    background: white; /* Fondo blanco para las secciones internas de la tarjeta */
+    padding: 1.2rem; /* Ajuste de padding */
+    border-radius: 12px; /* Redondeo consistente */
+    border: 1px solid var(--color-border-light-grey); /* Borde consistente */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03); /* Sombra muy sutil */
+}
+
+.detalle-cliente strong,
+.detalle-local strong {
+    color: var(--color-title-brown); /* Color de título de la paleta */
+    font-weight: 600;
 }
 
 .detalle-cliente,
 .detalle-local {
-  background: white;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
 }
 
-.direccion {
-  color: #666;
-  font-size: 0.9rem;
-  margin-left: 0.5rem;
+.detalle-cliente .direccion,
+.detalle-local .direccion {
+    color: var(--color-text-brown-light); /* Color de texto claro de la paleta */
+    font-size: 0.9rem;
+    margin-left: 0; /* Eliminar margen */
+    font-style: italic;
 }
 
 /* ✅ VALORES */
-.detalle-valores {
-  background: white;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-}
-
 .valor-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  padding: 0.3rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem; /* Ajuste de margen */
+    padding: 0.4rem 0; /* Ajuste de padding */
+    font-size: 0.95rem; /* Tamaño ligeramente más grande */
 }
 
 .valor-item:last-child {
-  margin-bottom: 0;
+    margin-bottom: 0;
+}
+
+.valor-item .label {
+    color: var(--color-text-brown-dark);
+}
+
+.valor-item .value {
+    color: var(--color-text-brown-dark);
+    font-weight: 600;
 }
 
 .valor-item.propina {
-  color: #28a745;
-  font-weight: 500;
+    color: var(--color-stat-green); /* Verde para propina */
+    font-weight: 600;
 }
 
 .valor-item.total {
-  font-weight: bold;
-  font-size: 1.1rem;
-  border-top: 1px solid #e9ecef;
-  padding-top: 0.8rem;
-  margin-top: 0.8rem;
+    font-weight: 700;
+    font-size: 1.2rem; /* Tamaño más grande */
+    border-top: 1px dashed var(--color-card-border); /* Borde punteado consistente */
+    padding-top: 1rem; /* Ajuste de padding */
+    margin-top: 1rem; /* Ajuste de margen */
+    color: var(--color-subtitle-orange); /* Naranja para el total */
 }
 
 /* ✅ VALORACIÓN RECIBIDA */
 .valoracion-recibida {
-  background: linear-gradient(135deg, #fff8e1 0%, #ffffff 100%);
-  border: 1px solid #ffcc02;
-  border-radius: 8px;
-  padding: 1rem;
+    background: linear-gradient(135deg, var(--color-valoracion-bg-light) 0%, white 100%); /* Gradiente de fondo amarillo claro */
+    border: 1px solid var(--color-valoracion-accent); /* Borde amarillo más oscuro */
+    border-radius: 12px; /* Redondeo consistente */
+    padding: 1.5rem; /* Ajuste de padding */
+    box-shadow: 0 2px 10px rgba(255, 193, 7, 0.1); /* Sombra con acento amarillo */
 }
 
 .valoracion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem; /* Ajuste de margen */
+    color: var(--color-title-brown); /* Color de título de la paleta */
+}
+
+.valoracion-header strong {
+    font-size: 1rem;
 }
 
 .valoracion-numero {
-  background: #ffcc02;
-  color: white;
-  padding: 0.2rem 0.5rem;
-  border-radius: 12px;
-  font-weight: bold;
-  font-size: 0.9rem;
+    background: var(--color-valoracion-accent); /* Amarillo más oscuro */
+    color: white;
+    padding: 0.3rem 0.7rem; /* Ajuste de padding */
+    border-radius: 15px; /* Redondeo más pronunciado */
+    font-weight: 700;
+    font-size: 1rem; /* Tamaño ligeramente más grande */
 }
 
 .stars-container {
-  margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem; /* Ajuste de margen */
+    white-space: nowrap;
 }
 
 .stars-container .star-filled {
-  color: #ffc107;
-  font-size: 1.2rem;
-  margin-right: 0.1rem;
+    color: var(--color-stat-yellow); /* Amarillo */
+    font-size: 1.4rem; /* Tamaño más grande */
+    margin-right: 0.1rem;
 }
 
 .stars-container .star-half-filled {
-  color: #ffc107;
-  opacity: 0.6;
-  font-size: 1.2rem;
-  margin-right: 0.1rem;
+    color: var(--color-stat-yellow); /* Amarillo */
+    opacity: 0.6;
+    font-size: 1.4rem;
+    margin-right: 0.1rem;
 }
 
 .stars-container .star-empty {
-  color: #ddd;
-  font-size: 1.2rem;
-  margin-right: 0.1rem;
+    color: var(--color-border-light-grey); /* Gris claro */
+    font-size: 1.4rem;
+    margin-right: 0.1rem;
 }
 
 .fecha-valoracion {
-  color: #666;
-  font-size: 0.8rem;
-  font-style: italic;
+    color: var(--color-text-brown-light); /* Color de texto claro de la paleta */
+    font-size: 0.85rem; /* Tamaño ligeramente más grande */
+    font-style: italic;
 }
 
 .sin-valoracion {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
-  color: #666;
-  font-style: italic;
+    background: var(--color-bg-light-grey); /* Fondo gris claro */
+    border: 1px dashed var(--color-card-border); /* Borde punteado consistente */
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--color-text-brown-light); /* Color de texto claro de la paleta */
+    font-style: italic;
 }
 
 /* ✅ INFORMACIÓN ADICIONAL */
 .info-adicional {
-  display: flex;
-  justify-content: space-between;
-  background: #f8f9fa;
-  padding: 0.8rem;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-  font-size: 0.9rem;
-  color: #666;
+    display: flex;
+    justify-content: space-between;
+    background: var(--color-bg-light-grey); /* Fondo gris claro */
+    padding: 1rem; /* Ajuste de padding */
+    border-radius: 12px;
+    border: 1px solid var(--color-border-light-grey);
+    font-size: 0.95rem;
+    color: var(--color-text-brown-dark);
+    margin-top: 1.5rem; /* Margen superior para separarse de la valoración */
+    font-weight: 500;
 }
 
-/* ✅ LOADING Y ERROR */
-.loading,
-.error {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #666;
-  font-size: 1.1rem;
-}
-
-.error {
-  color: #dc3545;
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+.info-adicional span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 /* ✅ RESPONSIVE */
+@media (max-width: 992px) {
+    .historial-entregas-root {
+        padding: 0.8rem;
+    }
+    .historial-header {
+        padding: 1rem 1.5rem;
+    }
+    .historial-title {
+        font-size: 1.8rem;
+    }
+    .btn-volver {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+    .estadisticas-container,
+    .entregas-section {
+        padding: 2rem;
+    }
+    .estadisticas-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+    }
+    .stat-card {
+        padding: 1.5rem;
+    }
+    .stat-content h3 {
+        font-size: 1.8rem;
+    }
+    .stat-content p {
+        font-size: 0.9rem;
+    }
+    .estadisticas-adicionales {
+        padding-top: 1.5rem;
+        gap: 1.5rem;
+    }
+    .stat-adicional .value {
+        font-size: 1.1rem;
+    }
+    .section-title {
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+    }
+    .entrega-card {
+        padding: 1.5rem;
+    }
+    .pedido-nombre {
+        font-size: 1.3rem;
+    }
+    .entrega-fecha {
+        font-size: 0.85rem;
+        padding: 0.3rem 0.7rem;
+    }
+    .entrega-detalles {
+        grid-template-columns: 1fr; /* Una columna en pantallas medianas */
+        gap: 1rem;
+    }
+    .detalle-cliente,
+    .detalle-local,
+    .detalle-valores,
+    .valoracion-recibida,
+    .sin-valoracion,
+    .info-adicional {
+        padding: 1rem;
+    }
+    .valor-item {
+        font-size: 0.9rem;
+    }
+    .valor-item.total {
+        font-size: 1.1rem;
+    }
+    .valoracion-recibida .stars-container .star-filled,
+    .valoracion-recibida .stars-container .star-half-filled,
+    .valoracion-recibida .stars-container .star-empty {
+        font-size: 1.2rem;
+    }
+    .info-adicional {
+        font-size: 0.9rem;
+        margin-top: 1rem;
+    }
+    .loading-state, .error-state, .no-entregas {
+        padding: 2rem;
+        min-height: 350px;
+    }
+    .loading-state .loading-spinner, .error-state .error-icon, .no-entregas .no-entregas-icon {
+        font-size: 3rem;
+    }
+    .loading-state h3, .error-state h3, .no-entregas h3 {
+        font-size: 1.6rem;
+    }
+    .loading-state p, .error-state p, .no-entregas p {
+        font-size: 1rem;
+    }
+}
+
 @media (max-width: 768px) {
-  .historial-entregas-root {
-    padding: 0.5rem;
-  }
+    .historial-entregas-root {
+        padding: 0.5rem;
+    }
+    .historial-header {
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 0.8rem 1rem;
+        border-radius: 0 0 14px 14px;
+    }
+    .historial-title {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+    }
+    .btn-volver {
+        width: 100%;
+        text-align: center;
+        padding: 0.7rem 1.2rem;
+    }
+    .estadisticas-container,
+    .entregas-section {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+    .estadisticas-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .stat-card {
+        padding: 1.2rem;
+    }
+    .stat-icon {
+        font-size: 2.5rem;
+    }
+    .stat-content h3 {
+        font-size: 1.6rem;
+    }
+    .stat-content p {
+        font-size: 0.85rem;
+    }
+    .estadisticas-adicionales {
+        flex-direction: column;
+        gap: 1rem;
+        padding-top: 1.2rem;
+    }
+    .stat-adicional .label {
+        font-size: 0.85rem;
+    }
+    .stat-adicional .value {
+        font-size: 1rem;
+    }
+    .section-title {
+        font-size: 1.4rem;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.6rem;
+    }
+    .entrega-card {
+        padding: 1.2rem;
+        border-radius: 12px;
+    }
+    .entrega-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.6rem;
+    }
+    .pedido-nombre {
+        font-size: 1.1rem;
+    }
+    .entrega-fecha {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.6rem;
+    }
+    .detalle-cliente,
+    .detalle-local,
+    .detalle-valores,
+    .valoracion-recibida,
+    .sin-valoracion,
+    .info-adicional {
+        padding: 0.8rem;
+    }
+    .valor-item {
+        font-size: 0.85rem;
+    }
+    .valor-item.total {
+        font-size: 1rem;
+    }
+    .valoracion-recibida .stars-container .star-filled,
+    .valoracion-recibida .stars-container .star-half-filled,
+    .valoracion-recibida .stars-container .star-empty {
+        font-size: 1.1rem;
+    }
+    .info-adicional {
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        margin-top: 1rem;
+    }
+    .loading-state, .error-state, .no-entregas {
+        padding: 1.5rem;
+        min-height: 300px;
+    }
+    .loading-state .loading-spinner, .error-state .error-icon, .no-entregas .no-entregas-icon {
+        font-size: 2.5rem;
+    }
+    .loading-state h3, .error-state h3, .no-entregas h3 {
+        font-size: 1.4rem;
+    }
+    .loading-state p, .error-state p, .no-entregas p {
+        font-size: 0.9rem;
+    }
+}
 
-  .estadisticas-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .stat-card {
-    padding: 1rem;
-  }
-
-  .estadisticas-adicionales {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .entrega-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .info-adicional {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .valor-item {
-    font-size: 0.9rem;
-  }
-
-  .historial-header {
-    padding: 1rem;
-  }
-
-  .historial-title {
-    font-size: 1.2rem;
-  }
+@media (max-width: 480px) {
+    .historial-entregas-root {
+        padding: 0.2rem;
+    }
+    .historial-header {
+        padding: 0.6rem 0.8rem;
+        border-radius: 0 0 10px 10px;
+    }
+    .historial-title {
+        font-size: 1.4rem;
+    }
+    .btn-volver {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+    }
+    .estadisticas-container,
+    .entregas-section {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+    .stat-card {
+        padding: 1rem;
+    }
+    .stat-icon {
+        font-size: 2rem;
+    }
+    .stat-content h3 {
+        font-size: 1.4rem;
+    }
+    .stat-content p {
+        font-size: 0.8rem;
+    }
+    .estadisticas-adicionales {
+        padding-top: 1rem;
+        gap: 0.8rem;
+    }
+    .stat-adicional .label {
+        font-size: 0.8rem;
+    }
+    .stat-adicional .value {
+        font-size: 0.95rem;
+    }
+    .section-title {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+    }
+    .entrega-card {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+    .entrega-header {
+        gap: 0.5rem;
+        margin-bottom: 0.6rem;
+        padding-bottom: 0.5rem;
+    }
+    .pedido-nombre {
+        font-size: 1rem;
+    }
+    .entrega-fecha {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+    }
+    .detalle-cliente,
+    .detalle-local,
+    .detalle-valores,
+    .valoracion-recibida,
+    .sin-valoracion,
+    .info-adicional {
+        padding: 0.7rem;
+    }
+    .valor-item {
+        font-size: 0.8rem;
+    }
+    .valor-item.total {
+        font-size: 0.9rem;
+    }
+    .valoracion-recibida .stars-container .star-filled,
+    .valoracion-recibida .stars-container .star-half-filled,
+    .valoracion-recibida .stars-container .star-empty {
+        font-size: 1rem;
+    }
+    .info-adicional {
+        font-size: 0.8rem;
+        margin-top: 0.8rem;
+    }
+    .loading-state, .error-state, .no-entregas {
+        padding: 1rem;
+        min-height: 250px;
+    }
+    .loading-state .loading-spinner, .error-state .error-icon, .no-entregas .no-entregas-icon {
+        font-size: 2rem;
+    }
+    .loading-state h3, .error-state h3, .no-entregas h3 {
+        font-size: 1.2rem;
+    }
+    .loading-state p, .error-state p, .no-entregas p {
+        font-size: 0.85rem;
+    }
 }
 
 /* ✅ ANIMACIONES */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .entrega-card {
-  animation: fadeIn 0.5s ease-out;
+    animation: fadeIn 0.5s ease-out;
 }
 
 .stat-card {
-  animation: fadeIn 0.5s ease-out;
+    animation: fadeIn 0.5s ease-out;
 }
+
+/* Retrasos para animaciones escalonadas */
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
 
 .entrega-card:nth-child(1) { animation-delay: 0.1s; }
 .entrega-card:nth-child(2) { animation-delay: 0.2s; }

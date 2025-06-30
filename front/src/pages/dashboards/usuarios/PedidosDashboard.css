@@ -1,157 +1,702 @@
-.pedidos-dashboard-root {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 0 1rem 4rem 1rem;
-  background: #f7fafd;
-  min-height: 100vh;
-}
-.pedidos-dashboard-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2rem 0 1.2rem 0;
-  background: #fff;
-  border-radius: 0 0 18px 18px;
-  box-shadow: 0 2px 12px #d87a9c22;
-  margin-bottom: 2rem;
-}
-.pedidos-dashboard-volver {
-  background: #f7fafd;
-  border: none;
-  font-size: 1.5rem;
-  color: #d87a9c;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-  transition: background 0.18s;
-}
-.pedidos-dashboard-volver:hover {
-  background: #ffe6f0;
-}
-.pedidos-dashboard-title {
-  color: #d87a9c;
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  flex: 1;
-}
-.pedidos-dashboard-loading,
-.pedidos-dashboard-empty {
-  color: #888;
-  text-align: center;
-  margin-top: 2rem;
-}
-.pedidos-dashboard-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-.pedido-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px #d87a9c22;
-  padding: 1.2rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  transition: box-shadow 0.18s;
-}
-.pedido-card:hover {
-  box-shadow: 0 4px 24px #d87a9c44;
-}
-.pedido-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-.pedido-nombre {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #4f8cff;
-}
-.pedido-estado {
-  font-weight: bold;
-  font-size: 1.1rem;
-  text-transform: capitalize;
-  padding: 0.2rem 0.8rem;
-  border-radius: 12px;
-  background: #f2c94c22;
-  color: #f2c94c;
-}
-.pedido-estado-entregado {
-  background: #27ae6022;
-  color: #27ae60;
-}
-.pedido-estado-pendiente {
-  background: #f2c94c22;
-  color: #f2c94c;
-}
-.pedido-estado-cancelado {
-  background: #fa314a22;
-  color: #fa314a;
-}
-.pedido-info {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.2rem;
-  color: #555;
-  font-size: 1rem;
-}
-@media (max-width: 600px) {
-  .pedidos-dashboard-root {
-    padding: 0.5rem 0.1rem 4rem 0.1rem;
-  }
-  .pedidos-dashboard-header {
-    padding: 1rem 0 0.7rem 0;
-    margin-bottom: 1rem;
-  }
-  .pedidos-dashboard-title {
-    font-size: 1.1rem;
-  }
-  .pedido-card {
-    padding: 0.7rem 0.5rem;
-  }
+/* --- Variables de Color y Tipografía (Mantener consistencia) --- */
+:root {
+    --color-dark-brown: #532a14;
+    --color-light-orange-pastel: #fef4e8;
+    --color-card-bg-light: #fff8f2;
+    --color-title-brown: #6b3e26;
+    --color-subtitle-orange: #8d5c3d;
+    --color-card-border: #d1a38d;
+    --color-text-brown-dark: #5a3a28;
+    --color-text-brown-light: #9b7d69;
+    --color-general-shadow: rgba(0, 0, 0, 0.08);
+    --color-card-shadow: rgba(0, 0, 0, 0.12);
+    /* Nuevas variables para promociones y UI general */
+    --color-promo-accent: #e74c3c; /* Un rojo más apagado para ofertas */
+    --color-promo-light-bg: #fff0ec; /* Fondo muy claro para detalles de promo */
+    --color-modal-bg: #fff;
+    --color-modal-border: var(--color-card-border);
+
+    /* Nuevas variables para un diseño más pulido */
+    --color-active-tab-shadow: rgba(141, 92, 61, 0.4); /* Sombra más fuerte para pestaña activa */
+    --color-star-gold: #f7d716; /* Un dorado más vibrante para estrellas */
+    --color-success-badge: #4CAF50; /* Verde más estándar para estado 'abierto' */
+    --color-closed-badge: #F44336; /* Rojo más estándar para estado 'cerrado' */
+    --color-border-hover: var(--color-subtitle-orange); /* Color de borde en hover */
+    --color-banner-bg: #8d5c3d; /* Color de fondo del banner (similar a subtitle-orange) */
+    --color-banner-text: #fff8f2; /* Color de texto del banner (similar a card-bg-light) */
+    --color-info-bg: #f0f8ff; /* Fondo para secciones de info como repartidor */
+    --color-info-border: #2196F3; /* Borde para secciones de info */
+    --color-warning-bg: #fff3e0; /* Fondo para mensajes de alerta/código */
+    --color-warning-border: #FF9800; /* Borde para mensajes de alerta/código */
+
+    /* Fuentes */
+    --font-primary: 'Quicksand', sans-serif;
+    --font-heading: 'Comfortaa', cursive;
 }
 
+body {
+    background-color: var(--color-dark-brown)!important; /* Fondo marrón oscuro */
+    font-family: var(--font-primary);
+    color: var(--color-text-brown-dark);
+}
+
+/* --- Base del Dashboard --- */
+.pedidos-dashboard-root {
+    max-width: 900px; /* Aumentar ligeramente el ancho máximo */
+    margin: 2rem auto; /* Margen superior e inferior para despegarlo del borde */
+    padding: 0 1.5rem 3rem 1.5rem; /* Ajustar padding */
+    background: var(--color-light-orange-pastel); /* El fondo ya lo da el body */
+    min-height: calc(100vh - 4rem); /* Ajustar altura mínima */
+    box-sizing: border-box; /* Incluir padding en el cálculo del ancho/alto */
+}
+
+/* --- Encabezado --- */
+.pedidos-dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 1.5rem 1rem 1.5rem; /* Ajustar padding */
+    background: var(--color-card-bg-light);
+    border-radius: 15px; /* Menos pronunciado */
+    box-shadow: 0 4px 15px var(--color-general-shadow); /* Sombra más suave */
+    margin-bottom: 2.5rem; /* Aumentar margen inferior */
+    border: 1px solid var(--color-card-border); /* Añadir un borde */
+}
+
+.pedidos-dashboard-volver {
+    background: var(--color-light-orange-pastel);
+    border: 2px solid var(--color-subtitle-orange); /* Borde con color de acento */
+    font-size: 1.4rem; /* Ligeramente más pequeño */
+    color: var(--color-subtitle-orange); /* Color de acento */
+    border-radius: 50%;
+    width: 40px; /* Aumentar tamaño del botón */
+    height: 40px; /* Aumentar tamaño del botón */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Transición más suave */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra sutil */
+}
+.pedidos-dashboard-volver:hover {
+    background: var(--color-subtitle-orange); /* Fondo oscuro en hover */
+    color: white;
+    transform: translateY(-2px); /* Efecto de elevación */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.pedidos-dashboard-title {
+    color: var(--color-title-brown); /* Marrón oscuro */
+    font-size: 1.8rem; /* Más grande y prominente */
+    font-weight: 700;
+    text-align: center;
+    flex: 1;
+    font-family: var(--font-heading); /* Fuente decorativa */
+    letter-spacing: 0.5px; /* Pequeño espaciado */
+}
+
+/* --- Mensajes de estado --- */
+.pedidos-dashboard-loading,
+.pedidos-dashboard-empty,
+.pedidos-dashboard-error {
+    color: var(--color-text-brown-light);
+    text-align: center;
+    margin-top: 3rem; /* Más margen */
+    background-color: var(--color-card-bg-light);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px var(--color-general-shadow);
+    border: 1px solid var(--color-card-border);
+}
+
+.pedidos-dashboard-loading::before {
+    content: '⏳'; /* Icono de carga */
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.pedidos-dashboard-empty::before {
+    content: '😔'; /* Icono de vacío */
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.pedidos-dashboard-error h3 {
+    color: var(--color-promo-accent); /* Color para errores */
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+    font-family: var(--font-heading);
+}
+
+.pedidos-dashboard-error p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.pedidos-dashboard-error button {
+    background-color: var(--color-subtitle-orange);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.pedidos-dashboard-error button:hover {
+    background-color: var(--color-title-brown);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.3);
+}
+
+/* --- Lista de Pedidos --- */
+.pedidos-dashboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Aumentar espacio entre tarjetas */
+}
+
+/* --- Tarjeta de Pedido --- */
+.pedido-card {
+    background: var(--color-card-bg-light);
+    border-radius: 18px; /* Ligeramente más redondeado */
+    box-shadow: 0 6px 20px var(--color-card-shadow); /* Sombra más prominente */
+    padding: 1.5rem 2rem; /* Más padding */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Más espacio entre secciones */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves */
+    border: 1.5px solid var(--color-card-border); /* Borde sutil */
+}
+.pedido-card:hover {
+    transform: translateY(-5px); /* Efecto de elevación notorio */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); /* Sombra más fuerte al hover */
+}
+
+.pedido-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem; /* Más espacio */
+    padding-bottom: 0.8rem; /* Padding inferior para el borde */
+    border-bottom: 1px dashed var(--color-card-border); /* Separador punteado */
+}
 .pedido-header-right {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem; /* Más espacio entre estado y botones */
+}
+
+.pedido-nombre {
+    font-weight: 700; /* Más negrita */
+    font-size: 1.3rem; /* Más grande */
+    color: var(--color-title-brown)!important; /* Color de título */
+    font-family: var(--font-heading); /* Fuente decorativa */
+}
+
+.pedido-local {
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--color-text-brown-light);
+    margin-left: 0.5rem;
+}
+
+/* --- Estados del Pedido --- */
+.pedido-estado {
+    font-weight: 600;
+    font-size: 0.9rem; /* Ligeramente más pequeño */
+    text-transform: uppercase;
+    padding: 0.4rem 0.9rem; /* Más padding */
+    border-radius: 20px; /* Más redondeado */
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.pedido-estado-rechazado {
+    background: var(--color-closed-badge); /* Rojo para rechazado */
+    color: white;
+}
+.pedido-estado-en-espera {
+    background: #fdf3e6; /* Pastel amarillo-naranja */
+    color: #e67e22; /* Naranja más oscuro */
+    border: 1px solid #e67e22;
+}
+.pedido-estado-preparando {
+    background: #e8f0fe; /* Azul pastel suave */
+    color: #3498db; /* Azul vibrante */
+    border: 1px solid #3498db;
+}
+.pedido-estado-listo {
+    background: #e6f7e6; /* Verde pastel suave */
+    color: #28a745; /* Verde vibrante */
+    border: 1px solid #28a745;
+}
+.pedido-estado-en-camino {
+    background: #f8e6f7; /* Púrpura pastel suave */
+    color: #9b59b6; /* Púrpura vibrante */
+    border: 1px solid #9b59b6;
+}
+
+/* --- Botones de Acción --- */
+.btn-eliminar-pedido, .btn-cancelar-pedido {
+    background: none;
+    border: none;
+    font-size: 1.4rem; /* Más grande para los íconos */
+    cursor: pointer;
+    padding: 0.5rem; /* Más padding alrededor del ícono */
+    border-radius: 50%;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-eliminar-pedido {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.2rem;
-  border-radius: 50%;
-  transition: background-color 0.2s;
+    color: var(--color-closed-badge); /* Rojo para eliminar */
 }
-
 .btn-eliminar-pedido:hover {
-  background-color: #f0f0f0;
+    background-color: rgba(244, 67, 54, 0.15); /* Fondo rojo claro en hover */
+    transform: scale(1.1);
 }
 
 .btn-cancelar-pedido {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.2rem;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-  color: #ff6b6b;
+    color: var(--color-promo-accent); /* Rojo de acento para cancelar */
 }
-
 .btn-cancelar-pedido:hover {
-  background-color: #ffe0e0;
+    background-color: rgba(231, 76, 60, 0.15); /* Fondo rojo de acento claro en hover */
+    transform: scale(1.1);
 }
 
-.pedido-estado-listo {
-  background-color: #e8f5e8;
-  color: #2e7d32;
-  border: 1px solid #4caf50;
+/* --- Información del Pedido --- */
+.pedido-info {
+    display: flex;
+    flex-direction: column; /* Apilar elementos verticalmente */
+    gap: 0.8rem; /* Espacio entre las líneas de información */
+    color: var(--color-text-brown-dark);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+.pedido-info span b {
+    color: var(--color-title-brown); /* Color de títulos para las etiquetas */
+    margin-right: 0.4rem;
+}
+
+/* --- Secciones de Lista de Comidas/Promociones --- */
+.comidas-lista, .promociones-lista {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-card-border);
+    background-color: var(--color-light-orange-pastel); /* Fondo más claro */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Sombra interna sutil */
+}
+
+.comidas-lista b, .promociones-lista b {
+    color: var(--color-subtitle-orange); /* Color de acento para los títulos de sección */
+    display: block;
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.comida-item {
+    padding: 0.3rem 0;
+    font-size: 0.95rem;
+    color: var(--color-text-brown-dark);
+    border-bottom: 1px dotted rgba(155, 125, 105, 0.3); /* Línea punteada sutil */
+}
+.comida-item:last-child {
+    border-bottom: none;
+}
+
+/* --- Estilos para Promociones en Pedidos --- */
+.promociones-lista {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.05) 0%, rgba(200, 50, 40, 0.05) 100%); /* Gradiente sutil */
+    border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+.promociones-lista b {
+    color: var(--color-promo-accent); /* Rojo de acento */
+    font-family: var(--font-heading);
+}
+
+.promocion-item {
+    background: rgba(255, 255, 255, 0.9); /* Fondo casi blanco */
+    padding: 0.8rem 1rem; /* Más padding */
+    border-radius: 10px; /* Más redondeado */
+    margin-bottom: 0.8rem;
+    border: 1px solid rgba(231, 76, 60, 0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Sombra sutil */
+}
+
+.promocion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.8rem; /* Más espacio */
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dotted rgba(231, 76, 60, 0.3);
+}
+
+.promocion-nombre {
+    font-weight: 700;
+    color: var(--color-promo-accent);
+    flex: 1;
+    font-size: 1.1rem;
+}
+
+.promocion-cantidad {
+    background: var(--color-promo-accent);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.promocion-precio {
+    color: var(--color-success-badge); /* Verde para el precio */
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.promocion-comidas {
+    color: var(--color-text-brown-dark);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.promocion-comida-item {
+    color: var(--color-text-brown-light);
+}
+
+/* --- Información del Repartidor --- */
+.repartidor-info {
+    background-color: var(--color-info-bg); /* Fondo azul pastel */
+    padding: 1rem;
+    border-radius: 10px;
+    border-left: 5px solid var(--color-info-border); /* Borde azul */
+    margin-top: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.repartidor-info b {
+    color: var(--color-info-border); /* Color de borde para el título */
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 1.05rem;
+}
+
+.repartidor-detalles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.95em;
+    color: var(--color-text-brown-dark);
+}
+
+.repartidor-detalles span b {
+    color: var(--color-title-brown);
+}
+
+/* --- Código de Entrega --- */
+.codigo-entrega-info {
+    background-color: var(--color-warning-bg); /* Fondo naranja pastel */
+    padding: 1rem;
+    border-radius: 10px;
+    border-left: 5px solid var(--color-warning-border); /* Borde naranja */
+    margin-top: 1.2rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.codigo-entrega-info b {
+    color: var(--color-warning-border); /* Naranja para el título */
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 1.05rem;
+}
+
+.codigo-entrega-numero {
+    display: block;
+    font-size: 2.5rem; /* Más grande */
+    font-weight: 700;
+    color: var(--color-warning-border);
+    margin: 0.8rem 0;
+    letter-spacing: 3px; /* Más espaciado */
+    background: white;
+    padding: 0.8rem;
+    border-radius: 10px;
+    border: 3px dashed var(--color-warning-border); /* Borde punteado más grueso */
+    animation: pulseCode 2s infinite;
+}
+
+@keyframes pulseCode {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7);
+    }
+    70% {
+        transform: scale(1.03); /* Ligeramente más grande */
+        box-shadow: 0 0 0 15px rgba(255, 152, 0, 0); /* Mayor expansión de sombra */
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 152, 0, 0);
+    }
+}
+
+.codigo-entrega-info small {
+    color: var(--color-text-brown-light);
+    font-style: italic;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+/* --- Debug Info --- */
+.debug-info {
+    background: var(--color-card-bg-light) !important; /* Usar color de la paleta */
+    color: var(--color-text-brown-light) !important;
+    border: 1px dashed var(--color-card-border) !important; /* Borde punteado */
+    padding: 1.2rem !important;
+    margin: 3rem auto 1rem auto !important; /* Ajustar margen */
+    border-radius: 12px !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+    max-width: 900px;
+}
+.debug-info h4 {
+    color: var(--color-title-brown);
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+}
+.debug-info p {
+    font-size: 0.9rem;
+    margin: 0.4rem 0;
+}
+
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .pedidos-dashboard-root {
+        padding: 0 1rem 2rem 1rem;
+        margin-top: 1rem; /* Menos margen arriba en móviles */
+    }
+    .pedidos-dashboard-header {
+        padding: 1rem 1rem 0.8rem 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 10px;
+    }
+    .pedidos-dashboard-volver {
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+    }
+    .pedidos-dashboard-title {
+        font-size: 1.5rem;
+    }
+    .pedido-card {
+        padding: 1rem 1.2rem;
+        gap: 0.8rem;
+        border-radius: 15px;
+    }
+    .pedido-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .pedido-nombre {
+        font-size: 1.2rem;
+    }
+    .pedido-header-right {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+    }
+    .pedido-estado {
+        font-size: 0.85rem;
+        padding: 0.3rem 0.7rem;
+    }
+    .btn-eliminar-pedido, .btn-cancelar-pedido {
+        font-size: 1.2rem;
+        width: 32px;
+        height: 32px;
+        padding: 0.3rem;
+    }
+    .pedido-info {
+        font-size: 0.95rem;
+        gap: 0.6rem;
+    }
+    .comidas-lista, .promociones-lista {
+        padding: 0.8rem;
+        margin-top: 0.8rem;
+    }
+    .comidas-lista b, .promociones-lista b {
+        font-size: 1rem;
+        margin-bottom: 0.6rem;
+    }
+    .comida-item {
+        font-size: 0.9rem;
+    }
+    .promocion-item {
+        padding: 0.6rem 0.8rem;
+        margin-bottom: 0.6rem;
+    }
+    .promocion-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+        padding-bottom: 0.4rem;
+    }
+    .promocion-nombre {
+        font-size: 1rem;
+    }
+    .promocion-cantidad {
+        font-size: 0.8rem;
+    }
+    .promocion-price {
+        font-size: 0.9rem;
+    }
+    .promocion-comidas {
+        font-size: 0.8rem;
+    }
+    .repartidor-info, .codigo-entrega-info {
+        padding: 0.8rem;
+        margin-top: 1rem;
+    }
+    .repartidor-info b, .codigo-entrega-info b {
+        font-size: 1rem;
+    }
+    .codigo-entrega-numero {
+        font-size: 2rem;
+        padding: 0.6rem;
+    }
+    .debug-info {
+        padding: 1rem !important;
+        margin-top: 2rem !important;
+    }
+    .debug-info h4 {
+        font-size: 1rem;
+    }
+    .debug-info p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pedidos-dashboard-root {
+        padding: 0 0.5rem 1.5rem 0.5rem;
+    }
+    .pedidos-dashboard-header {
+        padding: 0.8rem 0.8rem 0.6rem 0.8rem;
+        margin-bottom: 1rem;
+    }
+    .pedidos-dashboard-title {
+        font-size: 1.3rem;
+    }
+    .pedidos-dashboard-volver {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    .pedidos-dashboard-loading,
+    .pedidos-dashboard-empty,
+    .pedidos-dashboard-error {
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    .pedidos-dashboard-error h3 {
+        font-size: 1.5rem;
+    }
+    .pedidos-dashboard-error p {
+        font-size: 0.95rem;
+    }
+    .pedidos-dashboard-error button {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    .pedidos-dashboard-list {
+        gap: 1rem;
+    }
+    .pedido-card {
+        padding: 0.8rem 1rem;
+        gap: 0.6rem;
+    }
+    .pedido-nombre {
+        font-size: 1.1rem;
+    }
+    .pedido-local {
+        font-size: 0.9rem;
+    }
+    .pedido-estado {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.6rem;
+    }
+    .btn-eliminar-pedido, .btn-cancelar-pedido {
+        font-size: 1rem;
+        width: 28px;
+        height: 28px;
+        padding: 0.2rem;
+    }
+    .pedido-info {
+        font-size: 0.85rem;
+        gap: 0.5rem;
+    }
+    .comidas-lista, .promociones-lista {
+        padding: 0.6rem;
+        margin-top: 0.6rem;
+    }
+    .comidas-lista b, .promociones-lista b {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    .comida-item {
+        font-size: 0.85rem;
+    }
+    .promocion-item {
+        padding: 0.5rem 0.6rem;
+        margin-bottom: 0.5rem;
+    }
+    .promocion-nombre {
+        font-size: 0.95rem;
+    }
+    .promocion-cantidad {
+        font-size: 0.75rem;
+    }
+    .promocion-price {
+        font-size: 0.8rem;
+    }
+    .promocion-comidas {
+        font-size: 0.75rem;
+    }
+    .repartidor-info, .codigo-entrega-info {
+        padding: 0.7rem;
+        margin-top: 0.8rem;
+    }
+    .repartidor-info b, .codigo-entrega-info b {
+        font-size: 0.9rem;
+    }
+    .codigo-entrega-numero {
+        font-size: 1.8rem;
+        padding: 0.5rem;
+        border-width: 2px;
+    }
+    .debug-info {
+        padding: 0.8rem !important;
+        margin-top: 1.5rem !important;
+    }
+    .debug-info h4 {
+        font-size: 0.95rem;
+    }
+    .debug-info p {
+        font-size: 0.8rem;
+    }
 }

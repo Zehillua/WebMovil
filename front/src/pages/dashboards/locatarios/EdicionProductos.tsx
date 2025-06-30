@@ -271,13 +271,13 @@ const EdicionProductos: React.FC = () => {
                           ? producto.imagenUrl.startsWith('/uploads/')
                             ? `http://localhost:3001${producto.imagenUrl}`
                             : producto.imagenUrl
-                          : 'https://via.placeholder.com/200x140?text=Sin+Imagen'
+                          : 'https://placehold.co/200x140/fef4e8/8d5c3d?text=Sin+Imagen' // Updated placeholder
                       }
                       alt={producto.nombre}
                       className="producto-imagen"
                     />
                     <div className="producto-overlay">
-                      <span className="producto-precio">${producto.precio.toLocaleString()}</span>
+                      <span className="producto-precio">${producto.precio.toLocaleString('es-CL')}</span> {/* Added es-CL */}
                     </div>
                   </div>
 

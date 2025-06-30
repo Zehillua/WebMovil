@@ -1,526 +1,744 @@
 /* CompradorDashboard.css */
 
-/* --- Variables de Color (Asegúrate de que estas sean las mismas que en tu index.css o un archivo global) --- */
+/* --- Variables de Color de VeciMarket (Tonos Pastel) --- */
 :root {
-    --color-dark-brown: #532a14;
-    --color-light-orange-pastel: #fef4e8; /* Color de fondo general */
-    --color-card-bg-light: #fff8f2; /* Fondo para tarjetas y secciones */
-    --color-title-brown: #6b3e26; /* Color para títulos y navbar principal */
-    --color-subtitle-orange: #8d5c3d; /* Color para subtítulos, botones, elementos secundarios */
-    --color-card-border: #d1a38d; /* Borde de tarjetas */
-    --color-text-brown-dark: #5a3a28; /* Texto principal */
-    --color-text-brown-light: #7a5540; /* Texto secundario/info */
-    --color-info-text: #6d4b3c; /* Texto informativo */
-    --color-card-shadow: rgba(0,0,0,0.08); /* Sombra suave para tarjetas */
-    --color-general-shadow: rgba(0,0,0,0.05); /* Sombra más sutil */
-    --logo-color: #ffffff; /* Color para el logo y algunos íconos en la navbar */
-    --color-success: #27ae60; /* Verde para éxito/confirmar */
-    --color-danger: #fa314a; /* Rojo para eliminar */
-    --color-placeholder-bg: #e0e0e0;
-    --color-placeholder-border: #bdbdbd;
-    --color-placeholder-text: #757575;
+    --color-primary-dark: #6B3E26; /* Marrón oscuro para títulos principales, navbar */
+    --color-primary-medium: #8D5C3D; /* Naranja medio para botones, acentos */
+    --color-primary-light: #C28B6D; /* Naranja claro para detalles */
+    --color-background-main: #FEF4E8; /* Fondo general, muy claro */
+    --color-background-card: #FFF8F2; /* Fondo de tarjetas, casi blanco */
+    --color-text-dark: #5A3A28; /* Texto principal oscuro */
+    --color-text-medium: #7A5540; /* Texto secundario */
+    --color-text-light: #9B7D69; /* Texto muy claro, placeholders */
+    --color-border-light: #D1A38D; /* Borde de elementos, claro */
+    --color-shadow-light: rgba(0,0,0,0.08); /* Sombra ligera */
+    --color-shadow-medium: rgba(0,0,0,0.15); /* Sombra un poco más visible */
+    --color-success: #7ED957; /* Verde pastel para éxito/abierto */
+    --color-danger: #FA7F7F; /* Rojo pastel para error/cerrado */
+    --color-info: #A5DFF9; /* Azul pastel para información */
+    --color-warning: #FFD180; /* Amarillo pastel para advertencias */
+    --color-star-filled: #FFD700; /* Dorado para estrellas llenas */
+    --color-star-empty: #CFCFCF; /* Gris claro para estrellas vacías */
+    --navbar-icon-filter: brightness(0) invert(1); /* Para iconos blancos en navbar */
 }
 
+/* Base global */
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--color-light-orange-pastel);
-    color: var(--color-text-brown-dark);
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    background-color: var(--color-background-main);
+    color: var(--color-text-dark);
+    box-sizing: border-box;
 }
 
-.comprador-dashboard {
-    width: 100%;
-    min-height: 100vh;
+/* Contenedor principal del dashboard */
+.comprador-dashboard-container {
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
     align-items: center;
-    box-sizing: border-box;
-    background-color: var(--color-light-orange-pastel);
+    background-color: var(--color-background-main);
 }
 
 /* --- Navbar (Menu Superior) --- */
-.navbar-dashboard {
+.navbar-comprador {
     width: 100%;
-    background-color: var(--color-dark-brown); /* Marrón oscuro para la navbar */
+    background-color: var(--color-primary-dark); /* Color oscuro para la navbar */
     color: white;
-    padding: 0.8rem 2rem;
-    border-radius: 0 0 16px 16px;
-    box-shadow: 0 4px 10px var(--color-general-shadow); /* Sombra más pronunciada */
+    padding: 1rem 2.5rem;
+    box-shadow: 0 3px 10px var(--color-shadow-medium);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem; /* Aumento de gap */
     box-sizing: border-box;
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
 }
 
-.logo-section .logo {
-    font-size: 1.8rem; /* Ajuste el tamaño del logo */
-    font-weight: bold;
-    color: var(--logo-color);
-    letter-spacing: 0.5px;
-}
-
-.search-section {
-    flex: 1;
+.navbar-brand {
     display: flex;
-    justify-content: center;
-    min-width: 200px; /* Asegura un ancho mínimo para el buscador */
+    align-items: center;
+    white-space: nowrap;
 }
 
-.search-input {
+.logo-text {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.navbar-user-info {
+    flex-grow: 1;
+    text-align: right;
+    min-width: 150px;
+    padding-right: 1rem;
+    white-space: nowrap; /* Evita que el saludo se rompa */
+}
+
+.user-greeting {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.navbar-search {
+    flex-basis: 40%;
+    min-width: 250px;
+    order: 2;
+}
+
+.search-input-navbar {
     width: 100%;
-    max-width: 450px; /* Aumenta el ancho máximo */
-    padding: 0.7rem 1.2rem;
-    border-radius: 25px; /* Más redondeado */
-    border: 1px solid var(--color-card-border);
-    font-size: 0.95rem;
-    color: var(--color-text-brown-dark);
-    background-color: white; /* Fondo blanco */
-    transition: box-shadow 0.2s, border-color 0.2s;
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    border: none;
+    font-size: 1rem;
+    color: var(--color-text-dark);
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.search-input-navbar::placeholder {
+    color: var(--color-text-light);
+}
+
+.search-input-navbar:focus {
     outline: none;
-    box-sizing: border-box;
+    background-color: white;
+    box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
-.search-input::placeholder {
-    color: var(--color-text-brown-light);
-}
-
-.search-input:focus {
-    border-color: var(--color-subtitle-orange);
-    box-shadow: 0 0 8px rgba(141, 92, 61, 0.3); /* Sombra más visible al enfocar */
-}
-
-.icons-section {
+.navbar-actions {
     display: flex;
-    gap: 0.8rem; /* Espacio entre iconos */
+    gap: 1rem; /* Aumento del gap entre los botones */
+    align-items: center;
+    flex-wrap: wrap;
+    order: 3;
+    justify-content: flex-end; /* Alinea los botones a la derecha si hay espacio */
 }
 
-.icon-btn {
+.nav-action-btn {
     background: none;
     border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.6rem 1rem; /* Ajuste de padding */
+    border-radius: 25px;
     cursor: pointer;
-    padding: 0.4rem; /* Un poco más de padding */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Ajuste del espacio entre icono y texto */
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap; /* ¡Clave para evitar que el texto se rompa! */
+    flex-shrink: 0; /* Evita que el botón se encoja */
+}
+
+.nav-action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.nav-action-btn img {
+    width: 24px;
+    height: 24px;
+    filter: var(--navbar-icon-filter);
+}
+
+/* Contenedor específico para el icono y texto del botón de historial */
+.nav-action-btn .btn-content-icon {
+    display: flex; /* Asegura que el icono y texto estén en línea */
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-action-btn .btn-text {
+    display: inline-block;
+}
+
+.logout-btn {
+    background-color: #E57373;
+}
+
+.logout-btn:hover {
+    background-color: #C62828;
+}
+
+.nav-action-btn.has-notification {
+    position: relative;
+    background-color: var(--color-primary-medium);
+}
+
+.notification-badge-nav {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--color-danger);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
     border-radius: 50%;
-    transition: background 0.2s ease-in-out;
+    padding: 0.2em 0.5em;
+    min-width: 1.5em;
+    text-align: center;
+    line-height: 1;
+    border: 2px solid var(--color-primary-dark);
+    z-index: 1; /* Asegura que el badge esté por encima */
+}
+
+/* --- Contenido Principal (El resto de tu CSS anterior...) --- */
+.main-content-area {
+    width: 100%;
+    max-width: 1300px;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    box-sizing: border-box;
+}
+
+.card-style {
+    background-color: var(--color-background-card);
+    border: 1px solid var(--color-border-light);
+    border-radius: 15px;
+    box-shadow: 0 6px 15px var(--color-shadow-light);
+    padding: 2.5rem;
+    box-sizing: border-box;
+}
+
+.welcome-section {
+    text-align: center;
+}
+
+.welcome-title {
+    font-size: 3rem;
+    color: var(--color-primary-dark);
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+}
+
+.welcome-subtitle {
+    font-size: 1.3rem;
+    color: var(--color-text-medium);
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    color: var(--color-primary-dark)!important;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-primary-medium);
+    border-radius: 2px;
+}
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: var(--color-background-card);
+    border: 1px solid var(--color-border-light);
+    border-radius: 15px;
+    box-shadow: 0 6px 15px var(--color-shadow-light);
+}
+
+.action-card {
+    background-color: white;
+    border: 1px solid var(--color-border-light);
+    border-radius: 12px;
+    padding: 1.8rem;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px var(--color-shadow-medium);
+}
+
+.action-icon {
+    font-size: 3.5rem;
+    margin-bottom: 0.8rem;
+    line-height: 1;
+}
+
+.action-card h3 {
+    font-size: 1.3rem;
+    color: var(--color-primary-dark);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.action-card p {
+    font-size: 0.95rem;
+    color: var(--color-text-medium);
+    margin-bottom: 0.5rem;
+}
+
+.action-card.has-pending-badge {
+    background-color: var(--color-warning);
+    border-color: var(--color-primary-medium);
+}
+
+.action-card .pending-text {
+    color: var(--color-primary-dark);
+    font-weight: bold;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.locales-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 1.5rem;
+    background-color: var(--color-background-card);
+    border: 1px solid var(--color-border-light);
+    border-radius: 15px;
+    box-shadow: 0 6px 15px var(--color-shadow-light);
+}
+
+.local-card {
+    background-color: white;
+    border: 1px solid var(--color-border-light);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.local-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 10px 25px var(--color-shadow-medium);
+}
+
+.local-image-container {
+    width: 100%;
+    height: 180px;
+    background-color: var(--color-background-main);
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.icon-btn:hover {
-    background-color: rgba(255,255,255,0.15);
-}
-
-.icon-btn img {
-    width: 26px; /* Ajusta el tamaño del icono */
-    height: 26px; /* Ajusta el tamaño del icono */
-    filter: brightness(0) invert(1); /* Hace que los íconos se vean blancos */
-}
-
-/* --- Cuerpo principal del Dashboard --- */
-.dashboard-body {
-    display: flex;
-    width: 100%;
-    max-width: 1200px; /* Ancho máximo del contenido */
-    padding: 2.5rem 1.5rem; /* Más padding en general */
-    gap: 2rem; /* Espacio entre la sidebar y la sección de productos */
-    box-sizing: border-box;
-    flex-wrap: wrap; /* Permite que las columnas se apilen en pantallas pequeñas */
-    justify-content: center; /* Centra las columnas cuando se apilan */
-}
-
-/* --- Estilo de la Tarjeta General (para sidebar y productos) --- */
-.card-container {
-    background-color: var(--color-card-bg-light);
-    border: 1.5px solid var(--color-card-border);
-    border-radius: 12px;
-    box-shadow: 0 6px 15px var(--color-card-shadow);
-    padding: 2rem; /* Padding interno consistente */
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-}
-
-.card-title {
-    font-size: 1.8rem; /* Tamaño de título para las tarjetas */
-    color: var(--color-title-brown);
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    text-align: center; /* Centrar el título */
-    font-weight: bold;
-    letter-spacing: 0.2px;
-}
-
-/* --- Sidebar (Locales del Vecindario) --- */
-.sidebar {
-    flex: 1; /* Crece para ocupar espacio disponible */
-    min-width: 280px; /* Ancho mínimo para la sidebar */
-    max-width: 350px; /* Ancho máximo para la sidebar */
-    height: fit-content; /* Se ajusta al contenido */
-}
-
-/* Input de texto genérico (usado en sidebar) */
-.text-input {
-    width: 100%;
-    padding: 0.7rem 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid var(--color-card-border);
-    border-radius: 8px;
-    font-size: 1em;
-    color: var(--color-text-brown-dark);
-    background-color: white;
-    box-sizing: border-box;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.text-input:focus {
-    outline: none;
-    border-color: var(--color-subtitle-orange);
-    box-shadow: 0 0 0 2px rgba(141, 92, 61, 0.2);
-}
-
-.lista-locales {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.lista-locales li {
-    margin-bottom: 0.6rem;
-}
-
-/* Botones de lista (para locales) */
-.list-button {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    background-color: white;
-    border: 1px solid var(--color-card-border); /* Borde más sutil */
-    border-radius: 8px;
-    color: var(--color-text-brown-dark);
-    font-weight: 500;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-    text-align: left;
-    display: block;
-    box-sizing: border-box;
-}
-
-.list-button:hover {
-    background-color: var(--color-light-orange-pastel); /* Pastel claro al pasar el mouse */
-    border-color: var(--color-subtitle-orange);
-}
-
-.list-button.selected-list-button {
-    background-color: var(--color-subtitle-orange); /* Naranja oscuro al seleccionar */
-    color: white;
-    border-color: var(--color-subtitle-orange);
-    font-weight: bold;
-}
-
-/* Botón para limpiar filtro */
-.clear-filter-button {
-    background-color: transparent;
-    color: var(--color-info-text); /* Color de texto informativo */
-    border: 1px dashed var(--color-card-border); /* Borde punteado */
-    font-size: 0.9em;
-    margin-top: 1.5rem;
-    width: 100%;
-    padding: 0.7rem 1.2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-    text-align: center;
-    box-sizing: border-box;
-}
-
-.clear-filter-button:hover {
-    background-color: var(--color-light-orange-pastel);
-    color: var(--color-subtitle-orange);
-    border-color: var(--color-subtitle-orange);
-}
-
-/* --- Zona de productos --- */
-.productos-section {
-    flex: 3; /* Crece para ocupar más espacio */
-    min-width: 60%; /* Ancho mínimo para la sección de productos */
-    min-height: 400px;
-}
-
-.productos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ajuste de tamaño de columnas */
-    gap: 1.5rem; /* Espacio entre productos */
-    justify-content: center; /* Centra las tarjetas si no llenan la fila */
-}
-
-/* Tarjeta de producto individual */
-.product-item-card {
-    background-color: white;
-    border-radius: 12px;
-    border: 1px solid var(--color-card-border);
-    box-shadow: 0 4px 10px var(--color-general-shadow);
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
-    text-align: left; /* Alinear texto a la izquierda dentro de la tarjeta */
+    border-bottom: 1px solid var(--color-border-light);
 }
 
-.product-item-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 18px var(--color-card-shadow);
-}
-
-.product-image {
+.local-image {
     width: 100%;
-    height: 150px; /* Altura fija para las imágenes */
+    height: 100%;
     object-fit: cover;
-    border-bottom: 1px solid var(--color-card-border); /* Separador de imagen */
 }
 
-.product-details {
-    padding: 1rem;
+.local-image-placeholder {
+    font-size: 5rem;
+    color: var(--color-text-light);
+}
+
+.local-info-content {
+    padding: 1.5rem;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
 
-.product-name {
-    font-size: 1.15em;
-    color: var(--color-text-brown-dark);
-    margin: 0 0 0.4rem 0;
-    font-weight: bold;
+.local-name {
+    font-size: 1.5rem;
+    color: var(--color-primary-dark);
+    margin-top: 0;
+    margin-bottom: 0.6rem;
+    font-weight: 700;
 }
 
-.product-local-name {
-    font-size: 0.85em;
-    color: var(--color-text-brown-light);
-    margin-bottom: 0.8rem;
+.local-description {
+    font-size: 0.95rem;
+    color: var(--color-text-medium);
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
-.product-price {
-    font-size: 1em;
-    color: var(--color-title-brown);
-    margin-top: auto; /* Empuja el precio y el botón hacia abajo */
-    margin-bottom: 0.8rem;
-    font-weight: bold;
+.local-rating {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
 }
 
-.product-price strong {
-    color: var(--color-subtitle-orange);
+.star-filled {
+    color: var(--color-star-filled);
+    font-size: 1.3rem;
 }
 
-/* Botón Primario (reutilizable) */
-.button-primary {
-    background-color: var(--color-subtitle-orange); /* Color de VeciMarket para botones primarios */
-    color: white;
-    border: none;
-    padding: 0.8rem 1.2rem;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-    width: 100%;
-    text-align: center;
+.star-half {
+    color: var(--color-star-filled);
+    font-size: 1.3rem;
+    position: relative;
+    overflow: hidden;
+    width: 0.65em;
+    display: inline-block;
+    direction: ltr;
 }
 
-.button-primary:hover {
-    background-color: var(--color-title-brown); /* Un tono más oscuro al pasar el mouse */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+.star-empty {
+    color: var(--color-star-empty);
+    font-size: 1.3rem;
 }
 
-/* --- Mensajes de estado --- */
-.loading-message,
-.error-message,
-.no-data-message {
-    grid-column: 1 / -1; /* Ocupa todo el ancho de la cuadrícula */
-    text-align: center;
-    color: var(--color-text-brown-light);
-    font-size: 1.1em;
-    padding: 20px;
+.rating-number {
+    font-size: 0.95rem;
+    color: var(--color-text-medium);
+    margin-left: 0.3rem;
     font-weight: 500;
 }
 
+.local-status-time {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: auto;
+    margin-bottom: 1rem;
+}
+
+.time-badge, .status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.time-badge {
+    background-color: var(--color-info);
+    color: var(--color-text-dark);
+}
+
+.status-badge.abierto {
+    background-color: var(--color-success);
+    color: white;
+}
+
+.status-badge.cerrado {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+.local-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    border-top: 1px dashed var(--color-border-light);
+    padding-top: 1rem;
+}
+
+.category-tag {
+    background-color: var(--color-primary-light);
+    color: white;
+    padding: 0.3rem 0.7rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.status-message {
+    padding: 2rem;
+    text-align: center;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    margin-top: 2rem;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--color-background-card);
+    border: 1px solid var(--color-border-light);
+    box-shadow: 0 4px 10px var(--color-shadow-light);
+}
+
+.loading-message {
+    color: var(--color-text-medium);
+    font-style: italic;
+}
+
 .error-message {
-    color: var(--color-danger); /* Rojo para errores */
+    color: var(--color-danger);
     font-weight: bold;
 }
 
-/* --- Responsive Design --- */
+.no-results-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--color-text-medium);
+    font-size: 1.1rem;
+    padding: 20px;
+    background-color: white;
+    border-radius: 12px;
+    border: 1px dashed var(--color-border-light);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Responsive */
 @media (max-width: 1024px) {
-    .dashboard-body {
-        flex-direction: column; /* Apila las secciones */
-        padding: 1.5rem;
+    .navbar-comprador {
+        padding: 1rem 1.5rem;
+        justify-content: center;
+        gap: 0.8rem;
+    }
+    .navbar-brand {
+        flex-basis: 100%;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        justify-content: center;
+    }
+    .navbar-search {
+        order: 3;
+        flex-basis: 100%;
+    }
+    .navbar-user-info {
+        flex-grow: 0;
+        flex-basis: 100%;
+        text-align: center;
+        padding-right: 0;
+        margin-bottom: 0.5rem;
+    }
+    .navbar-actions {
+        order: 4;
+        flex-basis: 100%;
+        justify-content: center;
+        gap: 0.6rem;
+    }
+
+    .main-content-area {
+        padding: 1.5rem 1rem;
         gap: 1.5rem;
     }
-    .sidebar, .productos-section {
-        max-width: 100%; /* Ocupan todo el ancho disponible */
-        min-width: unset; /* Quita el min-width */
+
+    .welcome-title {
+        font-size: 2.5rem;
     }
-    .sidebar .card-container,
-    .productos-section .card-container {
-        width: 100%;
+    .welcome-subtitle {
+        font-size: 1.1rem;
+    }
+    .section-title {
+        font-size: 1.8rem;
+    }
+    .quick-actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        padding: 1rem;
+    }
+    .action-card {
+        padding: 1.2rem;
+    }
+    .action-icon {
+        font-size: 3rem;
+    }
+    .action-card h3 {
+        font-size: 1.1rem;
+    }
+    .locales-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        padding: 1rem;
+    }
+    .local-card {
+        padding-bottom: 1rem;
+    }
+    .local-name {
+        font-size: 1.3rem;
+    }
+    .local-image-container {
+        height: 150px;
+    }
+    .local-info-content {
+        padding: 1rem;
     }
 }
 
 @media (max-width: 768px) {
-    .navbar-dashboard {
-        flex-wrap: wrap;
-        justify-content: center;
+    .navbar-comprador {
         padding: 0.8rem 1rem;
-        gap: 0.8rem;
     }
-    .logo-section {
-        flex-basis: 100%; /* El logo ocupa su propia línea */
-        text-align: center;
-        margin-bottom: 0.5rem;
+    .logo-text {
+        font-size: 1.8rem;
     }
-    .search-section {
-        flex-basis: 100%; /* El buscador ocupa su propia línea */
-        order: 3; /* Se mueve abajo */
-    }
-    .icons-section {
-        order: 2; /* Los iconos se quedan en el medio */
-        flex-basis: 100%; /* Los iconos ocupan su propia línea */
-        justify-content: center;
-    }
-    .dashboard-body {
-        padding: 1rem;
-        gap: 1rem;
-    }
-    .card-container {
-        padding: 1.2rem;
-    }
-    .card-title {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-    }
-    .productos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Ajuste para móviles */
-        gap: 1rem;
-    }
-    .product-image {
-        height: 120px;
-    }
-    .product-details {
-        padding: 0.8rem;
-    }
-    .product-name {
-        font-size: 1em;
-    }
-    .button-primary {
+    .search-input-navbar {
         padding: 0.6rem 1rem;
-        font-size: 0.9em;
+        font-size: 0.9rem;
+    }
+    .nav-action-btn {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.8rem;
+        gap: 0.3rem;
+        flex-direction: row; /* Mantener en fila en tablet si es posible */
+    }
+    .nav-action-btn img {
+        width: 20px;
+        height: 20px;
+    }
+    .main-content-area {
+        padding: 1rem 0.8rem;
+        gap: 1rem;
+    }
+    .card-style {
+        padding: 1.5rem;
+    }
+    .welcome-title {
+        font-size: 2rem;
+    }
+    .welcome-subtitle {
+        font-size: 1rem;
+    }
+    .section-title {
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+    }
+    .quick-actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+    .action-card {
+        padding: 1rem;
+    }
+    .action-icon {
+        font-size: 2.5rem;
+    }
+    .action-card h3 {
+        font-size: 1rem;
+    }
+    .action-card p {
+        font-size: 0.85rem;
+    }
+    .locales-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+    .local-image-container {
+        height: 180px;
+    }
+    .local-name {
+        font-size: 1.2rem;
+    }
+    .local-description {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 3;
+    }
+    .local-rating, .local-status-time, .local-categories {
+        font-size: 0.85rem;
     }
 }
 
 @media (max-width: 480px) {
-    .navbar-dashboard {
-        padding: 0.6rem 0.5rem;
+    .navbar-comprador {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.6rem 0.8rem;
+        gap: 0.5rem;
     }
-    .logo-section .logo {
-        font-size: 1.5rem;
+    .navbar-brand, .navbar-search, .navbar-user-info, .navbar-actions {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        margin-bottom: 0;
     }
-    .search-input {
-        padding: 0.6rem 1rem;
+    .navbar-actions {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+    .nav-action-btn {
+        flex-grow: 1;
+        min-width: 80px;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
+        flex-direction: column; /* Icono arriba, texto abajo */
+    }
+    .nav-action-btn .btn-text {
+        display: block;
+        margin-top: 0.2rem;
+        font-size: 0.75rem;
+    }
+    .nav-action-btn img {
+        width: 18px;
+        height: 18px;
+    }
+    .notification-badge-nav {
+        top: -2px;
+        right: -2px;
+        font-size: 0.6em;
+        padding: 0.1em 0.3em;
+        min-width: 1.2em;
+        border-width: 1px;
+    }
+    .main-content-area {
+        padding: 0.8rem;
+        gap: 0.8rem;
+    }
+    .card-style {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+    .welcome-title {
+        font-size: 1.8rem;
+    }
+    .welcome-subtitle {
         font-size: 0.9rem;
     }
-    .icon-btn img {
-        width: 22px;
-        height: 22px;
+    .section-title {
+        font-size: 1.4rem;
     }
-    .card-container {
-        padding: 1rem;
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
     }
-    .card-title {
-        font-size: 1.3rem;
+    .action-card {
+        padding: 0.8rem;
     }
-    .list-button, .clear-filter-button, .text-input {
-        font-size: 0.9em;
-        padding: 0.6rem 0.8rem;
+    .action-icon {
+        font-size: 2rem;
     }
-    .productos-grid {
-        grid-template-columns: 1fr; /* Una columna en pantallas muy pequeñas */
+    .action-card h3 {
+        font-size: 0.9rem;
     }
-}
-
-/* Estos estilos del modal no parecen usarse en este componente,
-   pero los mantengo por si son de un archivo global. Si no se usan,
-   puedes eliminarlos o moverlos a un archivo específico de modal. */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex; justify-content: center; align-items: center;
-    z-index: 1000;
-}
-
-.modal-carrito {
-    background: var(--color-card-bg-light);
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-    width: 90%;
-    max-width: 400px;
-    position: relative;
-}
-
-.modal-carrito h2 {
-    color: var(--color-title-brown);
-    margin-bottom: 1rem;
-}
-
-.modal-carrito p {
-    margin-bottom: 1rem;
-    font-weight: bold;
-    color: var(--color-text-brown-dark);
-}
-
-.modal-carrito input {
-    width: 100%;
-    padding: 0.7rem;
-    margin: 0.8rem 0;
-    border: 1.5px solid var(--color-card-border);
-    border-radius: 6px;
-    font-size: 1rem;
-    color: var(--color-text-brown-dark);
-    background-color: white;
-}
-
-.modal-carrito button {
-    padding: 0.7rem 1.8rem;
-    background-color: var(--color-subtitle-orange);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-top: 0.8rem;
-    transition: background-color 0.2s, transform 0.2s;
-}
-.modal-carrito button:hover {
-    background-color: var(--color-title-brown);
-    transform: translateY(-1px);
-}
-
-.close-button {
-    position: absolute;
-    top: 0.7rem;
-    right: 0.7rem;
-    font-size: 1.8rem; /* Tamaño más grande para el ícono de cerrar */
-    background: none;
-    border: none;
-    color: var(--color-info-text); /* Color más sutil */
-    cursor: pointer;
-    line-height: 1; /* Asegura que no haya espacio extra */
-}
-.close-button:hover {
-    color: var(--color-danger);
+    .local-image-container {
+        height: 140px;
+    }
+    .local-info-content {
+        padding: 0.8rem;
+    }
+    .local-name {
+        font-size: 1rem;
+    }
+    .local-description {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 3;
+    }
 }

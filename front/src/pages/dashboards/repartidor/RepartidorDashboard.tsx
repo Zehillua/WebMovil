@@ -1,47 +1,57 @@
-// RepartidorDashboard.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../hooks/useAuth'; // Importar el hook de autenticación
 import './RepartidorDashboard.css';
 
 const RepartidorDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth(); // Usar el hook para acceder al usuario y la función de logout
 
+  // Función para manejar el cierre de sesión
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/', { replace: true });
+    logout(); // Llama a la función de logout del hook de autenticación
+    navigate('/', { replace: true }); // Redirige al usuario a la página de inicio
   };
 
   return (
-    <div className="repartidor-root">
-      {/* Banner superior al estilo de Home.tsx */}
-      <div className="top-banner">
-        <button className="icon-btn" onClick={() => navigate('/perfil')} title="Perfil">
-          <img src="https://img.icons8.com/ios-filled/28/ffffff/user.png" alt="Perfil" />
+    <div className="repartidor-dashboard">
+      {/* Barra de navegación del repartidor */}
+      <nav className="navbar-repartidor">
+        <div className="logo-centered">
+          🚗 Panel Repartidor
+          {/* Muestra el nombre de usuario o el nombre completo del repartidor si está disponible */}
+          {user && (
+            <small style={{ display: 'block', fontSize: '0.8rem', opacity: 0.8 }}>
+              Bienvenido, {user.usuarioRepartidor || `${user.nombre} ${user.apellido}`}
+            </small>
+          )}
+        </div>
+        {/* Botón para cerrar sesión */}
+        <button className="logout-btn" onClick={handleLogout} title="Cerrar sesión">
+          Salir
         </button>
-        <span className="top-banner-text">Panel Repartidor</span> {/* Título en el centro */}
-        <button className="icon-btn" onClick={handleLogout} title="Cerrar sesión">
-          <img src="https://img.icons8.com/ios-filled/28/ffffff/exit.png" alt="Salir" />
+      </nav>
+
+      {/* Sección principal de acciones del repartidor */}
+      <div className="main-actions">
+        {/* Botones de navegación a diferentes secciones de pedidos */}
+        <button className="action-btn" onClick={() => navigate('/repartidor/pedidos')}>
+          Pedidos Disponibles
+        </button>
+        <button className="action-btn" onClick={() => navigate('/repartidor/pendientes')}>
+          Mis Pedidos Pendientes
+        </button>
+        <button className="action-btn" onClick={() => navigate('/repartidor/en-camino')}>
+          Pedidos En Camino
+        </button>
+        <button className="action-btn" onClick={() => navigate('/repartidor/historial')}>
+          Historial de Entregas
+        </button>
+        {/* Botón para la sección de estadísticas (funcionalidad no implementada en este TSX) */}
+        <button className="action-btn" onClick={() => navigate('/repartidor/estadisticas')}>
+          Estadísticas
         </button>
       </div>
-
-      <main className="repartidor-dashboard-body">
-        <h2 className="dashboard-title">Panel de Repartidor</h2> {/* Título principal más descriptivo */}
-        <button className="repartidor-action-btn" onClick={() => navigate('/repartidor/pedidos')}>
-          📦 Pedidos Disponibles
-        </button>
-        <button className="repartidor-action-btn" onClick={() => navigate('/repartidor/pendientes')}>
-          🕒 Pedidos Pendientes
-        </button>
-        <button className="repartidor-action-btn" onClick={() => navigate('/repartidor/en-camino')}>
-          🚚 Pedidos en Camino
-        </button>
-        <button className="repartidor-action-btn" disabled>
-          📜 Historial de Entregas
-        </button>
-        <button className="repartidor-action-btn" disabled>
-          📊 Estadísticas
-        </button>
-      </main>
     </div>
   );
 };

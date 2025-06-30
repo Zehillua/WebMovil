@@ -1,6 +1,9 @@
-/* RepartidorDashboard.css */
+/* RepartidorDashboard.css (Adaptado a la paleta Pastel/Marrón con acentos Rojos para Repartidor) */
 
-/* Variables de Color (Asegúrate de que estas sean consistentes en todos tus archivos CSS) */
+/* Importar fuentes de Google Fonts para consistencia */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;700&display=swap');
+
+/* Variables de Color (Centralizadas para consistencia) */
 :root {
     --color-dark-brown: #532a14;
     --color-light-orange-pastel: #fef4e8;
@@ -9,207 +12,198 @@
     --color-subtitle-orange: #8d5c3d;
     --color-card-border: #d1a38d;
     --color-text-brown-dark: #5a3a28;
-    --color-text-brown-light: #7a5540;
-    --color-info-text: #6d4b3c;
-    --color-card-shadow: rgba(0,0,0,0.08);
-    --color-general-shadow: rgba(0,0,0,0.05);
-    --logo-color: #ffffff; /* Color para el logo y algunos íconos en la navbar */
-    --color-success: #27ae60;
-    --color-danger: #fa314a;
-    --color-placeholder-bg: #e0e0e0;
-    --color-placeholder-border: #bdbdbd;
-    --color-placeholder-text: #757575;
+    --color-text-brown-light: #9b7d69; /* Ajustado para ser más claro y consistente */
+    --color-general-shadow: rgba(0, 0, 0, 0.08); /* Sombra general más suave */
+    --color-card-shadow: rgba(0, 0, 0, 0.12); /* Sombra de tarjeta más pronunciada */
+
+    /* Colores específicos para Repartidor Dashboard (acentos rojos) */
+    --color-repartidor-red-primary: #e74c3c; /* Rojo principal para Repartidor */
+    --color-repartidor-red-dark: #c0392b; /* Rojo oscuro para Repartidor */
+    --color-repartidor-red-light-alpha: rgba(231, 76, 60, 0.05); /* Rojo claro con transparencia */
+    --color-repartidor-red-light-alpha-hover: rgba(231, 76, 60, 0.08); /* Rojo claro con más transparencia para hover */
+
+    /* Colores para estados (adaptados a la paleta general) */
+    --color-estado-pendiente-bg: #fce8d7; /* Pastel amarillo/naranja */
+    --color-estado-pendiente-text: var(--color-subtitle-orange); /* Naranja de la paleta */
+    --color-estado-en-camino-bg: #d7e8fc; /* Pastel azul */
+    --color-estado-en-camino-text: #4a6fae; /* Azul oscuro */
+    --color-estado-entregado-bg: #e4fce4; /* Pastel verde */
+    --color-estado-entregado-text: var(--color-success); /* Verde de la paleta */
+    --color-estado-cancelado-bg: #f8d7da; /* Rojo claro */
+    --color-estado-cancelado-text: #721c24; /* Rojo oscuro */
+
+    /* Colores adicionales del usuario, mapeados o ajustados */
+    --color-info-text: #6d4b3c; /* Manteniendo el color del usuario */
+    --logo-color: #ffffff; /* Manteniendo el color del usuario */
+    --color-success: #27ae60; /* Manteniendo el color del usuario */
+    --color-danger: #fa314a; /* Manteniendo el color del usuario */
+    --color-placeholder-bg: #e0e0e0; /* Manteniendo el color del usuario */
+    --color-placeholder-border: #bdbdbd; /* Manteniendo el color del usuario */
+    --color-placeholder-text: #757575; /* Manteniendo el color del usuario */
+
+
+    /* Fuentes */
+    --font-primary: 'Quicksand', sans-serif; /* Preferencia de la paleta */
+    --font-heading: 'Comfortaa', cursive; /* Preferencia de la paleta */
 }
 
-/* Base y Contenedor Principal */
+/* ========== ESTILOS BASE ========== */
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-primary); /* Usar la fuente de la paleta */
     background-color: var(--color-light-orange-pastel);
     color: var(--color-text-brown-dark);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.repartidor-root {
-    width: 100%;
+.repartidor-dashboard { /* Cambiado de .repartidor-root a .repartidor-dashboard para coincidir con el TSX */
     min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Fondo del usuario */
+    font-family: var(--font-primary); /* Usar fuente de la paleta */
     display: flex;
     flex-direction: column;
     align-items: center;
     box-sizing: border-box;
-    background-color: var(--color-light-orange-pastel);
 }
 
-/* --- ADAPTACIÓN DEL BANNER SUPERIOR DE HOME.CSS --- */
-.top-banner {
+/* ========== NAVBAR REPARTIDOR ========== */
+.navbar-repartidor {
     width: 100%;
-    background-color: var(--color-dark-brown); /* Usamos el marrón oscuro de Home */
+    background: linear-gradient(135deg, var(--color-repartidor-red-primary) 0%, var(--color-repartidor-red-dark) 100%); /* Gradiente rojo del usuario */
     color: white;
-    padding: 0.75rem 1rem; /* Padding vertical y horizontal de Home */
-    text-align: center;
-    font-weight: bold;
-    box-shadow: 0 2px 5px var(--color-general-shadow);
-    display: flex; /* Para alinear íconos y texto */
-    justify-content: space-between; /* Para que los íconos estén en los extremos */
+    padding: 1rem 2.5rem; /* Ajuste de padding para consistencia */
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Sombra consistente */
+    border-radius: 0 0 20px 20px; /* Redondeo consistente */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     box-sizing: border-box;
 }
 
-.top-banner-text {
-    font-size: 0.95rem; /* Tamaño de fuente de Home */
-    letter-spacing: 0.3px;
-    flex-grow: 1; /* Para que ocupe el espacio central disponible */
-    text-align: center; /* Centra el texto */
-    margin: 0 1rem; /* Margen para separar del botón si está muy pegado */
-}
-
-/* --- Botón de ícono (ajustado para el nuevo top-banner) --- */
-.icon-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.3rem;
-    border-radius: 50%;
-    transition: background 0.2s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.icon-btn:hover {
-    background-color: rgba(255,255,255,0.15);
-}
-
-.icon-btn img {
-    width: 24px; /* Un poco más pequeños para el banner más compacto */
-    height: 24px;
-    filter: brightness(0) invert(1); /* Hace que los iconos sean blancos */
-}
-
-/* --- Título del dashboard --- */
-.dashboard-title {
-    text-align: center;
-    margin: 2rem 0;
-    font-size: 2.5rem;
-    color: var(--color-title-brown);
+.navbar-repartidor .logo-centered {
+    font-family: var(--font-heading); /* Fuente de título de la paleta */
+    font-size: 2.2rem; /* Tamaño más grande para consistencia */
     font-weight: 700;
+    flex: 1;
+    text-align: center;
+    color: white;
+    letter-spacing: 1.5px; /* Espaciado de letras */
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Sombra de texto */
 }
 
-/* Contenedor principal de los botones de acción */
-.repartidor-dashboard-body {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 2rem;
-    align-items: center;
-    width: 100%;
-    max-width: 800px;
-    margin-top: 2rem;
+.navbar-repartidor .logo-centered small {
+    font-family: var(--font-primary);
+    font-weight: 400;
+    margin-top: 0.3rem;
+}
+
+.logout-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.6rem 1.2rem; /* Ajuste de padding para consistencia */
+    border-radius: 25px; /* Redondeo consistente */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Transición suave */
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Sombra sutil */
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px); /* Efecto de elevación */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Sombra más pronunciada */
+}
+
+/* ========== ACCIONES PRINCIPALES ========== */
+.main-actions { /* Coincide con el TSX */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem; /* Ajuste de gap */
+    padding: 2.5rem; /* Ajuste de padding */
+    width: 100%; /* Ocupar todo el ancho disponible */
+    max-width: 1200px; /* Max-width consistente */
+    margin: 2rem auto; /* Margen superior e inferior */
     box-sizing: border-box;
 }
 
-/* Botones de acción específicos del repartidor */
-.repartidor-action-btn {
-    background-color: var(--color-subtitle-orange);
-    color: white;
-    padding: 1.2rem 2.5rem;
-    font-size: 1.4rem;
-    border: none;
-    border-radius: 12px;
+.action-btn { /* Coincide con el TSX */
+    background: var(--color-card-bg-light); /* Fondo claro de la paleta */
+    border: 2px solid var(--color-card-border); /* Borde de la paleta */
+    border-radius: 20px; /* Redondeo consistente */
+    padding: 2.5rem; /* Ajuste de padding */
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 4px 8px var(--color-general-shadow);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.8rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px var(--color-card-shadow); /* Sombra consistente */
+    font-size: 1.2rem; /* Tamaño de fuente más grande */
     font-weight: 600;
+    color: var(--color-title-brown); /* Color de título de la paleta */
+    border-left: 5px solid var(--color-repartidor-red-primary); /* Borde izquierdo rojo del usuario */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.8rem;
 }
 
-.repartidor-action-btn:hover {
-    background-color: var(--color-title-brown);
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px var(--color-card-shadow);
+.action-btn::before { /* Añadir un ícono con pseudo-elemento para cada botón */
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-repartidor-red-primary);
+    transition: all 0.3s ease;
 }
 
-.repartidor-action-btn:disabled {
-    background-color: #ccc;
-    color: #666;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
+.action-btn:nth-child(1)::before { content: '📦'; } /* Pedidos Disponibles */
+.action-btn:nth-child(2)::before { content: '⏳'; } /* Mis Pedidos Pendientes */
+.action-btn:nth-child(3)::before { content: '🚚'; } /* Pedidos En Camino */
+.action-btn:nth-child(4)::before { content: '✅'; } /* Historial de Entregas */
+.action-btn:nth-child(5)::before { content: '📊'; } /* Estadísticas (corregido de '') */
+
+
+.action-btn:hover {
+    transform: translateY(-8px); /* Efecto de elevación más pronunciado */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18); /* Sombra más pronunciada */
+    background: linear-gradient(135deg, var(--color-repartidor-red-light-alpha-hover) 0%, white 100%); /* Fondo con gradiente rojo en hover */
+    border-color: var(--color-repartidor-red-dark); /* Borde más oscuro en hover */
+    color: var(--color-repartidor-red-dark); /* Color de texto más oscuro en hover */
 }
 
-/* Media Queries para responsividad */
-@media (max-width: 768px) {
-    .top-banner {
-        padding: 0.6rem 0.5rem; /* Ajuste para móviles */
-    }
-    .top-banner-text {
-        font-size: 0.85rem;
-        margin: 0 0.5rem;
-    }
-    .icon-btn img {
-        width: 20px; /* Íconos más pequeños en móviles */
-        height: 20px;
-    }
-    .dashboard-title {
-        font-size: 2rem;
-        margin: 1.5rem 0;
-    }
-    .repartidor-dashboard-body {
-        padding: 1rem;
-        gap: 1rem;
-    }
-    .repartidor-action-btn {
-        padding: 1rem 1.5rem;
-        font-size: 1.1rem;
-        max-width: 90%;
-    }
+.action-btn:hover::before {
+    transform: scale(1.1); /* Escalar el ícono en hover */
+    color: var(--color-repartidor-red-dark);
 }
 
-@media (max-width: 480px) {
-    .repartidor-action-btn {
-        font-size: 1rem;
-        padding: 0.8rem 1rem;
-    }
-}
 
-/* Mantengo aquí los estilos que podrían ser usados en sub-vistas del repartidor,
-   aunque no sean directamente parte del dashboard principal */
-
-.pedidos-grid {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    padding: 2rem;
-}
-
-.pedido-card {
-    background: var(--color-card-bg-light);
-    border: 1.5px solid var(--color-card-border);
-    border-radius: 12px;
+/* ========== CARDS DE PEDIDOS (para posible uso futuro) ========== */
+.card-pedido {
+    background: var(--color-card-bg-light); /* Fondo claro de la paleta */
+    border-left: 5px solid var(--color-repartidor-red-primary); /* Borde izquierdo rojo */
     padding: 1.5rem;
-    box-shadow: 0 4px 10px var(--color-card-shadow);
-    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 2rem;
+    border-radius: 16px; /* Redondeo consistente */
+    box-shadow: 0 4px 16px var(--color-general-shadow); /* Sombra consistente */
+    transition: all 0.3s ease;
+    border: 1px solid var(--color-card-border); /* Borde sutil */
 }
 
-.pedido-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px var(--color-card-shadow);
+.card-pedido:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .pedido-card h3 {
-    color: var(--color-title-brown);
-    font-size: 1.5rem;
     margin-top: 0;
-    margin-bottom: 0.5rem;
+    color: var(--color-title-brown); /* Color de título de la paleta */
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
 }
 
 .pedido-card p {
@@ -220,6 +214,7 @@ html, body {
 .pedido-card ul {
     padding-left: 1.5rem;
     margin: 0.5rem 0;
+    color: var(--color-text-brown-dark);
 }
 
 button { /* Este es un estilo general para botones, ajustado para ser más neutral */
@@ -240,26 +235,27 @@ button:hover {
 }
 
 .estado {
-    font-weight: bold;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    text-transform: uppercase;
+    font-weight: 600; /* Peso de fuente consistente */
+    padding: 0.4rem 0.9rem; /* Ajuste de padding */
+    border-radius: 15px; /* Redondeo consistente */
+    font-size: 0.85rem;
+    text-transform: uppercase; /* Mayúsculas */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .estado.pendiente {
-    background-color: #fce8d7;
-    color: var(--color-subtitle-orange);
+    background-color: var(--color-estado-pendiente-bg);
+    color: var(--color-estado-pendiente-text);
 }
 
 .estado.en-camino {
-    background-color: #d7e8fc;
-    color: #4a6fae;
+    background-color: var(--color-estado-en-camino-bg);
+    color: var(--color-estado-en-camino-text);
 }
 
 .estado.entregado {
-    background-color: #e4fce4;
-    color: var(--color-success);
+    background-color: var(--color-estado-entregado-bg);
+    color: var(--color-estado-entregado-text);
 }
 
 .loading, .no-pedidos {
@@ -267,4 +263,136 @@ button:hover {
     font-size: 1.2rem;
     color: var(--color-text-brown-light);
     margin-top: 3rem;
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 992px) {
+    .navbar-repartidor {
+        padding: 1rem 1.5rem;
+    }
+    .navbar-repartidor .logo-centered {
+        font-size: 1.8rem;
+    }
+    .logout-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    .main-actions {
+        padding: 1.5rem;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .action-btn {
+        padding: 2rem;
+        font-size: 1.1rem;
+    }
+    .action-btn::before {
+        font-size: 2.5rem;
+    }
+    .card-pedido {
+        padding: 1.2rem;
+    }
+    .pedido-card h3 {
+        font-size: 1.2rem;
+    }
+    .pedido-card ul {
+        font-size: 0.9rem;
+    }
+    .pedido-card button {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    .estado {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-repartidor {
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 0.8rem 1rem;
+        border-radius: 0 0 14px 14px;
+    }
+    .navbar-repartidor .logo-centered {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+    }
+    .logout-btn {
+        width: 100%;
+        text-align: center;
+        padding: 0.7rem 1.2rem;
+    }
+    .main-actions {
+        padding: 1rem;
+        gap: 1rem;
+        grid-template-columns: 1fr; /* Apilar botones */
+    }
+    .action-btn {
+        padding: 1.5rem;
+        font-size: 1rem;
+    }
+    .action-btn::before {
+        font-size: 2rem;
+    }
+    .card-pedido {
+        padding: 1rem;
+    }
+    .pedido-card h3 {
+        font-size: 1.1rem;
+    }
+    .pedido-card ul {
+        font-size: 0.85rem;
+    }
+    .pedido-card button {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+    .estado {
+        padding: 0.2rem 0.6rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-repartidor {
+        padding: 0.6rem 0.8rem;
+        border-radius: 0 0 10px 10px;
+    }
+    .navbar-repartidor .logo-centered {
+        font-size: 1.4rem;
+    }
+    .logout-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    .main-actions {
+        padding: 0.8rem;
+        gap: 0.8rem;
+    }
+    .action-btn {
+        padding: 1.2rem;
+        font-size: 0.95rem;
+    }
+    .action-btn::before {
+        font-size: 1.8rem;
+    }
+    .card-pedido {
+        padding: 0.8rem;
+    }
+    .pedido-card h3 {
+        font-size: 1rem;
+    }
+    .pedido-card ul {
+        font-size: 0.7rem; /* Ajustado para ser más pequeño en móviles */
+    }
+    .pedido-card button {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    .estado {
+        padding: 0.15rem 0.4rem;
+        font-size: 0.7rem;
+    }
 }

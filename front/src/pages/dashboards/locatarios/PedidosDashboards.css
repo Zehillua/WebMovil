@@ -1,131 +1,793 @@
+/* PedidosDashboards.css (Adaptado a la paleta Pastel/Marrón) */
+
+/* Importar fuentes de Google Fonts para consistencia */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;700&display=swap');
+
+/* Variables de Color (Centralizadas para consistencia) */
+:root {
+    --color-dark-brown: #532a14;
+    --color-light-orange-pastel: #fef4e8;
+    --color-card-bg-light: #fff8f2;
+    --color-title-brown: #6b3e26;
+    --color-subtitle-orange: #8d5c3d;
+    --color-card-border: #d1a38d;
+    --color-text-brown-dark: #5a3a28;
+    --color-text-brown-light: #9b7d69;
+    --color-general-shadow: rgba(0, 0, 0, 0.08);
+    --color-card-shadow: rgba(0, 0, 0, 0.12);
+
+    /* Colores para estados de pedidos (adaptados a la paleta) */
+    --color-estado-en-espera: #f39c12; /* Naranja */
+    --color-estado-preparando: #3498db; /* Azul */
+    --color-estado-listo: #2ecc71; /* Verde */
+    --color-estado-completado: #27ae60; /* Verde oscuro */
+    --color-estado-cancelado: #e74c3c; /* Rojo */
+
+    /* Colores para botones de acción (adaptados a la paleta) */
+    --color-btn-aceptar: #27ae60; /* Verde */
+    --color-btn-aceptar-hover: #219a52;
+    --color-btn-rechazar: #e74c3c; /* Rojo */
+    --color-btn-rechazar-hover: #c0392b;
+    --color-btn-listo: #3498db; /* Azul */
+    --color-btn-listo-hover: #2980b9;
+
+    /* Colores para mensajes (success, error, info) */
+    --color-message-success-bg: #d4edda;
+    --color-message-success-text: #155724;
+    --color-message-error-bg: #f8d7da;
+    --color-message-error-text: #721c24;
+    --color-message-info-bg: #cfe2ff;
+    --color-message-info-text: #055160;
+
+    /* Fuentes */
+    --font-primary: 'Quicksand', sans-serif;
+    --font-heading: 'Comfortaa', cursive;
+}
+
+/* ========== ESTILOS BASE ========== */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: var(--font-primary);
+    background-color: var(--color-light-orange-pastel);
+    color: var(--color-text-brown-dark);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 .pedidos-dashboard-root {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 0 1rem 4rem 1rem;
-  background: #f7fafd;
-  min-height: 100vh;
+    min-height: 100vh;
+    background: var(--color-light-orange-pastel); /* Fondo pastel */
+    font-family: var(--font-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 1rem 4rem 1rem; /* Padding base */
 }
+
+/* ========== HEADER DEL DASHBOARD ========== */
 .pedidos-dashboard-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2rem 0 1.2rem 0;
-  background: #fff;
-  border-radius: 0 0 18px 18px;
-  box-shadow: 0 2px 12px #d87a9c22;
-  margin-bottom: 2rem;
+    width: 100%;
+    background: var(--color-card-bg-light); /* Fondo claro para el header */
+    color: var(--color-title-brown); /* Color de título */
+    padding: 2rem 1.5rem 1.2rem 1.5rem; /* Ajuste de padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 12px rgba(107, 62, 38, 0.1); /* Sombra adaptada */
+    border-radius: 0 0 18px 18px;
+    margin-bottom: 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-sizing: border-box;
 }
+
 .pedidos-dashboard-volver {
-  background: #f7fafd;
-  border: none;
-  font-size: 1.5rem;
-  color: #d87a9c;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-  transition: background 0.18s;
+    background: var(--color-light-orange-pastel); /* Fondo pastel */
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-subtitle-orange); /* Color de acento */
+    border-radius: 50%;
+    width: 40px; /* Más grande */
+    height: 40px; /* Más grande */
+    cursor: pointer;
+    transition: background 0.18s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
 .pedidos-dashboard-volver:hover {
-  background: #ffe6f0;
+    background: var(--color-card-border); /* Tono de marrón claro */
+    transform: translateX(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
+
 .pedidos-dashboard-title {
-  color: #d87a9c;
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  flex: 1;
+    font-family: var(--font-heading);
+    font-size: 2rem; /* Más grande */
+    font-weight: 700;
+    text-align: center;
+    flex: 1;
+    color: var(--color-title-brown); /* Color de título */
+    letter-spacing: 1px;
 }
+
+/* ========== ESTADOS DE CARGA Y VACÍO ========== */
 .pedidos-dashboard-loading,
 .pedidos-dashboard-empty {
-  color: #888;
-  text-align: center;
-  margin-top: 2rem;
+    color: var(--color-text-brown-light);
+    text-align: center;
+    margin-top: 2rem;
+    padding: 3rem;
+    background: var(--color-card-bg-light);
+    border-radius: 20px;
+    box-shadow: 0 8px 25px var(--color-card-shadow);
+    border: 2px solid var(--color-card-border);
+    font-family: var(--font-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    width: 90%;
+    max-width: 800px;
+    box-sizing: border-box;
 }
-.pedidos-dashboard-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+
+.pedidos-dashboard-loading .loading-spinner {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    animation: spin 1.5s linear infinite;
+    color: var(--color-subtitle-orange);
 }
-.pedido-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px #d87a9c22;
-  padding: 1.2rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  transition: box-shadow 0.18s;
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
-.pedido-card:hover {
-  box-shadow: 0 4px 24px #d87a9c44;
+
+.pedidos-dashboard-empty .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+    color: var(--color-subtitle-orange);
 }
-.pedido-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
+
+.pedidos-dashboard-empty h3 {
+    margin: 1rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    color: var(--color-title-brown);
 }
-.pedido-nombre {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #4f8cff;
-}
-.pedido-estado {
-  font-weight: bold;
-  font-size: 1.1rem;
-  text-transform: capitalize;
-  padding: 0.2rem 0.8rem;
-  border-radius: 12px;
-  background: #f2c94c22;
-  color: #f2c94c;
-}
-.pedido-estado-entregado {
-  background: #27ae6022;
-  color: #27ae60;
-}
-.pedido-estado-pendiente {
-  background: #f2c94c22;
-  color: #f2c94c;
-}
-.pedido-estado-cancelado {
-  background: #fa314a22;
-  color: #fa314a;
-}
-.pedido-info {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.2rem;
-  color: #555;
-  font-size: 1rem;
-}
-@media (max-width: 600px) {
-  .pedidos-dashboard-root {
-    padding: 0.5rem 0.1rem 4rem 0.1rem;
-  }
-  .pedidos-dashboard-header {
-    padding: 1rem 0 0.7rem 0;
-    margin-bottom: 1rem;
-  }
-  .pedidos-dashboard-title {
+
+.pedidos-dashboard-loading p,
+.pedidos-dashboard-empty p {
     font-size: 1.1rem;
-  }
-  .pedido-card {
-    padding: 0.7rem 0.5rem;
-  }
+    margin-bottom: 0;
+    color: var(--color-text-brown-dark);
+}
+
+/* ========== LISTA DE PEDIDOS ========== */
+.pedidos-dashboard-list {
+    width: 100%;
+    max-width: 1200px;
+    padding: 2rem;
+    display: grid; /* Usar grid para mejor control */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    box-sizing: border-box;
+}
+
+.pedido-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px var(--color-card-shadow);
+    transition: all 0.3s ease;
+    border: 2px solid var(--color-card-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 1.5rem; /* Ajuste de padding */
+}
+
+.pedido-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    border-color: var(--color-subtitle-orange);
+}
+
+.pedido-header {
+    background: linear-gradient(135deg, var(--color-subtitle-orange) 0%, var(--color-dark-brown) 100%); /* Gradiente marrón/naranja */
+    color: white;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    border-radius: 15px 15px 0 0; /* Redondeado solo arriba */
+    margin: -1.5rem -1.5rem 0.5rem -1.5rem; /* Ajuste para que el header ocupe el ancho completo de la tarjeta */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pedido-nombre {
+    font-size: 1.5rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.pedido-estado {
+    padding: 0.4rem 0.9rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Mapeo de estados a la paleta de colores */
+.pedido-estado-en-espera { background-color: var(--color-estado-en-espera); }
+.pedido-estado-preparando { background-color: var(--color-estado-preparando); }
+.pedido-estado-listo { background-color: var(--color-estado-listo); }
+.pedido-estado-completado { background-color: var(--color-estado-completado); }
+.pedido-estado-cancelado { background-color: var(--color-estado-cancelado); }
+
+/* ========== DETALLES DEL PEDIDO ========== */
+.pedido-details {
+    padding: 0.5rem 0; /* Ajuste de padding */
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    flex-grow: 1;
+}
+
+.detail-item {
+    font-size: 0.95rem;
+    color: var(--color-text-brown-dark);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
+
+.detail-item b {
+    color: var(--color-title-brown);
+    margin-right: 0.5rem;
+    font-weight: 700;
+}
+
+.meals-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+    width: 100%;
+}
+
+.meals-list li {
+    background: var(--color-light-orange-pastel);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    margin-bottom: 0.3rem;
+    border: 1px solid var(--color-card-border);
+    font-size: 0.9rem;
+    color: var(--color-text-brown-dark);
+}
+
+.meals-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* ========== ACCIONES DEL PEDIDO ========== */
+.pedido-acciones {
+    padding: 1.5rem 0 0 0; /* Ajuste de padding */
+    background: var(--color-card-bg-light); /* Fondo claro */
+    border-top: 1px dashed var(--color-card-border); /* Borde punteado */
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    border-radius: 0 0 15px 15px; /* Redondeado solo abajo */
+    margin-left: -1.5rem; /* Ajuste para que ocupe el ancho completo */
+    margin-right: -1.5rem; /* Ajuste para que ocupe el ancho completo */
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.btn-aceptar,
+.btn-rechazar,
+.btn-pedido-listo {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    flex: 1; /* Para que ocupen el espacio disponible */
+    min-width: 120px;
+}
+
+.btn-aceptar {
+    background: linear-gradient(135deg, var(--color-btn-aceptar) 0%, var(--color-btn-aceptar-hover) 100%);
+    color: white;
+}
+
+.btn-aceptar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(39, 174, 96, 0.3);
+}
+
+.btn-rechazar {
+    background: linear-gradient(135deg, var(--color-btn-rechazar) 0%, var(--color-btn-rechazar-hover) 100%);
+    color: white;
+}
+
+.btn-rechazar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(231, 76, 60, 0.3);
 }
 
 .btn-pedido-listo {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
+    background: linear-gradient(135deg, var(--color-btn-listo) 0%, var(--color-btn-listo-hover) 100%);
+    color: white;
 }
 
 .btn-pedido-listo:hover {
-  background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(52, 152, 219, 0.3);
+}
+
+.action-message-cancelado,
+.action-message-completado {
+    font-weight: 700;
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    text-align: center;
+    flex: 1;
+    min-width: 120px;
+}
+
+.action-message-cancelado {
+    background-color: var(--color-error-bg-light);
+    color: var(--color-error-text);
+    border: 1px solid var(--color-error-message);
+}
+
+.action-message-completado {
+    background-color: var(--color-success-bg-light);
+    color: var(--color-success-text);
+    border: 1px solid var(--color-success-message);
+}
+
+/* ========== MENSAJES (Alerts/Toasts) ========== */
+.message-box {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 2000;
+    animation: slideInTop 0.5s ease-out forwards;
+    min-width: 250px;
+    text-align: center;
+}
+
+.message-box-success {
+    background-color: var(--color-message-success-bg);
+    color: var(--color-message-success-text);
+    border: 1px solid var(--color-success-message);
+}
+
+.message-box-error {
+    background-color: var(--color-message-error-bg);
+    color: var(--color-message-error-text);
+    border: 1px solid var(--color-error-message);
+}
+
+.message-box-info {
+    background-color: var(--color-message-info-bg);
+    color: var(--color-message-info-text);
+    border: 1px solid var(--color-info-message);
+}
+
+.message-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.message-close-btn:hover {
+    opacity: 1;
+}
+
+@keyframes slideInTop {
+    from {
+        transform: translateX(-50%) translateY(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ========== MODAL DE CONFIRMACIÓN ========== */
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000; /* Mayor z-index */
+    animation: fadeInModal 0.3s ease;
+    padding: 1rem;
+}
+
+.confirm-modal {
+    background: var(--color-card-bg-light);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    border: 2px solid var(--color-card-border);
+    animation: slideUpModal 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.2) forwards;
+}
+
+.confirm-modal p {
+    font-size: 1.1rem;
+    color: var(--color-text-brown-dark);
+    margin-bottom: 2rem;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.confirm-cancel-btn,
+.confirm-ok-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.confirm-cancel-btn {
+    background: var(--color-card-border);
+    color: var(--color-text-brown-dark);
+}
+
+.confirm-cancel-btn:hover {
+    background: #bb9782;
+    transform: translateY(-2px);
+}
+
+.confirm-ok-btn {
+    background: linear-gradient(135deg, var(--color-subtitle-orange) 0%, var(--color-dark-brown) 100%);
+    color: white;
+}
+
+.confirm-ok-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(141, 92, 61, 0.3);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 992px) {
+    .pedidos-dashboard-header {
+        padding: 0.8rem 1.5rem;
+    }
+    .pedidos-dashboard-title {
+        font-size: 1.8rem;
+    }
+    .pedidos-dashboard-volver {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        width: 36px;
+        height: 36px;
+    }
+    .pedidos-dashboard-loading,
+    .pedidos-dashboard-empty {
+        padding: 2rem;
+        min-height: 300px;
+    }
+    .pedidos-dashboard-loading .loading-spinner,
+    .pedidos-dashboard-empty .empty-icon {
+        font-size: 3rem;
+    }
+    .pedidos-dashboard-empty h3 {
+        font-size: 1.6rem;
+    }
+    .pedidos-dashboard-loading p,
+    .pedidos-dashboard-empty p {
+        font-size: 1rem;
+    }
+    .pedidos-dashboard-list {
+        padding: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    .pedido-card {
+        border-radius: 18px;
+        padding: 1.2rem;
+    }
+    .pedido-header {
+        padding: 1rem 1.2rem;
+        margin: -1.2rem -1.2rem 0.5rem -1.2rem;
+    }
+    .pedido-nombre {
+        font-size: 1.3rem;
+    }
+    .pedido-estado {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    .pedido-details {
+        padding: 0.6rem 0;
+        gap: 0.6rem;
+    }
+    .detail-item {
+        font-size: 0.9rem;
+    }
+    .meals-list li {
+        font-size: 0.85rem;
+        padding: 0.3rem 0.6rem;
+    }
+    .pedido-acciones {
+        padding: 1rem 0 0 0;
+        gap: 0.8rem;
+        margin-left: -1.2rem;
+        margin-right: -1.2rem;
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
+        padding-bottom: 1.2rem;
+    }
+    .btn-aceptar,
+    .btn-rechazar,
+    .btn-pedido-listo {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+        min-width: 100px;
+    }
+    .message-box {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    .confirm-modal {
+        padding: 1.5rem;
+        max-width: 400px;
+    }
+    .confirm-modal p {
+        font-size: 1rem;
+    }
+    .confirm-cancel-btn,
+    .confirm-ok-btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .pedidos-dashboard-header {
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 0.8rem 1rem;
+        border-radius: 0 0 14px 14px;
+    }
+    .pedidos-dashboard-title {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+    }
+    .pedidos-dashboard-volver {
+        width: 100%;
+        text-align: center;
+        padding: 0.7rem 1.2rem;
+    }
+    .pedidos-dashboard-loading,
+    .pedidos-dashboard-empty {
+        padding: 1.5rem;
+        min-height: 250px;
+    }
+    .pedidos-dashboard-loading .loading-spinner,
+    .pedidos-dashboard-empty .empty-icon {
+        font-size: 2.5rem;
+    }
+    .pedidos-dashboard-empty h3 {
+        font-size: 1.4rem;
+    }
+    .pedidos-dashboard-loading p,
+    .pedidos-dashboard-empty p {
+        font-size: 0.9rem;
+    }
+    .pedidos-dashboard-list {
+        padding: 1rem;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .pedido-card {
+        border-radius: 15px;
+        padding: 1rem;
+    }
+    .pedido-header {
+        padding: 0.8rem 1rem;
+        margin: -1rem -1rem 0.5rem -1rem;
+    }
+    .pedido-nombre {
+        font-size: 1.2rem;
+    }
+    .pedido-estado {
+        padding: 0.2rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    .pedido-details {
+        padding: 0.5rem 0;
+        gap: 0.5rem;
+    }
+    .detail-item {
+        font-size: 0.85rem;
+    }
+    .meals-list li {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.5rem;
+    }
+    .pedido-acciones {
+        padding: 1rem 0 0 0;
+        gap: 0.5rem;
+        flex-direction: column; /* Apilar botones */
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-bottom: 1rem;
+    }
+    .btn-aceptar,
+    .btn-rechazar,
+    .btn-pedido-listo {
+        width: 100%;
+        justify-content: center;
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+    }
+    .message-box {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.85rem;
+    }
+    .confirm-modal {
+        padding: 1.2rem;
+        max-width: 95%;
+    }
+    .confirm-modal p {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+    .confirm-cancel-btn,
+    .confirm-ok-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pedidos-dashboard-header {
+        padding: 0.6rem 0.8rem;
+        border-radius: 0 0 10px 10px;
+    }
+    .pedidos-dashboard-title {
+        font-size: 1.4rem;
+    }
+    .pedidos-dashboard-volver {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        width: 32px;
+        height: 32px;
+    }
+    .pedidos-dashboard-loading,
+    .pedidos-dashboard-empty {
+        padding: 1rem;
+        min-height: 200px;
+    }
+    .pedidos-dashboard-loading .loading-spinner,
+    .pedidos-dashboard-empty .empty-icon {
+        font-size: 2rem;
+    }
+    .pedidos-dashboard-empty h3 {
+        font-size: 1.2rem;
+    }
+    .pedidos-dashboard-loading p,
+    .pedidos-dashboard-empty p {
+        font-size: 0.85rem;
+    }
+    .pedidos-dashboard-list {
+        padding: 0.8rem;
+        gap: 0.8rem;
+    }
+    .pedido-card {
+        border-radius: 12px;
+        padding: 0.8rem;
+    }
+    .pedido-header {
+        padding: 0.6rem 0.8rem;
+        margin: -0.8rem -0.8rem 0.5rem -0.8rem;
+    }
+    .pedido-nombre {
+        font-size: 1.1rem;
+    }
+    .pedido-estado {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.7rem;
+    }
+    .pedido-details {
+        padding: 0.4rem 0;
+        gap: 0.4rem;
+    }
+    .detail-item {
+        font-size: 0.8rem;
+    }
+    .meals-list li {
+        font-size: 0.75rem;
+        padding: 0.1rem 0.4rem;
+    }
+    .pedido-acciones {
+        padding: 0.8rem 0 0 0;
+        gap: 0.4rem;
+        margin-left: -0.8rem;
+        margin-right: -0.8rem;
+        padding-left: 0.8rem;
+        padding-right: 0.8rem;
+        padding-bottom: 0.8rem;
+    }
+    .btn-aceptar,
+    .btn-rechazar,
+    .btn-pedido-listo {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    .message-box {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+    }
+    .confirm-modal {
+        padding: 1rem;
+    }
+    .confirm-modal p {
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+    .confirm-cancel-btn,
+    .confirm-ok-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
 }

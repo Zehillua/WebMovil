@@ -38,6 +38,8 @@ export class LocatarioService {
   return this.usuarioModel.findById(id);
 }
 
+
+
 async actualizarValoracion(
   locatarioId: string, 
   nuevaValoracion: number

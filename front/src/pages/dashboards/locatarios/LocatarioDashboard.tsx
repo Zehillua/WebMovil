@@ -1,11 +1,10 @@
-// LocatarioDashboard.tsx (Completo con Edición y Eliminación de Productos, y Promociones)
 import React, { useState, useEffect } from 'react';
-import './LocatarioDashboard.css';
 import { useNavigate } from 'react-router-dom';
+import './LocatarioDashboard.css';
 
 interface Producto {
-  id?: number;
-  _id?: string; // ID de MongoDB (preferido si usas MongoDB)
+  id: number;
+  _id?: string;
   nombre: string;
   ingredientes: string[];
   descripcion: string;
@@ -14,108 +13,70 @@ interface Producto {
   imagenUrl?: string;
 }
 
+interface ComidaPromocion {
+  comidaId: string;
+  nombre: string;
+  cantidad: number;
+  precioOriginal: number;
+}
+
 interface Promocion {
   _id?: string;
   nombre: string;
   descripcion: string;
-  tipoDescuento: 'porcentaje';
-  valorDescuento: number;
-  productosAplicables: string[];
-  fechaInicio: string;
-  fechaFin: string;
-  activo?: boolean;
+  precio: number;
+  imagenUrl?: string;
+  comidas: ComidaPromocion[];
+  activa?: boolean;
+  cantidadDisponible?: number;
 }
 
 const LocatarioDashboard: React.FC = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
+  const [promociones, setPromociones] = useState<Promocion[]>([]);
+  const [vistaActual, setVistaActual] = useState<'productos' | 'promociones'>('productos');
+  
   const [formulario, setFormulario] = useState({
     nombre: '',
     precio: '',
     cantidad: '',
     ingredientes: '',
     descripcion: '',
+    imagenUrl: '',
+  });
+
+  const [formularioPromo, setFormularioPromo] = useState({
+    nombre: '',
+    descripcion: '',
+    precio: '',
+    cantidadDisponible: '',
+    comidasSeleccionadas: [] as ComidaPromocion[]
   });
 
   const [imagenFile, setImagenFile] = useState<File | null>(null);
-  const [mostrarFormulario, setMostrarFormulario] = useState(false); // Para agregar/editar producto
-  const [loadingProducts, setLoadingProducts] = useState(true);
-  const [productsError, setProductsError] = useState<string | null>(null);
-
-  const [mostrarTopVentas, setMostrarTopVentas] = useState(false);
-
-  // Estados para el formulario de Promoción
-  const [mostrarFormularioPromocion, setMostrarFormularioPromocion] = useState(false);
-  const [formularioPromocion, setFormularioPromocion] = useState({
-    nombre: '',
-    descripcion: '',
-    valorDescuento: '',
-    fechaInicio: '',
-    fechaFin: '',
-  });
-  const [availableProductsForPromo, setAvailableProductsForPromo] = useState<Producto[]>([]);
-  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-
-  // ESTADO para el producto que se está editando
-  const [editingProduct, setEditingProduct] = useState<Producto | null>(null);
-
+  const [imagenPromoFile, setImagenPromoFile] = useState<File | null>(null);
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [mostrarFormularioPromo, setMostrarFormularioPromo] = useState(false);
+  const [mostrarSelectorComidas, setMostrarSelectorComidas] = useState(false);
+  
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/', { replace: true });
-      return;
-    }
-    fetchComidas();
-  }, [navigate]);
-
-  // Cargar productos disponibles para la promoción cuando el formulario de promoción se abre
-  useEffect(() => {
-    const fetchAllProductsForPromo = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('No autenticado para cargar productos de promoción.');
-        return;
-      }
-      try {
-        const response = await fetch('http://localhost:3001/comidas', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setAvailableProductsForPromo(data);
-        } else {
-          console.error('Error al cargar productos para la promoción:', await response.json());
-          alert('Error al cargar productos disponibles para la promoción.');
-        }
-      } catch (error) {
-        console.error('Error de red al cargar productos para la promoción:', error);
-        alert('Error de red al cargar productos disponibles para la promoción.');
-      }
-    };
-
-    if (mostrarFormularioPromocion) {
-      fetchAllProductsForPromo();
-    } else {
-      setAvailableProductsForPromo([]);
-      setSelectedProductIds([]);
-    }
-  }, [mostrarFormularioPromocion]);
-
+  // Cerrar sesión
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('tipoUsuario');
-    navigate('/', { replace: true });
+    window.location.href = '/';
   };
 
-  const fetchComidas = async () => {
-    setLoadingProducts(true);
-    setProductsError(null);
+  useEffect(() => {
+    cargarProductos();
+    cargarPromociones();
+  }, []);
+
+  const cargarProductos = async () => {
     const token = localStorage.getItem('token');
-    if (!token) {
-      setLoadingProducts(false);
-      return;
-    }
+    if (!token) return;
+    
     try {
       const response = await fetch('http://localhost:3001/comidas', {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -123,19 +84,30 @@ const LocatarioDashboard: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         setProductos(data);
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al cargar los productos.');
       }
-    } catch (err: any) {
-      console.error("Error al cargar comidas:", err);
-      setProductsError(err.message || "No se pudieron cargar los productos.");
-    } finally {
-      setLoadingProducts(false);
+    } catch (error) {
+      console.error('Error cargando productos:', error);
     }
   };
 
-  // ----- Manejadores del Formulario de Producto (Agregar/Editar) -----
+  const cargarPromociones = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+      const response = await fetch('http://localhost:3001/promociones', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setPromociones(data);
+      }
+    } catch (error) {
+      console.error('Error cargando promociones:', error);
+    }
+  };
+
+  // Handlers para productos (mantener los existentes)
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormulario({ ...formulario, [e.target.name]: e.target.value });
   };
@@ -151,24 +123,81 @@ const LocatarioDashboard: React.FC = () => {
     }
   };
 
-  const subirImagen = async (file: File): Promise<string> => {
+  // Handlers para promociones
+  const handlePromoInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormularioPromo({ ...formularioPromo, [e.target.name]: e.target.value });
+  };
+
+  const handlePromoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImagenPromoFile(file);
+    }
+  };
+
+  const agregarComidaAPromocion = (producto: Producto) => {
+    const yaExiste = formularioPromo.comidasSeleccionadas.find(c => c.comidaId === producto._id);
+    if (yaExiste) {
+      alert('Esta comida ya está en la promoción');
+      return;
+    }
+
+    const cantidad = prompt('¿Cuántas unidades de este producto incluir en la promoción?', '1');
+    if (!cantidad || isNaN(Number(cantidad)) || Number(cantidad) <= 0) {
+      alert('Cantidad inválida');
+      return;
+    }
+
+    const nuevaComida: ComidaPromocion = {
+      comidaId: producto._id || '',
+      nombre: producto.nombre,
+      cantidad: Number(cantidad),
+      precioOriginal: producto.precio
+    };
+
+    setFormularioPromo({
+      ...formularioPromo,
+      comidasSeleccionadas: [...formularioPromo.comidasSeleccionadas, nuevaComida]
+    });
+  };
+
+  const eliminarComidaDePromocion = (comidaId: string) => {
+    setFormularioPromo({
+      ...formularioPromo,
+      comidasSeleccionadas: formularioPromo.comidasSeleccionadas.filter(c => c.comidaId !== comidaId)
+    });
+  };
+
+  const calcularPrecioOriginalTotal = () => {
+    return formularioPromo.comidasSeleccionadas.reduce((total, comida) => {
+      return total + (comida.precioOriginal * comida.cantidad);
+    }, 0);
+  };
+
+  const subirImagen = async (file: File, tipo: 'producto' | 'promocion' = 'producto'): Promise<string> => {
     const formData = new FormData();
     formData.append('imagen', file);
+
     const token = localStorage.getItem('token');
-    const response = await fetch('http://localhost:3001/comidas/upload', {
+    const endpoint = tipo === 'promocion' 
+      ? 'http://localhost:3001/promociones/upload'
+      : 'http://localhost:3001/comidas/upload';
+
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
       body: formData,
     });
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error al subir la imagen');
+      throw new Error('Error al subir la imagen');
     }
     const data = await response.json();
     return data.url;
   };
 
-  const agregarProducto = async (producto: Omit<Producto, '_id' | 'id'>) => {
+  // Mantener función de agregar producto existente
+  const agregarProducto = async (producto: any) => {
     const token = localStorage.getItem('token');
     if (!token) {
       throw new Error('No autenticado');
@@ -188,178 +217,14 @@ const LocatarioDashboard: React.FC = () => {
     return response.json();
   };
 
-  // Función para actualizar producto
-  const actualizarProducto = async (productId: string, updatedProduct: Partial<Omit<Producto, '_id' | 'id'>>) => {
+  const agregarPromocion = async (promocion: any) => {
     const token = localStorage.getItem('token');
     if (!token) {
       throw new Error('No autenticado');
     }
-    const response = await fetch(`http://localhost:3001/comidas/${productId}`, {
-      method: 'PUT', // Usamos PUT para actualizar, aunque PATCH también sería válido si solo se envían los campos modificados
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(updatedProduct),
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Error al actualizar producto');
-    }
-    return response.json();
-  };
 
+    console.log('🎉 Enviando promoción:', promocion);
 
-  // Función unificada para manejar el envío del formulario (Agregar/Editar)
-  const handleProductSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { nombre, precio, cantidad, ingredientes, descripcion } = formulario;
-    const ingredientesArray = ingredientes.split(',').map(i => i.trim()).filter(i => i);
-
-    const parsedPrecio = parseFloat(precio);
-    const parsedCantidad = parseInt(cantidad, 10);
-
-    if (!nombre || !precio || !cantidad || !ingredientes || !descripcion) {
-      alert('Por favor completa todos los campos obligatorios');
-      return;
-    }
-    if (isNaN(parsedPrecio) || parsedCantidad < 0) { // Cantidad no puede ser negativa
-      alert('Precio y Cantidad deben ser números válidos y Cantidad no puede ser negativa.');
-      return;
-    }
-
-    let finalImagenUrl = editingProduct?.imagenUrl; // Mantiene la imagen existente si no se cambia
-
-    if (imagenFile) { // Si se seleccionó un nuevo archivo de imagen
-      try {
-        finalImagenUrl = await subirImagen(imagenFile);
-      } catch (err: any) {
-        alert('Error al subir la nueva imagen: ' + err.message);
-        return;
-      }
-    }
-
-    const productData = {
-      nombre,
-      precio: parsedPrecio,
-      cantidad: parsedCantidad,
-      ingredientes: ingredientesArray,
-      descripcion,
-      imagenUrl: finalImagenUrl || undefined,
-    };
-
-    try {
-      if (editingProduct && editingProduct._id) { // Si estamos editando un producto existente
-        await actualizarProducto(editingProduct._id, productData);
-        alert('Producto actualizado correctamente');
-      } else { // Si estamos agregando un nuevo producto
-        await agregarProducto(productData);
-        alert('Producto agregado correctamente');
-      }
-      limpiarFormulario(); // Limpia el formulario y el estado de edición
-      setMostrarFormulario(false);
-      fetchComidas(); // Refresca la lista de productos
-    } catch (err: any) {
-      alert(err.message);
-    }
-  };
-
-  // Función para limpiar el formulario de producto y el estado de edición
-  const limpiarFormulario = () => {
-    setFormulario({
-      nombre: '',
-      precio: '',
-      cantidad: '',
-      ingredientes: '',
-      descripcion: '',
-    });
-    setImagenFile(null);
-    setEditingProduct(null); // MUY IMPORTANTE: Resetear el producto en edición
-  };
-
-  // Función para manejar la acción de "Editar" en una tarjeta de producto
-  const handleEditProduct = (product: Producto) => {
-    setEditingProduct(product); // Establece el producto que se va a editar
-    setFormulario({ // Pre-llena el formulario con los datos del producto
-      nombre: product.nombre,
-      precio: product.precio.toString(),
-      cantidad: product.cantidad.toString(),
-      ingredientes: product.ingredientes.join(', '),
-      descripcion: product.descripcion,
-    });
-    setImagenFile(null); // No hay nuevo archivo seleccionado aún
-    setMostrarFormulario(true); // Abre el modal de formulario
-    // Cierra cualquier otro modal que pudiera estar abierto
-    setMostrarFormularioPromocion(false);
-    setMostrarTopVentas(false);
-  };
-
-  // NUEVA Función para manejar la eliminación de un producto
-  const handleDeleteProduct = async (productId: string, productName: string) => {
-    if (!window.confirm(`¿Estás seguro de que quieres eliminar "${productName}"? Esta acción no se puede deshacer.`)) {
-      return; // El usuario canceló la eliminación
-    }
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('No autenticado. Por favor, inicia sesión de nuevo.');
-      navigate('/', { replace: true });
-      return;
-    }
-
-    try {
-      const response = await fetch(`http://localhost:3001/comidas/${productId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        alert(`"${productName}" eliminado correctamente.`);
-        fetchComidas(); // Refrescar la lista de productos
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al eliminar el producto.');
-      }
-    } catch (err: any) {
-      console.error("Error al eliminar producto:", err);
-      alert('Error al eliminar el producto: ' + err.message);
-    }
-  };
-
-
-  // ----- Manejadores del Formulario de Promoción -----
-  const handlePromocionInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormularioPromocion({ ...formularioPromocion, [e.target.name]: e.target.value });
-  };
-
-  const handleProductSelection = (productId: string) => {
-    setSelectedProductIds(prevSelected => {
-      if (prevSelected.includes(productId)) {
-        return prevSelected.filter(id => id !== productId);
-      } else {
-        return [...prevSelected, productId];
-      }
-    });
-  };
-
-  const limpiarFormularioPromocion = () => {
-    setFormularioPromocion({
-      nombre: '',
-      descripcion: '',
-      valorDescuento: '',
-      fechaInicio: '',
-      fechaFin: '',
-    });
-    setSelectedProductIds([]);
-  };
-
-  const agregarPromocion = async (promocion: Omit<Promocion, '_id'>) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('No autenticado');
-    }
     const response = await fetch('http://localhost:3001/promociones', {
       method: 'POST',
       headers: {
@@ -368,295 +233,602 @@ const LocatarioDashboard: React.FC = () => {
       },
       body: JSON.stringify(promocion),
     });
+
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Error al agregar promoción');
+      throw new Error(error.message || 'Error al crear promoción');
     }
     return response.json();
   };
 
+  const handleAgregarProducto = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { nombre, precio, cantidad, ingredientes, descripcion } = formulario;
+    if (!nombre || !precio || !cantidad || !ingredientes || !descripcion) {
+      alert('Por favor completa todos los campos obligatorios');
+      return;
+    }
+    const ingredientesArray = ingredientes.split(',').map(i => i.trim()).filter(i => i);
+
+    let imagenUrl = '';
+    if (imagenFile) {
+      try {
+        imagenUrl = await subirImagen(imagenFile, 'producto');
+      } catch (err: any) {
+        alert('Error al subir la imagen: ' + err.message);
+        return;
+      }
+    }
+
+    try {
+      await agregarProducto({
+        nombre,
+        precio: parseFloat(precio),
+        cantidad: parseInt(cantidad, 10),
+        ingredientes: ingredientesArray,
+        descripcion,
+        imagenUrl: imagenUrl || undefined,
+      });
+      alert('Producto agregado correctamente');
+      limpiarFormulario();
+      setMostrarFormulario(false);
+      setImagenFile(null);
+      cargarProductos();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
   const handleAgregarPromocion = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { nombre, descripcion, valorDescuento, fechaInicio, fechaFin } = formularioPromocion;
-
-    if (!nombre || !descripcion || !valorDescuento || !fechaInicio || !fechaFin) {
-      alert('Por favor completa todos los campos obligatorios para la promoción.');
+    
+    const { nombre, descripcion, precio, cantidadDisponible } = formularioPromo;
+    
+    if (!nombre || !descripcion || !precio) {
+      alert('Por favor completa todos los campos obligatorios');
       return;
     }
 
-    const parsedValorDescuento = parseFloat(valorDescuento);
-    if (isNaN(parsedValorDescuento) || parsedValorDescuento <= 0 || parsedValorDescuento > 100) {
-      alert('El porcentaje de descuento debe ser un número válido entre 0.01 y 100.');
+    if (formularioPromo.comidasSeleccionadas.length === 0) {
+      alert('Debes agregar al menos una comida a la promoción');
       return;
     }
 
-    if (selectedProductIds.length === 0) {
-      alert('Por favor selecciona al menos un producto para aplicar la promoción.');
+    const precioPromo = parseFloat(precio);
+    const precioOriginalTotal = calcularPrecioOriginalTotal();
+
+    if (precioPromo >= precioOriginalTotal) {
+      alert(`El precio de la promoción ($${precioPromo.toLocaleString('es-CL')}) debe ser menor al precio original total ($${precioOriginalTotal.toLocaleString('es-CL')})`);
       return;
     }
 
-    const startDate = new Date(fechaInicio);
-    const endDate = new Date(fechaFin);
-    if (startDate >= endDate) {
-      alert('La fecha de fin debe ser posterior o igual a la fecha de inicio.');
-      return;
+    let imagenUrl = '';
+    if (imagenPromoFile) {
+      try {
+        imagenUrl = await subirImagen(imagenPromoFile, 'promocion');
+      } catch (err: any) {
+        alert('Error al subir la imagen: ' + err.message);
+        return;
+      }
     }
 
     try {
       await agregarPromocion({
         nombre,
         descripcion,
-        tipoDescuento: 'porcentaje',
-        valorDescuento: parsedValorDescuento,
-        productosAplicables: selectedProductIds,
-        fechaInicio,
-        fechaFin,
-        activo: true,
+        precio: precioPromo,
+        cantidadDisponible: cantidadDisponible ? parseInt(cantidadDisponible, 10) : 0,
+        comidas: formularioPromo.comidasSeleccionadas,
+        imagenUrl: imagenUrl || undefined,
       });
-      alert('Promoción agregada correctamente');
-      limpiarFormularioPromocion();
-      setMostrarFormularioPromocion(false);
+      
+      alert('Promoción creada correctamente');
+      limpiarFormularioPromo();
+      setMostrarFormularioPromo(false);
+      setImagenPromoFile(null);
+      cargarPromociones();
     } catch (err: any) {
-      alert(err.message);
+      alert('Error al crear promoción: ' + err.message);
     }
   };
 
+  const limpiarFormulario = () => {
+    setFormulario({
+      nombre: '',
+      precio: '',
+      cantidad: '',
+      ingredientes: '',
+      descripcion: '',
+      imagenUrl: '',
+    });
+    setImagenFile(null);
+  };
+
+  const limpiarFormularioPromo = () => {
+    setFormularioPromo({
+      nombre: '',
+      descripcion: '',
+      precio: '',
+      cantidadDisponible: '',
+      comidasSeleccionadas: []
+    });
+    setImagenPromoFile(null);
+  };
+
   return (
-    <>
-      <header className="header-banner">
-        <div className="header-left">Bienvenido, Locatario — gestiona tus productos y promociones</div>
-        <div className="header-right-icons">
-          <button className="icon-btn" onClick={() => navigate('/perfil')} title="Perfil">
-            <img src="https://img.icons8.com/ios-filled/28/ffffff/user.png" alt="Perfil" />
-          </button>
-          <button className="icon-btn logout-btn" onClick={handleLogout} title="Cerrar sesión">
-            <img src="https://img.icons8.com/ios-filled/28/ffffff/exit.png" alt="Salir" />
-          </button>
-        </div>
-      </header>
+    <div className="locatario-dashboard">
+      {/* Barra superior */}
+      <nav className="navbar-locatario">
+        <div className="logo-centered">Panel Locatario</div>
+        <button className="logout-btn" onClick={handleLogout} title="Cerrar sesión">
+          Salir
+        </button>
+      </nav>
 
-
-      <div className="locatario-dashboard">
-
-      <h2 className="dashboard-title">Tus Productos</h2>
-
-      <div className="main-actions-container">
-        <button onClick={() => {
-          setMostrarFormulario(true); // Abre el modal de producto para agregar
-          limpiarFormulario(); // Asegura que el formulario esté limpio y en modo agregar
-          setMostrarFormularioPromocion(false);
-          setMostrarTopVentas(false);
-
-        }}>Agregar Producto</button>
-        <button onClick={() => {
-          setMostrarFormularioPromocion(true);
-          setMostrarFormulario(false);
-          setMostrarTopVentas(false);
-
-          limpiarFormularioPromocion();
-        }}>Agregar Promoción</button>
-        {/* El botón "Edición de productos" ahora está cubierto por el botón "Editar" en cada tarjeta */}
-        <button>Gestión avanzada</button> {/* Puedes renombrarlo o darle otra función */}
-        <button onClick={() => {
-          setMostrarTopVentas(true);
-          setMostrarFormulario(false);
-          setMostrarFormularioPromocion(false);
-
-        }}>Top Ventas</button>
+      {/* Pestañas de navegación */}
+      <div className="tabs-container">
+        <button 
+          className={`tab-btn ${vistaActual === 'productos' ? 'active' : ''}`}
+          onClick={() => setVistaActual('productos')}
+        >
+          🍽️ Productos
+        </button>
+        <button 
+          className={`tab-btn ${vistaActual === 'promociones' ? 'active' : ''}`}
+          onClick={() => setVistaActual('promociones')}
+        >
+          🎉 Promociones
+        </button>
       </div>
 
-      <div className="products-section-wrapper">
-        {loadingProducts ? (
-          <div className="no-products">Cargando productos...</div>
-        ) : productsError ? (
-          <div className="no-products error-message">Error: {productsError}</div>
-        ) : productos.length === 0 ? (
-          <div className="no-products">No hay productos registrados. ¡Agrega uno!</div>
+      {/* Botones principales */}
+      <div className="main-actions">
+        {vistaActual === 'productos' ? (
+          <>
+            <button onClick={() => setMostrarFormulario(true)}>Agregar Producto</button>
+            {/* <button onClick={() => setVistaActual('promociones')}>Ver Promociones</button> */} {/* Este botón ya no es necesario aquí */}
+          </>
         ) : (
-          <div className="productos-grid">
-            {productos.map((product) => (
-              <div className="producto-card" key={product._id || product.id}>
-                <img
-                  src={
-                    product.imagenUrl
-                      ? product.imagenUrl.startsWith('/uploads/')
-                        ? `http://localhost:3001${product.imagenUrl}`
-                        : product.imagenUrl
-                      : 'https://via.placeholder.com/200x140?text=Sin+Imagen'
-                  }
-                  alt={product.nombre}
-                />
-                <h3>{product.nombre}</h3>
-                <p><strong>Precio:</strong> ${product.precio.toLocaleString('es-CL')}</p>
-                <p><strong>Cantidad:</strong> {product.cantidad}</p>
-                <p><strong>Ingredientes:</strong> {product.ingredientes?.join(', ')}</p>
-                <p>{product.descripcion}</p>
-                <div className="card-buttons">
-                    <button onClick={() => handleEditProduct(product)}>Editar</button>
-                    <button onClick={() => handleDeleteProduct(product._id!, product.nombre)}>Eliminar</button>
+          <>
+            <button onClick={() => setMostrarFormularioPromo(true)}>Agregar Promoción</button>
+            {/* <button onClick={() => setVistaActual('productos')}>Ver Productos</button> */} {/* Este botón ya no es necesario aquí */}
+          </>
+        )}
+        <button onClick={() => navigate('/locatario/edicion-productos')}>Edición de productos</button>
+        <button>Top Ventas</button>
+        <button>Top Deliverys</button>
+        <button onClick={() => navigate('/locatario/pedidos')}>Pedidos</button>
+      </div>
+
+      {/* Contenido según la vista activa */}
+      <div className="contenido">
+        {vistaActual === 'productos' ? (
+          // Vista de productos
+          productos.length === 0 ? (
+            <div className="no-products">No hay productos registrados.</div>
+          ) : (
+            <div className="productos-grid">
+              {productos.map((producto) => (
+                <div className="producto-card" key={producto.id || producto._id}>
+                  <img
+                    src={
+                      producto.imagenUrl
+                        ? producto.imagenUrl.startsWith('/uploads/')
+                          ? `http://localhost:3001${producto.imagenUrl}`
+                          : producto.imagenUrl
+                        : 'https://placehold.co/200x140/fef4e8/8d5c3d?text=Sin+Imagen' // Placeholder con colores de la paleta
+                    }
+                    alt={producto.nombre}
+                    style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 8 }}
+                  />
+                  <h3>{producto.nombre}</h3>
+                  <p><strong>Precio:</strong> ${producto.precio.toLocaleString('es-CL')}</p>
+                  <p><strong>Cantidad:</strong> {producto.cantidad}</p>
+                  <p><strong>Ingredientes:</strong> {producto.ingredientes?.join(', ')}</p>
+                  <p>{producto.descripcion}</p>
                 </div>
+              ))}
+            </div>
+          )
+        ) : (
+          // Vista de promociones
+          promociones.length === 0 ? (
+            <div className="no-products">
+              <div style={{ textAlign: 'center', padding: '2rem' }}>
+                <h3>🎉 No hay promociones creadas</h3>
+                <p>Crea tu primera promoción para atraer más clientes</p>
+                <button 
+                  className="btn-primary"
+                  onClick={() => setMostrarFormularioPromo(true)}
+                >
+                  Crear Primera Promoción
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="promociones-grid">
+              {promociones.map((promocion) => (
+                <div className="promocion-card" key={promocion._id}>
+                  <div className="promocion-header">
+                    <img
+                      src={
+                        promocion.imagenUrl
+                          ? promocion.imagenUrl.startsWith('/uploads/')
+                            ? `http://localhost:3001${promocion.imagenUrl}`
+                            : promocion.imagenUrl
+                          : 'https://placehold.co/200x140/fef4e8/8d5c3d?text=Promoción' // Placeholder con colores de la paleta
+                      }
+                      alt={promocion.nombre}
+                      style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 8 }}
+                    />
+                    <span className={`promocion-estado ${promocion.activa ? 'activa' : 'inactiva'}`}>
+                      {promocion.activa ? '✅ Activa' : '❌ Inactiva'}
+                    </span>
+                  </div>
+                  
+                  <div className="promocion-content">
+                    <h3>{promocion.nombre}</h3>
+                    <p className="promocion-descripcion">{promocion.descripcion}</p>
+                    
+                    <div className="promocion-precio">
+                      <span className="precio-promo">${promocion.precio.toLocaleString('es-CL')}</span>
+                      <span className="precio-original">
+                        ${promocion.comidas.reduce((total, c) => total + (c.precioOriginal * c.cantidad), 0).toLocaleString('es-CL')}
+                      </span>
+                    </div>
+
+                    <div className="promocion-comidas">
+                      <h4>Incluye:</h4>
+                      {promocion.comidas.map((comida, idx) => (
+                        <div key={idx} className="comida-incluida">
+                          <span>{comida.nombre} x{comida.cantidad}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {promocion.cantidadDisponible !== undefined && (
+                      <p className="cantidad-disponible">
+                        <strong>Disponibles:</strong> {promocion.cantidadDisponible}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
         )}
       </div>
 
-      {/* Formulario emergente (Modal) para Agregar/Editar Producto */}
+      {/* ✅ FORMULARIO PARA AGREGAR PRODUCTO (ORIGINAL) */}
       {mostrarFormulario && (
-        <div className="modal-overlay" onClick={() => { setMostrarFormulario(false); limpiarFormulario(); }}>
-          <div className="add-product-form" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button" onClick={() => { setMostrarFormulario(false); limpiarFormulario(); }}>×</button>
-            <h2>{editingProduct ? 'Editar Producto' : 'Agregar Nuevo Producto'}</h2>
-            <form onSubmit={handleProductSubmit}>
-              <label htmlFor="nombre">Nombre del Producto:</label>
-              <input type="text" id="nombre" name="nombre" placeholder="Ej: Pizza Artesanal" value={formulario.nombre} onChange={handleInputChange} required />
-
-              <label htmlFor="precio">Precio:</label>
-              <input type="number" id="precio" name="precio" placeholder="Ej: 9990" value={formulario.precio} onChange={handleInputChange} min="0" step="0.01" required />
-
-              <label htmlFor="cantidad">Cantidad Disponible:</label>
-              <input type="number" id="cantidad" name="cantidad" placeholder="Ej: 50" value={formulario.cantidad} onChange={handleInputChange} min="0" required />
-
-              <label htmlFor="ingredientes">Ingredientes (separados por coma):</label>
-              <input type="text" id="ingredientes" name="ingredientes" placeholder="Ej: Harina, Tomate, Queso" value={formulario.ingredientes} onChange={handleInputChange} required />
-
-              <label htmlFor="descripcion">Descripción:</label>
-              <textarea id="descripcion" name="descripcion" placeholder="Una breve descripción de tu producto..." value={formulario.descripcion} onChange={handleTextareaChange} rows={3} required />
-
-              <label htmlFor="imagenFile">Imagen del Producto (opcional):</label>
-              <input type="file" id="imagenFile" accept="image/*" onChange={handleFileChange} />
-              {editingProduct?.imagenUrl && !imagenFile && (
-                <p style={{ fontSize: '0.8em', color: 'var(--color-info-text)' }}>
-                  Imagen actual: <a href={editingProduct.imagenUrl.startsWith('/uploads/') ? `http://localhost:3001${editingProduct.imagenUrl}` : editingProduct.imagenUrl} target="_blank" rel="noopener noreferrer">Ver</a> (Selecciona un nuevo archivo para cambiarla)
-                </p>
-              )}
-
-
-              <button type="submit">{editingProduct ? 'Guardar Cambios' : 'Agregar Producto'}</button>
-            </form>
-          </div>
+        <div className="overlay" onClick={() => setMostrarFormulario(false)}>
+          <form className="formulario-flotante" onClick={(e) => e.stopPropagation()} onSubmit={handleAgregarProducto}>
+            <button className="cerrar" onClick={() => setMostrarFormulario(false)}>×</button>
+            <h3>Agregar Producto</h3>
+            <input type="text" name="nombre" placeholder="Nombre del producto" value={formulario.nombre} onChange={handleInputChange} className="form-input" />
+            <input type="number" name="precio" placeholder="Precio" value={formulario.precio} onChange={handleInputChange} className="form-input" />
+            <input type="number" name="cantidad" placeholder="Cantidad" value={formulario.cantidad} onChange={handleInputChange} className="form-input" />
+            <input type="text" name="ingredientes" placeholder="Ingredientes (separados por coma)" value={formulario.ingredientes} onChange={handleInputChange} className="form-input" />
+            <textarea name="descripcion" placeholder="Descripción" value={formulario.descripcion} onChange={handleTextareaChange} className="form-textarea" />
+            <input type="file" accept="image/*" onChange={handleFileChange} className="file-input" />
+            <button type="submit" className="btn-submit">Agregar</button>
+          </form>
         </div>
       )}
 
-      {/* Panel emergente para Agregar Promoción */}
-      {mostrarFormularioPromocion && (
-        <div className="modal-overlay" onClick={() => { setMostrarFormularioPromocion(false); limpiarFormularioPromocion(); }}>
-          <div className="add-product-form" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button" onClick={() => { setMostrarFormularioPromocion(false); limpiarFormularioPromocion(); }}>×</button>
-            <h2>Crear Nueva Promoción</h2>
-            <form onSubmit={handleAgregarPromocion}>
-              <label htmlFor="promoNombre">Nombre de la Promoción:</label>
-              <input
-                type="text"
-                id="promoNombre"
-                name="nombre"
-                placeholder="Ej: Descuento de Temporada"
-                value={formularioPromocion.nombre}
-                onChange={handlePromocionInputChange}
-                required
-              />
+      {/* ✅ MODAL MEJORADO PARA AGREGAR PROMOCIÓN */}
+      {mostrarFormularioPromo && (
+        <div className="modal-overlay-promo" onClick={() => setMostrarFormularioPromo(false)}>
+          <div className="modal-promocion" onClick={(e) => e.stopPropagation()}>
+            
+            {/* Header del modal */}
+            <div className="modal-header">
+              <div className="modal-title">
+                <span className="promo-icon">🎉</span>
+                <h2>Crear Nueva Promoción</h2>
+              </div>
+              <button 
+                className="modal-close-btn" 
+                onClick={() => setMostrarFormularioPromo(false)}
+                type="button"
+              >
+                ×
+              </button>
+            </div>
 
-              <label htmlFor="promoDescripcion">Descripción:</label>
-              <textarea
-                id="promoDescripcion"
-                name="descripcion"
-                placeholder="Detalles de la oferta, ej: 15% de descuento en pizzas seleccionadas."
-                value={formularioPromocion.descripcion}
-                onChange={handlePromocionInputChange}
-                rows={2}
-                required
-              />
-
-              <label htmlFor="valorDescuento">Porcentaje de Descuento (%):</label>
-              <input
-                type="number"
-                id="valorDescuento"
-                name="valorDescuento"
-                placeholder="Ej: 15 (para 15%)"
-                value={formularioPromocion.valorDescuento}
-                onChange={handlePromocionInputChange}
-                min="0.01"
-                max="100"
-                step="0.01"
-                required
-              />
-
-              <label htmlFor="fechaInicioPromo">Fecha de Inicio:</label>
-              <input
-                type="date"
-                id="fechaInicioPromo"
-                name="fechaInicio"
-                value={formularioPromocion.fechaInicio}
-                onChange={handlePromocionInputChange}
-                required
-              />
-
-              <label htmlFor="fechaFinPromo">Fecha de Fin:</label>
-              <input
-                type="date"
-                id="fechaFinPromo"
-                name="fechaFin"
-                value={formularioPromocion.fechaFin}
-                onChange={handlePromocionInputChange}
-                required
-              />
-
-              <label className="products-selection-label">Seleccionar Productos para la Promoción:</label>
-              <div className="promo-product-list">
-                {availableProductsForPromo.length === 0 ? (
-                  <p>Cargando productos o no hay productos disponibles.</p>
-                ) : (
-                  availableProductsForPromo.map(product => (
-                    <div key={product._id} className="promo-product-item">
-                      <input
-                        type="checkbox"
-                        id={`promo-product-${product._id}`}
-                        checked={selectedProductIds.includes(product._id || '')}
-                        onChange={() => handleProductSelection(product._id || '')}
+            {/* Contenido del modal */}
+            <form className="modal-content" onSubmit={handleAgregarPromocion}>
+              
+              {/* Paso 1: Información básica */}
+              <div className="form-section">
+                <div className="section-header">
+                  <span className="step-number">1</span>
+                  <h3>Información Básica</h3>
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="nombre-promo">Nombre de la Promoción</label>
+                  <input 
+                    id="nombre-promo"
+                    type="text" 
+                    name="nombre" 
+                    placeholder="Ej: Combo Familiar, Oferta del Día..." 
+                    value={formularioPromo.nombre} 
+                    onChange={handlePromoInputChange}
+                    className="form-input"
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="descripcion-promo">Descripción</label>
+                  <textarea 
+                    id="descripcion-promo"
+                    name="descripcion" 
+                    placeholder="Describe tu promoción de manera atractiva para los clientes..."
+                    value={formularioPromo.descripcion} 
+                    onChange={handlePromoInputChange}
+                    className="form-textarea"
+                    rows={3}
+                    required
+                  />
+                </div>
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="precio-promo">Precio Promocional</label>
+                    <div className="price-input-container">
+                      <span className="currency-symbol">$</span>
+                      <input 
+                        id="precio-promo"
+                        type="number" 
+                        name="precio" 
+                        placeholder="0" 
+                        value={formularioPromo.precio} 
+                        onChange={handlePromoInputChange}
+                        className="form-input price-input"
+                        step="0.01"
+                        required
                       />
-                      <label htmlFor={`promo-product-${product._id}`}>
-                        {product.nombre} (Precio: ${product.precio.toLocaleString('es-CL')})
-                      </label>
                     </div>
-                  ))
-                )}
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="cantidad-promo">Cantidad Disponible</label>
+                    <input 
+                      id="cantidad-promo"
+                      type="number" 
+                      name="cantidadDisponible" 
+                      placeholder="Sin límite" 
+                      value={formularioPromo.cantidadDisponible} 
+                      onChange={handlePromoInputChange}
+                      className="form-input"
+                      min="0"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <button type="submit">Crear Promoción</button>
+              {/* Paso 2: Selección de comidas */}
+              <div className="form-section">
+                <div className="section-header">
+                  <span className="step-number">2</span>
+                  <h3>Comidas Incluidas</h3>
+                </div>
+                
+                <div className="comidas-preview">
+                  {formularioPromo.comidasSeleccionadas.length === 0 ? (
+                    <div className="empty-selection">
+                      <div className="empty-icon">🍽️</div>
+                      <p>No hay comidas seleccionadas</p>
+                      <span className="empty-subtitle">Agrega comidas para crear tu promoción</span>
+                    </div>
+                  ) : (
+                    <div className="selected-items">
+                      {formularioPromo.comidasSeleccionadas.map((comida, idx) => (
+                        <div key={idx} className="selected-item">
+                          <div className="item-info">
+                            <span className="item-name">{comida.nombre}</span>
+                            <span className="item-details">
+                              x{comida.cantidad} • ${(comida.precioOriginal * comida.cantidad).toLocaleString('es-CL')}
+                            </span>
+                          </div>
+                          <button 
+                            type="button" 
+                            onClick={() => eliminarComidaDePromocion(comida.comidaId)}
+                            className="remove-item-btn"
+                            title="Eliminar comida"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      ))}
+                      
+                      <div className="price-summary">
+                        <div className="original-price">
+                          <span>Precio original total:</span>
+                          <strong>${calcularPrecioOriginalTotal().toLocaleString('es-CL')}</strong>
+                        </div>
+                        {formularioPromo.precio && (
+                          <div className="promo-price">
+                            <span>Precio promocional:</span>
+                            <strong className="promo-value">${parseFloat(formularioPromo.precio || '0').toLocaleString('es-CL')}</strong>
+                          </div>
+                        )}
+                        {formularioPromo.precio && calcularPrecioOriginalTotal() > 0 && (
+                          <div className="savings">
+                            <span>Ahorro:</span>
+                            <strong className="savings-value">
+                              ${(calcularPrecioOriginalTotal() - parseFloat(formularioPromo.precio || '0')).toLocaleString('es-CL')}
+                            </strong>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <button 
+                    type="button" 
+                    className="add-items-btn"
+                    onClick={() => setMostrarSelectorComidas(true)}
+                  >
+                    <span className="btn-icon">➕</span>
+                    {formularioPromo.comidasSeleccionadas.length === 0 ? 'Agregar Comidas' : 'Agregar Más Comidas'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Paso 3: Imagen */}
+              <div className="form-section">
+                <div className="section-header">
+                  <span className="step-number">3</span>
+                  <h3>Imagen de la Promoción</h3>
+                </div>
+                
+                <div className="image-upload-container">
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handlePromoFileChange}
+                    className="file-input"
+                    id="imagen-promo"
+                  />
+                  <label htmlFor="imagen-promo" className="file-upload-label">
+                    <div className="upload-content">
+                      {imagenPromoFile ? (
+                        <div className="file-selected">
+                          <span className="file-icon">📸</span>
+                          <span className="file-name">{imagenPromoFile.name}</span>
+                          <span className="file-size">
+                            ({(imagenPromoFile.size / 1024 / 1024).toFixed(2)} MB)
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="upload-placeholder">
+                          <span className="upload-icon">📷</span>
+                          <span className="upload-text">Subir imagen de la promoción</span>
+                          <span className="upload-subtitle">PNG, JPG hasta 3MB</span>
+                        </div>
+                      )}
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Validación y botones */}
+              <div className="modal-footer">
+                {formularioPromo.precio && calcularPrecioOriginalTotal() > 0 && 
+                parseFloat(formularioPromo.precio) >= calcularPrecioOriginalTotal() && (
+                  <div className="validation-error">
+                    ⚠️ El precio promocional debe ser menor al precio original total
+                  </div>
+                )}
+                
+                <div className="footer-buttons">
+                  <button 
+                    type="button" 
+                    className="cancel-btn"
+                    onClick={() => setMostrarFormularioPromo(false)}
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="create-btn"
+                    disabled={
+                      formularioPromo.comidasSeleccionadas.length === 0 ||
+                      formularioPromo.nombre.trim() === '' ||
+                      formularioPromo.descripcion.trim() === '' ||
+                      formularioPromo.precio.trim() === '' ||
+                      (formularioPromo.precio.trim() !== '' && calcularPrecioOriginalTotal() > 0 && 
+                      parseFloat(formularioPromo.precio) >= calcularPrecioOriginalTotal())
+                    }
+                  >
+                    <span className="btn-icon">✨</span>
+                    Crear Promoción
+                  </button>
+                </div>
+              </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Panel emergente para Top Ventas */}
-      {mostrarTopVentas && (
-        <div className="modal-overlay" onClick={() => setMostrarTopVentas(false)}>
-          <div className="add-product-form" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button" onClick={() => setMostrarTopVentas(false)}>×</button>
-            <h2>Top de Productos Más Vendidos</h2>
-            <div className="panel-content">
-              <p>Contenido del Top Ventas. Por ejemplo, una lista de productos ordenados por cantidad vendida.</p>
-              <ul>
-                <li>Producto A: 150 ventas</li>
-                <li>Producto B: 120 ventas</li>
-                <li>Producto C: 90 ventas</li>
-              </ul>
+      {/* ✅ SELECTOR DE COMIDAS CON Z-INDEX CORREGIDO */}
+      {mostrarSelectorComidas && (
+        <div className="overlay selector-overlay" onClick={() => setMostrarSelectorComidas(false)}>
+          <div className="selector-comidas" onClick={(e) => e.stopPropagation()}>
+            <div className="selector-header">
+              <h3>🍽️ Seleccionar Comidas para la Promoción</h3>
+              <button 
+                className="cerrar" 
+                onClick={() => setMostrarSelectorComidas(false)}
+                type="button"
+                title="Cerrar selector"
+              >
+                ×
+              </button>
             </div>
+            
+            <div className="comidas-disponibles">
+              {productos.length === 0 ? (
+                <p>
+                  🍽️ No tienes productos disponibles.<br/>
+                  <strong>Crea productos primero para poder agregarlos a tu promoción.</strong>
+                </p>
+              ) : (
+                productos.map((producto) => (
+                  <div key={producto._id} className="comida-disponible">
+                    <img
+                      src={
+                        producto.imagenUrl
+                          ? producto.imagenUrl.startsWith('/uploads/')
+                            ? `http://localhost:3001${producto.imagenUrl}`
+                            : producto.imagenUrl
+                          : 'https://placehold.co/80x60/fef4e8/8d5c3d?text=Sin+Imagen' // Placeholder con colores de la paleta
+                      }
+                      alt={producto.nombre}
+                      className="comida-mini-img"
+                    />
+                    <div className="comida-info">
+                      <h4>{producto.nombre}</h4>
+                      <p><strong>${producto.precio.toLocaleString('es-CL')}</strong></p>
+                      <p className="stock">📦 Stock: {producto.cantidad} disponibles</p>
+                      <p style={{ fontSize: '0.85rem', color: '#95a5a6' }}>
+                        {producto.ingredientes?.slice(0, 3).join(', ')}
+                        {producto.ingredientes && producto.ingredientes.length > 3 && '...'}
+                      </p>
+                    </div>
+                    <button 
+                      className="btn-agregar-comida"
+                      onClick={() => agregarComidaAPromocion(producto)}
+                      disabled={formularioPromo.comidasSeleccionadas.some(c => c.comidaId === producto._id)}
+                    >
+                      {formularioPromo.comidasSeleccionadas.some(c => c.comidaId === producto._id) 
+                        ? '✅ Ya agregado' 
+                        : '➕ Agregar'
+                      }
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+            
+              <button 
+              className="btn-finalizar-seleccion"
+              onClick={() => setMostrarSelectorComidas(false)}
+            >
+              <span style={{ marginRight: '0.5rem' }}>✨</span>
+              Finalizar Selección 
+              {formularioPromo.comidasSeleccionadas.length > 0 && 
+                `(${formularioPromo.comidasSeleccionadas.length} seleccionadas)`
+              }
+            </button>
+
           </div>
         </div>
       )}
-
-      {/* Botón flotante para agregar producto (siempre visible) */}
-      <button className="floating-add-button" onClick={() => {
-        setMostrarFormulario(true);
-        limpiarFormulario(); // Asegura que el formulario esté limpio y en modo agregar
-        setMostrarFormularioPromocion(false);
-        setMostrarTopVentas(false);
-      }}>
-        +
-      </button>
     </div>
-    </>
   );
 };
 

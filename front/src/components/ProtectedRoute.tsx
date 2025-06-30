@@ -1,8 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-// Update the import path if the file is in a different location, for example:
 import { useAuth } from '../hooks/useAuth';
-// If the file does not exist, create 'useAuth.ts' in the 'src/hooks' directory with the appropriate hook implementation.
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

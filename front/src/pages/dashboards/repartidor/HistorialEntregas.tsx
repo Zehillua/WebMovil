@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+// No se usan useQuery ni useMutation directamente en este componente,
+// pero se mantiene la estructura para referencia futura si se integran GraphQL aquí.
+// import { useQuery, useMutation } from '@apollo/client';
+// import { GET_HISTORIAL_ENTREGAS_REPARTIDOR, GET_ESTADISTICAS_REPARTIDOR } from '../../../apollo/queries';
 import './HistorialEntregas.css';
 
+// Interfaz para los datos de cada entrega individual
 interface Entrega {
   _id: string;
   pedidoId: string;
@@ -26,6 +31,7 @@ interface Entrega {
   tiempoEntrega: string;
 }
 
+// Interfaz para los datos de estadísticas generales
 interface Estadisticas {
   totalEntregas: number;
   totalGanancias: number;
@@ -42,16 +48,17 @@ const HistorialEntregas: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [repartidorId, setRepartidorId] = useState<string | null>(null);
 
+  // Efecto para obtener el ID del repartidor al cargar el componente
   useEffect(() => {
     const obtenerIdRepartidor = async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          navigate('/', { replace: true });
+          navigate('/', { replace: true }); // Redirigir si no hay token
           return;
         }
 
-        // Obtener datos del usuario actual
+        // Obtener datos del usuario actual desde el backend
         const response = await fetch('http://localhost:3000/usuarios/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -61,35 +68,37 @@ const HistorialEntregas: React.FC = () => {
         }
 
         const userData = await response.json();
-        const id = userData.userId || userData._id;
+        const id = userData.userId || userData._id; // Usar userId o _id
         
         console.log('🔍 ID del repartidor obtenido:', id);
-        setRepartidorId(id);
-
+        setRepartidorId(id); // Establecer el ID del repartidor
       } catch (error) {
         console.error('Error obteniendo ID del repartidor:', error);
-        setError('Error de autenticación');
+        setError('Error de autenticación. Por favor, inicie sesión nuevamente.');
         setLoading(false);
       }
     };
 
     obtenerIdRepartidor();
-  }, [navigate]);
+  }, [navigate]); // Dependencia: `navigate` para evitar advertencias
 
+  // Efecto para cargar los datos una vez que el ID del repartidor esté disponible
   useEffect(() => {
     if (repartidorId) {
-      cargarDatos();
+      cargarDatos(); // Cargar datos si repartidorId existe
     }
-  }, [repartidorId]);
+  }, [repartidorId]); // Dependencia: `repartidorId`
 
+  // Función principal para cargar el historial y las estadísticas
   const cargarDatos = async () => {
-    if (!repartidorId) return;
+    if (!repartidorId) return; // Salir si el ID no está disponible
 
     try {
       setLoading(true);
+      setError(null); // Limpiar errores previos
       console.log(`📦 Cargando datos para repartidor: ${repartidorId}`);
       
-      // Cargar entregas y estadísticas en paralelo
+      // Cargar entregas y estadísticas en paralelo usando fetch (como en el original)
       const [entregasResponse, estadisticasResponse] = await Promise.all([
         fetch(`http://localhost:3003/repartidores/entregas/${repartidorId}`),
         fetch(`http://localhost:3003/repartidores/estadisticas/${repartidorId}`)
@@ -101,13 +110,13 @@ const HistorialEntregas: React.FC = () => {
       if (!entregasResponse.ok) {
         const errorText = await entregasResponse.text();
         console.error('Error en entregas:', errorText);
-        throw new Error(`Error cargando entregas: ${entregasResponse.status}`);
+        throw new Error(`Error cargando entregas: ${entregasResponse.statusText}`);
       }
 
       if (!estadisticasResponse.ok) {
         const errorText = await estadisticasResponse.text();
         console.error('Error en estadísticas:', errorText);
-        throw new Error(`Error cargando estadísticas: ${estadisticasResponse.status}`);
+        throw new Error(`Error cargando estadísticas: ${estadisticasResponse.statusText}`);
       }
 
       const entregasData = await entregasResponse.json();
@@ -116,13 +125,13 @@ const HistorialEntregas: React.FC = () => {
       console.log('📦 Entregas recibidas:', entregasData);
       console.log('📊 Estadísticas recibidas:', estadisticasData);
 
-      // Obtener valoración promedio via GraphQL
+      // Obtener valoración promedio via GraphQL (como en el original)
       const valoracionPromedio = await obtenerValoracionPromedio();
 
       setEntregas(entregasData);
       setEstadisticas({
         ...estadisticasData,
-        valoracionPromedio
+        valoracionPromedio // Combinar con la valoración promedio de GraphQL
       });
 
     } catch (err) {
@@ -133,6 +142,7 @@ const HistorialEntregas: React.FC = () => {
     }
   };
 
+  // Función para obtener la valoración promedio del repartidor via GraphQL
   const obtenerValoracionPromedio = async (): Promise<number> => {
     if (!repartidorId) return 0;
 
@@ -155,18 +165,19 @@ const HistorialEntregas: React.FC = () => {
       });
 
       const data = await response.json();
+      // Devolver el promedio o 0 si no hay datos o es nulo
       return data.data?.promedioValoracionRepartidor || 0;
     } catch (error) {
       console.error('Error obteniendo valoración promedio:', error);
-      return 0;
+      return 0; // Devolver 0 en caso de error
     }
   };
 
-  // ...resto del código permanece igual
+  // Función auxiliar para renderizar estrellas de valoración
   const renderStars = (rating: number) => {
     const stars = [];
     const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
+    const hasHalfStar = rating % 1 !== 0; // Verificar si hay media estrella
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(<span key={i} className="star-filled">★</span>);
@@ -176,7 +187,7 @@ const HistorialEntregas: React.FC = () => {
       stars.push(<span key="half" className="star-half-filled">★</span>);
     }
 
-    const emptyStars = 5 - Math.ceil(rating);
+    const emptyStars = 5 - Math.ceil(rating); // Calcular estrellas vacías
     for (let i = 0; i < emptyStars; i++) {
       stars.push(<span key={`empty-${i}`} className="star-empty">★</span>);
     }
@@ -184,6 +195,7 @@ const HistorialEntregas: React.FC = () => {
     return stars;
   };
 
+  // Función auxiliar para formatear fechas
   const formatearFecha = (fecha: string) => {
     return new Date(fecha).toLocaleDateString('es-ES', {
       day: '2-digit',
@@ -194,6 +206,7 @@ const HistorialEntregas: React.FC = () => {
     });
   };
 
+  // Función auxiliar para formatear valores de moneda
   const formatearMoneda = (valor: number) => {
     return new Intl.NumberFormat('es-CL', {
       style: 'currency',
@@ -201,10 +214,14 @@ const HistorialEntregas: React.FC = () => {
     }).format(valor);
   };
 
+  // Renderizado condicional para estados de carga y error
   if (loading) {
     return (
       <div className="historial-entregas-root">
-        <div className="loading">Cargando historial de entregas...</div>
+        <div className="loading-state">
+          <div className="loading-spinner">🔄</div>
+          <p>Cargando historial de entregas...</p>
+        </div>
       </div>
     );
   }
@@ -212,10 +229,14 @@ const HistorialEntregas: React.FC = () => {
   if (error) {
     return (
       <div className="historial-entregas-root">
-        <div className="error">{error}</div>
-        <button onClick={() => navigate('/repartidor')} className="btn-volver">
-          Volver al Dashboard
-        </button>
+        <div className="error-state">
+          <span className="error-icon">⚠️</span>
+          <h3>Error al cargar el historial.</h3>
+          <p>{error}</p>
+          <button onClick={() => navigate('/repartidor')} className="btn-volver-dashboard">
+            Volver al Dashboard
+          </button>
+        </div>
       </div>
     );
   }
@@ -231,14 +252,6 @@ const HistorialEntregas: React.FC = () => {
           ← Volver
         </button>
         <h1 className="historial-title">Mi Historial de Entregas</h1>
-      </div>
-
-      {/* DEBUG INFO - Remover en producción */}
-      <div style={{ background: '#f0f0f0', padding: '1rem', margin: '1rem 0', borderRadius: '8px' }}>
-        <p><strong>🔍 Debug Info:</strong></p>
-        <p>Repartidor ID: {repartidorId}</p>
-        <p>Total entregas: {entregas.length}</p>
-        <p>Estadísticas: {estadisticas ? 'Cargadas' : 'No cargadas'}</p>
       </div>
 
       {/* ESTADÍSTICAS PRINCIPALES */}
@@ -364,7 +377,7 @@ const HistorialEntregas: React.FC = () => {
                       </div>
                       {entrega.fechaValoracion && (
                         <div className="fecha-valoracion">
-                          Valorado el {formatearFecha(entrega.fechaValoracion)}
+                          Valorada el {formatearFecha(entrega.fechaValoracion)}
                         </div>
                       )}
                     </div>

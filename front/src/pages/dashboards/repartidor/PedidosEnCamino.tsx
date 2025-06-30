@@ -1,116 +1,152 @@
-// PedidosEnCamino.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_PEDIDOS_EN_CAMINO_REPARTIDOR, ENTREGAR_PEDIDO } from '../../../apollo/queries'; // Asegúrate que la ruta sea correcta
-import './PedidosEnCamino.css'; // Asegúrate que la ruta sea correcta
+import { GET_PEDIDOS_EN_CAMINO_REPARTIDOR, ENTREGAR_PEDIDO } from '../../../apollo/queries';
+import './PedidosEnCamino.css';
 
+// Interface for User data
 interface Usuario {
   nombre: string;
   apellido: string;
-  nombreUsuario?: string;
+  nombreUsuario?: string; // Optional username
   direccion: string;
-  numeroCasaDepto?: string;
+  numeroCasaDepto?: string; // Optional apartment/house number
 }
 
+// Interface for Local data
 interface Local {
   nombreLocal: string;
   direccion: string;
 }
 
+// Interface for Pedido (Order) data
 interface Pedido {
   _id: string;
   nombrePedido: string;
   precioPedido: number;
   direccionEntrega: string;
-  propina?: boolean;
-  cantidadPropina?: number;
-  comidas: { nombre: string; cantidad: number }[];
-  enCamino: boolean;
-  pedidoEntregado: boolean;
-  codigoPedido: number;
-  usuario: Usuario;
-  local: Local;
+  propina?: boolean; // Optional tip flag
+  cantidadPropina?: number; // Optional tip amount
+  comidas: { nombre: string; cantidad: number }[]; // Array of meals
+  enCamino: boolean; // Flag if order is in transit
+  pedidoEntregado: boolean; // Flag if order is delivered
+  codigoPedido: number; // Order code for delivery confirmation
+  usuario: Usuario; // User who placed the order
+  local: Local; // Local from which the order is placed
 }
 
 const PedidosEnCamino: React.FC = () => {
   const [userId, setUserId] = useState<string>('');
+  // State to store the input code for each order
   const [codigoInput, setCodigoInput] = useState<{ [key: string]: string }>({});
   const navigate = useNavigate();
+  // State for displaying messages (success/error)
+  const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info', text: string } | null>(null);
+  // State for confirmation modal
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
+  const [confirmMessage, setConfirmMessage] = useState('');
 
-  // GraphQL Query con auto-refresh
+
+  // GraphQL Query with auto-refresh (polling every 5 seconds)
   const { data, loading, error, refetch } = useQuery(GET_PEDIDOS_EN_CAMINO_REPARTIDOR, {
     variables: { idRepartidor: userId },
-    skip: !userId,
-    pollInterval: 5000,
-    errorPolicy: 'all'
+    skip: !userId, // Skip query if userId is not available
+    pollInterval: 5000, // Auto-refresh every 5 seconds
+    errorPolicy: 'all' // Continue fetching even if some errors occur
   });
 
-  // GraphQL Mutation para entregar pedido
+  // GraphQL Mutation to deliver an order
   const [entregarPedidoMutation] = useMutation(ENTREGAR_PEDIDO, {
     onCompleted: () => {
-      refetch();
-      setCodigoInput({}); // Limpiar inputs
-      alert('¡Pedido entregado exitosamente!'); // Confirmación de éxito
+      showMessage('success', '¡Pedido entregado exitosamente!');
+      refetch(); // Refetch data automatically after mutation
+      setCodigoInput({}); // Clear input fields after successful delivery
     },
     onError: (error) => {
       console.error('Error entregando pedido:', error);
-      alert(`Error al entregar pedido: ${error.message}`); // Mensaje de error más descriptivo
+      showMessage('error', `Error al entregar pedido: ${error.message}`);
     }
   });
 
+  // Effect to fetch user data and set userId
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
-        navigate('/', { replace: true });
+        navigate('/', { replace: true }); // Redirect to home if no token
         return;
       }
       
       try {
-        // IMPORTANTE: Asegúrate de que el puerto del backend sea correcto (3000 o 3001)
         const resUser = await fetch('http://localhost:3000/usuarios/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
         
         if (!resUser.ok) {
-          navigate('/', { replace: true });
+          navigate('/', { replace: true }); // Redirect if user data fetch fails
           return;
         }
         
         const userData = await resUser.json();
-        setUserId(userData.userId || userData._id);
+        setUserId(userData.userId || userData._id); // Set userId from user data
       } catch (error) {
         console.error('Error obteniendo datos de usuario:', error);
-        navigate('/', { replace: true });
+        navigate('/', { replace: true }); // Redirect on any fetch error
       }
     };
 
     fetchUserData();
   }, [navigate]);
 
+  // Function to display messages
+  const showMessage = (type: 'success' | 'error' | 'info', text: string) => {
+    setMessage({ type, text });
+    setTimeout(() => setMessage(null), 5000); // Hide after 5 seconds
+  };
+
+  // Function to show confirmation modal
+  const handleConfirm = (message: string, action: () => void) => {
+    setConfirmMessage(message);
+    setConfirmAction(() => action); // Use a functional update for state
+    setShowConfirm(true);
+  };
+
+  // Function to close confirmation modal
+  const closeConfirm = () => {
+    setShowConfirm(false);
+    setConfirmAction(null);
+    setConfirmMessage('');
+  };
+
+  // Handler for delivering an order
   const handleEntregarPedido = async (pedidoId: string) => {
     const codigoIngresado = parseInt(codigoInput[pedidoId]);
     
     if (isNaN(codigoIngresado) || codigoIngresado.toString().length !== 4) {
-      alert('Por favor ingresa un código de 4 dígitos válido.');
+      showMessage('error', 'Por favor ingresa un código de 4 dígitos válido.');
       return;
     }
 
-    try {
-      await entregarPedidoMutation({
-        variables: { 
-          id: pedidoId, 
-          codigoPedido: codigoIngresado 
-        }
-      });
-    } catch (error) {
-      // El error ya se maneja en onError de useMutation
-    }
+    handleConfirm('¿Estás seguro de que el cliente te ha proporcionado el código correcto y deseas marcar este pedido como entregado?', async () => {
+      try {
+        await entregarPedidoMutation({
+          variables: { 
+            id: pedidoId, 
+            codigoPedido: codigoIngresado 
+          }
+        });
+      } catch (error) {
+        // Error handling is done in the mutation's onError callback
+      } finally {
+        closeConfirm();
+      }
+    });
   };
 
+  // Handler for input code changes
   const handleCodigoChange = (pedidoId: string, valor: string) => {
-    // Solo permitir números y máximo 4 dígitos
+    // Only allow numbers and a maximum of 4 digits
     const numeroLimpio = valor.replace(/\D/g, '').slice(0, 4);
     setCodigoInput(prev => ({
       ...prev,
@@ -118,83 +154,134 @@ const PedidosEnCamino: React.FC = () => {
     }));
   };
 
-  // Reutilizamos las clases globales para mensajes de estado
-  if (loading) return <div className="loading">Cargando pedidos en camino...</div>;
-  if (error) return <div className="error">Error: {error.message}</div>;
+  // Display loading state for orders
+  if (loading) {
+    return (
+      <div className="pedidos-en-camino-loading">
+        <div className="loading-spinner">🔄</div>
+        <p>Cargando tus pedidos en camino...</p>
+      </div>
+    );
+  }
+
+  // Display error state for orders
+  if (error) {
+    return (
+      <div className="pedidos-en-camino-error">
+        <span className="error-icon">⚠️</span>
+        <h3>Error al cargar los pedidos en camino.</h3>
+        <p>{error.message}</p>
+        <button onClick={() => refetch()} className="btn-retry">Reintentar</button>
+      </div>
+    );
+  }
 
   const pedidos: Pedido[] = data?.pedidosEnCaminoRepartidor || [];
 
   return (
     <div className="pedidos-en-camino-root">
-      {/* Header adaptado al estilo top-banner */}
-      <div className="top-banner">
-        <button className="icon-btn" onClick={() => navigate(-1)} title="Volver">
-          <img src="https://img.icons8.com/ios-filled/28/ffffff/left.png" alt="Volver" /> {/* Icono de flecha */}
-        </button>
-        <span className="top-banner-text">Pedidos En Camino</span> {/* Título más conciso */}
-        <div style={{ width: 28, height: 28 }}></div> {/* Espaciador para centrar el título */}
+      {/* Message Display */}
+      {message && (
+        <div className={`message-box message-box-${message.type}`}>
+          {message.text}
+          <button onClick={() => setMessage(null)} className="message-close-btn">×</button>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {showConfirm && (
+        <div className="confirm-overlay">
+          <div className="confirm-modal">
+            <p>{confirmMessage}</p>
+            <div className="confirm-actions">
+              <button onClick={closeConfirm} className="confirm-cancel-btn">Cancelar</button>
+              <button onClick={confirmAction || (() => {})} className="confirm-ok-btn">Confirmar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="pedidos-en-camino-header">
+        <button className="pedidos-en-camino-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
+        <span className="pedidos-en-camino-title">Pedidos En Camino</span>
+        <div style={{ width: 32 }}></div> {/* Placeholder for alignment */}
       </div>
       
-      <main className="pedidos-en-camino-main-content"> {/* Nuevo contenedor para el contenido principal */}
-        {pedidos.length === 0 ? (
-          <div className="no-pedidos">No tienes pedidos en camino.</div>
-        ) : (
-          <div className="pedidos-grid"> {/* Reutilizar clase pedidos-grid */}
-            {pedidos.map((pedido) => (
-              <div className="pedido-card en-camino-card-border" key={pedido._id}> {/* Reutilizar clase pedido-card y añadir modificador de borde */}
-                <h3>{pedido.nombrePedido}</h3>
-                <span className="codigo-pedido-display">Código: {pedido.codigoPedido}</span> {/* Clase para mostrar el código */}
-                
-                <div className="pedido-info-sections"> {/* Contenedor para las secciones de info */}
-                  <div className="seccion-cliente info-section-card"> {/* Clase general y especifica */}
-                    <h4>👤 Cliente</h4>
-                    <p><strong>Nombre:</strong> {pedido.usuario.nombreUsuario || `${pedido.usuario.nombre} ${pedido.usuario.apellido}`}</p>
-                    <p><strong>Dirección:</strong> {pedido.usuario.direccion} {pedido.usuario.numeroCasaDepto}</p>
-                    <p><strong>Entregar en:</strong> {pedido.direccionEntrega}</p>
+      {pedidos.length === 0 ? (
+        <div className="pedidos-en-camino-empty">
+          <span className="empty-icon">🎉</span>
+          <h3>¡No tienes pedidos en camino!</h3>
+          <p>Una vez que aceptes un pedido, aparecerá aquí para que lo entregues.</p>
+        </div>
+      ) : (
+        <div className="pedidos-en-camino-list">
+          {pedidos.map((pedido) => (
+            <div className="pedido-en-camino-card" key={pedido._id}>
+              <div className="pedido-en-camino-header">
+                <span className="pedido-en-camino-nombre">{pedido.nombrePedido}</span>
+              </div>
+              
+              <div className="pedido-en-camino-info">
+                <div className="seccion-cliente">
+                  <h4>👤 Cliente</h4>
+                  <div className="info-item">
+                    <b>Nombre:</b> {pedido.usuario.nombreUsuario || `${pedido.usuario.nombre} ${pedido.usuario.apellido}`}
                   </div>
-
-                  <div className="seccion-local info-section-card"> {/* Clase general y especifica */}
-                    <h4>🏪 Local</h4>
-                    <p><strong>Retirado de:</strong> {pedido.local.nombreLocal}</p>
-                    <p><strong>Dirección:</strong> {pedido.local.direccion}</p>
+                  <div className="info-item">
+                    <b>Dirección:</b> {pedido.usuario.direccion} {pedido.usuario.numeroCasaDepto}
                   </div>
+                  <div className="info-item">
+                    <b>Entregar en:</b> {pedido.direccionEntrega}
+                  </div>
+                </div>
 
-                  <div className="seccion-pedido info-section-card"> {/* Clase general y especifica */}
-                    <h4>📦 Detalles del Pedido</h4>
-                    <p><strong>Total:</strong> ${pedido.precioPedido.toLocaleString('es-CL')}</p>
-                    {pedido.propina && pedido.cantidadPropina && (
-                      <p><strong>Propina:</strong> ${pedido.cantidadPropina.toLocaleString('es-CL')}</p>
-                    )}
-                    
-                    <div className="comidas-lista">
-                      <p><strong>Comidas:</strong></p>
-                      <ul>
-                        {pedido.comidas.map((c, idx) => (
-                          <li key={idx}>
-                            {c.nombre} x{c.cantidad}
-                          </li>
-                        ))}
-                      </ul>
+                <div className="seccion-local">
+                  <h4>🏪 Local</h4>
+                  <div className="info-item">
+                    <b>Retirado de:</b> {pedido.local.nombreLocal}
+                  </div>
+                  <div className="info-item">
+                    <b>Dirección:</b> {pedido.local.direccion}
+                  </div>
+                </div>
+
+                <div className="seccion-pedido">
+                  <h4>📦 Pedido</h4>
+                  <div className="info-item total-price">
+                    <b>Total:</b> ${pedido.precioPedido.toLocaleString('es-CL')}
+                  </div>
+                  {pedido.propina && typeof pedido.cantidadPropina === 'number' && (
+                    <div className="info-item tip-amount">
+                      <b>Propina:</b> ${pedido.cantidadPropina.toLocaleString('es-CL')}
                     </div>
+                  )}
+                  
+                  <div className="comidas-lista">
+                    <b>Comidas:</b>
+                    <ul>
+                      {pedido.comidas.map((c, idx) => (
+                        <li key={idx} className="comida-item">
+                          {c.nombre} x{c.cantidad}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div> {/* Fin de pedido-info-sections */}
+                </div>
 
-                <div className="seccion-entrega-confirmacion info-section-card"> {/* Nueva clase para esta sección */}
+                <div className="seccion-entrega">
                   <h4>🔑 Confirmar Entrega</h4>
-                  <p>El cliente debe proporcionarte el código de 4 dígitos para completar la entrega:</p>
-                  <div className="codigo-input-group"> {/* Agrupador para el input y botón */}
+                  <p>El cliente debe proporcionarte el código de 4 dígitos:</p>
+                  <div className="codigo-input-container">
                     <input
                       type="text"
-                      inputMode="numeric" // Sugiere teclado numérico en móviles
-                      pattern="[0-9]*" // Asegura que solo se puedan ingresar números
                       placeholder="0000"
                       value={codigoInput[pedido._id] || ''}
                       onChange={(e) => handleCodigoChange(pedido._id, e.target.value)}
-                      className="text-input code-input" // Clases reutilizadas y específica
+                      className="codigo-input"
                       maxLength={4}
                     />
                     <button
-                      className="card-button primary-button" // Usar card-button y primary-button para el estilo
+                      className="btn-entregar"
                       onClick={() => handleEntregarPedido(pedido._id)}
                       disabled={!codigoInput[pedido._id] || codigoInput[pedido._id].length !== 4}
                     >
@@ -203,10 +290,10 @@ const PedidosEnCamino: React.FC = () => {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </main>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

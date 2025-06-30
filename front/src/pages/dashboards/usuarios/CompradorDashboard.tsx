@@ -1,278 +1,367 @@
 // CompradorDashboard.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './CompradorDashboard.css';
+import { useQuery } from '@apollo/client';
+import { GET_PEDIDOS_PENDIENTES_VALORACION } from '../../../apollo/queries'; // Asegúrate que la ruta es correcta
+import { useAuth } from '../../../hooks/useAuth';
+import './CompradorDashboard.css'; // Importa nuestro archivo CSS
 
-// Interfaces (mantener las mismas)
 interface Local {
     _id: string;
     nombreLocal: string;
-}
-
-interface Producto {
-    _id: string;
-    nombre: string;
-    precio: number;
-    cantidad: number;
-    ingredientes: string[];
-    descripcion: string;
-    imagenUrl: string;
-    locatarioId: string; // Referencia al locatario
-    localNombre: string; // Agregado manualmente en el frontend
+    numeroLocal?: string;
+    descripcion?: string;
+    imagen?: string;
+    valoracion?: number;
+    tiempoEntrega?: string;
+    categorias?: string[];
+    estado?: string;
 }
 
 const CompradorDashboard: React.FC = () => {
-    const [busqueda, setBusqueda] = useState('');
-    const [localSeleccionado, setLocalSeleccionado] = useState<string | null>(null);
-    const [locales, setLocales] = useState<Local[]>([]);
-    const [productos, setProductos] = useState<Producto[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
     const navigate = useNavigate();
+    const { user, logout } = useAuth(); // Asumiendo que useAuth ya está bien configurado
+    const [locales, setLocales] = useState<Local[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [busqueda, setBusqueda] = useState('');
+    const [userId, setUserId] = useState<string>('');
 
-    // Protección de ruta
+    // QUERY PARA PEDIDOS PENDIENTES DE VALORACIÓN
+    const { data: dataPendientes } = useQuery(GET_PEDIDOS_PENDIENTES_VALORACION, {
+        variables: { userId },
+        skip: !userId,
+        pollInterval: 30000,
+        errorPolicy: 'all'
+    });
+
+    // OBTENER USER ID AL CARGAR
     useEffect(() => {
-        if (!localStorage.getItem('token')) {
-            navigate('/', { replace: true });
-        }
-    }, [navigate]);
-
-    // Obtener locales
-    const fetchLocales = useCallback(async () => {
-        try {
-            // Asegúrate que el puerto del backend para locales sea correcto (3000)
-            const response = await fetch('http://localhost:3000/locatarios');
-            if (!response.ok) throw new Error(`Error al cargar locales: ${response.status} ${response.statusText}`);
-            const data: Local[] = await response.json();
-            setLocales(data);
-            return data;
-        } catch (err: any) {
-            console.error(err);
-            setError(err.message || "Error al cargar locales");
-            return [];
-        }
-    }, []);
-
-    // Obtener productos
-    const fetchProductos = useCallback(async (localesData: Local[]) => {
-        try {
-            let productosAcumulados: Producto[] = [];
-            for (const local of localesData) {
-                // Asegúrate que el puerto del backend para comidas sea correcto (3001)
-                const response = await fetch(`http://localhost:3001/comidas/locatario/${local._id}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    const productosConLocal = data.map((prod: any) => ({
-                        ...prod,
-                        localNombre: local.nombreLocal,
-                    }));
-                    productosAcumulados = [...productosAcumulados, ...productosConLocal];
-                }
+        const fetchUserData = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/', { replace: true });
+                return;
             }
-            setProductos(productosAcumulados);
-        } catch (err: any) {
-            console.error(err);
-            setError(err.message || "Error al cargar productos");
-        }
+
+            try {
+                const resUser = await fetch('http://localhost:3000/usuarios/me', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (!resUser.ok) {
+                    // Si el token es inválido o no se puede obtener el usuario, redirige
+                    logout(); // Cierra sesión si el token no es válido
+                    navigate('/', { replace: true });
+                    return;
+                }
+
+                const userData = await resUser.json();
+                setUserId(userData.userId || userData._id); // Asegura que obtienes el ID correcto
+            } catch (error) {
+                console.error('Error obteniendo datos de usuario:', error);
+                logout(); // En caso de error, también cierra sesión
+                navigate('/', { replace: true });
+            }
+        };
+
+        fetchUserData();
+    }, [navigate, logout]); // Añadir logout a dependencias para useCallback
+
+    // CARGAR LOCALES
+    useEffect(() => {
+        cargarLocales();
     }, []);
 
-    useEffect(() => {
-        setIsLoading(true);
-        setError(null);
-        fetchLocales().then((localesData) => {
-            fetchProductos(localesData).finally(() => setIsLoading(false));
-        });
-    }, [fetchLocales, fetchProductos]);
+    const cargarLocales = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/locatarios'); // Usar el endpoint de Auth Service
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Locales cargados:', data);
+                setLocales(data);
+            } else {
+                setError('Error cargando locales');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setError('Error de conexión');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('tipoUsuario');
+        logout(); // Llama a la función logout del hook useAuth
         navigate('/', { replace: true });
     };
 
-    // Función para agregar al carrito
-    const handleAgregarCarrito = async (producto: Producto) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('Debes iniciar sesión para agregar productos al carrito.');
-            return;
-        }
-
-        try {
-            // Primero obtenemos el id del comprador (usuario logueado):
-            // Asegúrate que el puerto del backend para usuarios sea correcto (3000)
-            const resUser = await fetch('http://localhost:3000/usuarios/me', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (!resUser.ok) {
-                const errorData = await resUser.json();
-                throw new Error(errorData?.message || 'No se pudo obtener la información del usuario.');
-            }
-            const userData = await resUser.json();
-            const idComprador = userData.userId || userData._id; // Asegura que obtienes el ID correcto
-
-            // Construimos el DTO esperado:
-            const body = {
-                idLocatario: producto.locatarioId,
-                nombreLocal: producto.localNombre,
-                nombreComida: producto.nombre,
-                cantidad: 1, // siempre 1 por ahora
-                precio: producto.precio
-            };
-
-            // Asegúrate que el puerto del backend para carrito sea correcto (3002)
-            const res = await fetch(`http://localhost:3002/carrito/${idComprador}/agregar`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify(body)
-            });
-
-            if (!res.ok) {
-                const errorData = await res.json();
-                throw new Error(errorData?.message || 'Error al agregar al carrito.');
-            }
-
-            alert('Producto agregado al carrito exitosamente.');
-        } catch (err: any) {
-            console.error(err);
-            alert(`Hubo un problema: ${err.message}`);
-        }
+    // FUNCIONES DE NAVEGACIÓN
+    const navegarCarrito = () => {
+        console.log('🛒 Navegando al carrito...');
+        navigate('/comprador/carrito');
     };
 
-    const productosFiltrados = productos.filter((producto) => {
-        const coincideBusqueda =
-            producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-            producto.localNombre.toLowerCase().includes(busqueda.toLowerCase());
+    const navegarPedidos = () => {
+        console.log('📦 Navegando a pedidos...');
+        navigate('/comprador/pedidos');
+    };
 
-        const coincideLocalSeleccionado = localSeleccionado
-            ? producto.localNombre === localSeleccionado
-            : true;
+    const navegarCartera = () => {
+        console.log('💰 Navegando a cartera...');
+        navigate('/comprador/cartera');
+    };
 
-        return coincideBusqueda && coincideLocalSeleccionado;
-    });
+    const navegarHistorial = () => {
+        console.log('📋 Navegando a historial...');
+        navigate('/comprador/historial');
+    };
+
+    // FILTRAR LOCALES POR BÚSQUEDA
+    const localesFiltrados = locales.filter((local) =>
+        local.nombreLocal.toLowerCase().includes(busqueda.toLowerCase())
+    );
+
+    // CALCULAR PEDIDOS PENDIENTES
+    const pedidosPendientes = dataPendientes?.pedidosPendientesValoracion || [];
+    const tieneValoracionesPendientes = pedidosPendientes.length > 0;
+
+    const renderStars = (rating: number) => {
+        const stars = [];
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 !== 0;
+
+        for (let i = 0; i < fullStars; i++) {
+            stars.push(<span key={`full-${i}`} className="star-filled">★</span>);
+        }
+
+        if (hasHalfStar) {
+            stars.push(<span key="half" className="star-half">★</span>);
+        }
+
+        const emptyStars = 5 - Math.ceil(rating);
+        for (let i = 0; i < emptyStars; i++) {
+            stars.push(<span key={`empty-${i}`} className="star-empty">★</span>);
+        }
+
+        return stars;
+    };
 
     return (
-        <div className="comprador-dashboard">
-            <nav className="navbar-dashboard">
-                <div className="navbar-section logo-section">
-                    <span className="logo">VeciMarket</span>
+        <div className="comprador-dashboard-container"> {/* Contenedor principal de la página */}
+            {/* NAVBAR MEJORADO */}
+            <nav className="navbar-comprador">
+                <div className="navbar-brand">
+                    <span className="logo-text">VeciMarket</span>
                 </div>
-                <div className="navbar-section search-section">
+
+                {/* BARRA DE BÚSQUEDA */}
+                <div className="navbar-search">
                     <input
                         type="text"
-                        className="search-input"
-                        placeholder="Buscar locales o productos..."
+                        className="text-input search-input-navbar" // Clase para input general y específico de navbar
+                        placeholder="Buscar locales..."
                         value={busqueda}
                         onChange={(e) => setBusqueda(e.target.value)}
                     />
                 </div>
-                <div className="navbar-section icons-section">
-                    <button className="icon-btn" onClick={() => navigate('/carrito')} title="Carrito">
-                        <img src="https://img.icons8.com/ios-filled/28/ffffff/shopping-cart.png" alt="Carrito" />
-                    </button>
+
+                <div className="navbar-user-info">
+                    {user && (
+                        <span className="user-greeting">
+                            Hola, {user.nombreUsuario || user.nombre}
+                        </span>
+                    )}
+                </div>
+
+                <div className="navbar-actions">
                     <button
-                        className="icon-btn"
-                        onClick={() => navigate('/cartera')}
-                        title="Cartera"
+                        onClick={navegarCarrito}
+                        className="nav-action-btn" // Botón de acción general de la navbar
+                        title="Ver carrito"
                     >
-                        <img
-                            src="https://img.icons8.com/ios-filled/28/ffffff/wallet-app.png" // Cambiado a icono blanco para consistencia
-                            alt="Cartera"
-                        />
+                        <img src="https://img.icons8.com/ios-filled/28/ffffff/shopping-cart.png" alt="Carrito" />
+                        <span className="btn-text">Carrito</span>
                     </button>
-                    <button className="icon-btn" onClick={() => navigate('/perfil')} title="Perfil">
-                        <img src="https://img.icons8.com/ios-filled/28/ffffff/user.png" alt="Perfil" />
+
+                    <button
+                        onClick={navegarPedidos}
+                        className="nav-action-btn"
+                        title="Mis pedidos"
+                    >
+                        <img src="https://img.icons8.com/ios-filled/28/ffffff/box.png" alt="Pedidos" />
+                        <span className="btn-text">Pedidos</span>
                     </button>
-                    <button className="icon-btn logout-btn" onClick={handleLogout} title="Cerrar sesión">
+
+                    <button
+                        onClick={navegarCartera}
+                        className="nav-action-btn"
+                        title="Mi cartera"
+                    >
+                        <img src="https://img.icons8.com/ios-filled/28/ffffff/wallet-app.png" alt="Cartera" />
+                        <span className="btn-text">Cartera</span>
+                    </button>
+
+                    {/* BOTÓN DE HISTORIAL CON NOTIFICACIÓN */}
+                    <button
+                        onClick={navegarHistorial}
+                        className={`nav-action-btn ${tieneValoracionesPendientes ? 'has-notification' : ''}`}
+                        title={tieneValoracionesPendientes
+                            ? `Historial (${pedidosPendientes.length} pendientes de valorar)`
+                            : "Historial de Pedidos"
+                        }
+                    >
+                        <div className="btn-content-icon"> {/* Contenedor para icono y texto */}
+                            <img src="https://img.icons8.com/ios-filled/28/ffffff/time-machine--v1.png" alt="Historial" />
+                            <span className="btn-text">Historial</span>
+                            {/* BADGE DE NOTIFICACIÓN */}
+                            {tieneValoracionesPendientes && (
+                                <span className="notification-badge-nav">
+                                    {pedidosPendientes.length}
+                                </span>
+                            )}
+                        </div>
+                    </button>
+
+                    <button
+                        onClick={handleLogout}
+                        className="nav-action-btn logout-btn"
+                        title="Cerrar sesión"
+                    >
                         <img src="https://img.icons8.com/ios-filled/28/ffffff/exit.png" alt="Cerrar sesión" />
+                        <span className="btn-text">Salir</span>
                     </button>
                 </div>
             </nav>
 
-            <div className="dashboard-body">
-                {/* Sidebar */}
-                <aside className="sidebar">
-                    <div className="card-container"> {/* Contenedor de la tarjeta */}
-                        <h3 className="card-title">Locales del Vecindario</h3> {/* Título usando card-title */}
-                        <input
-                            type="text"
-                            className="text-input" /* Usar clase general de input */
-                            placeholder="Filtrar locales..."
-                            value={busqueda}
-                            onChange={(e) => setBusqueda(e.target.value)}
-                        />
-                        <ul className="lista-locales">
-                            {isLoading ? (
-                                <li><p className="loading-message">Cargando locales...</p></li>
-                            ) : error ? (
-                                <li><p className="error-message">{error}</p></li>
-                            ) : locales.map((local) => (
-                                <li key={local._id}>
-                                    <button
-                                        className={`list-button ${localSeleccionado === local.nombreLocal ? 'selected-list-button' : ''}`} /* Clases para botones de lista */
-                                        onClick={() => setLocalSeleccionado(local.nombreLocal)}
-                                    >
-                                        {local.nombreLocal}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                        {localSeleccionado && (
-                            <button
-                                className="clear-filter-button" /* Clase para botón de limpiar filtro */
-                                onClick={() => setLocalSeleccionado(null)}
-                            >
-                                Ver todos los productos
-                            </button>
-                        )}
-                    </div>
-                </aside>
+            {/* CONTENIDO PRINCIPAL */}
+            <div className="main-content-area">
+                <section className="welcome-section card-style"> {/* Usamos card-style aquí */}
+                    <h1 className="welcome-title">¡Bienvenido a VeciMarket! 👋</h1>
+                    <p className="welcome-subtitle">Descubre los mejores locales de comida de tu vecindario y haz tu pedido fácilmente.</p>
+                </section>
 
-                {/* Zona de productos */}
-                <main className="productos-section">
-                    <div className="card-container"> {/* Contenedor de la tarjeta */}
-                        <h2 className="card-title"> {/* Título usando card-title */}
-                            {localSeleccionado ? `Menú de ${localSeleccionado}` : 'Productos disponibles'}
-                        </h2>
-                        <div className="productos-grid">
-                            {isLoading ? (
-                                <p className="loading-message">Cargando productos...</p>
-                            ) : error ? (
-                                <p className="error-message">{error}</p>
-                            ) : productosFiltrados.length > 0 ? (
-                                productosFiltrados.map((producto) => (
-                                    <div className="product-item-card" key={producto._id}> {/* Clase para tarjeta de producto individual */}
-                                        <img
-                                            src={
-                                                producto.imagenUrl
-                                                    ? producto.imagenUrl.startsWith('/uploads/')
-                                                        ? `http://localhost:3001${producto.imagenUrl}`
-                                                        : producto.imagenUrl
-                                                    : 'https://via.placeholder.com/200x140?text=Sin+Imagen'
-                                            }
-                                            alt={producto.nombre}
-                                            className="product-image" /* Clase para imagen de producto */
-                                        />
-                                        <div className="product-details"> {/* Contenedor de detalles del producto */}
-                                            <h3 className="product-name">{producto.nombre}</h3> {/* Clase para nombre de producto */}
-                                            <p className="product-local-name">De: {producto.localNombre}</p> {/* Clase para nombre del local en producto */}
-                                            <p className="product-price"><strong>Precio:</strong> ${producto.precio.toLocaleString('es-CL')}</p> {/* Clase para precio */}
-                                            <button className="button-primary" onClick={() => handleAgregarCarrito(producto)}> {/* Clase general de botón primario */}
-                                                Agregar al Carrito
-                                            </button>
+                {/* ACCIONES RÁPIDAS */}
+                <section className="quick-actions-section">
+                    <h2 className="section-title">Acciones Rápidas</h2>
+                    <div className="quick-actions-grid">
+                        <div className="action-card" onClick={navegarCarrito}>
+                            <div className="action-icon">🛒</div>
+                            <h3>Mi Carrito</h3>
+                            <p>Ver productos agregados</p>
+                        </div>
+
+                        <div className="action-card" onClick={navegarPedidos}>
+                            <div className="action-icon">📦</div>
+                            <h3>Mis Pedidos</h3>
+                            <p>Seguir estado de pedidos</p>
+                        </div>
+
+                        <div className="action-card" onClick={navegarCartera}>
+                            <div className="action-icon">💰</div>
+                            <h3>Mi Cartera</h3>
+                            <p>Gestionar saldo</p>
+                        </div>
+
+                        <div
+                            className={`action-card ${tieneValoracionesPendientes ? 'has-pending-badge' : ''}`}
+                            onClick={navegarHistorial}
+                        >
+                            <div className="action-icon">📋</div>
+                            <h3>Historial</h3>
+                            <p>
+                                Ver pedidos anteriores
+                                {tieneValoracionesPendientes && (
+                                    <span className="pending-text">
+                                        ({pedidosPendientes.length} por valorar)
+                                    </span>
+                                )}
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* LOCALES DISPONIBLES */}
+                <section className="locales-section">
+                    <h2 className="section-title">Locales Disponibles</h2>
+
+                    {loading && (
+                        <div className="status-message loading-message">Cargando locales...</div>
+                    )}
+
+                    {error && (
+                        <div className="status-message error-message">{error}</div>
+                    )}
+
+                    {!loading && !error && (
+                        <div className="locales-grid">
+                            {localesFiltrados.length === 0 ? (
+                                <div className="no-results-message">
+                                    {busqueda ?
+                                        `No se encontraron locales para "${busqueda}"` :
+                                        'No hay locales disponibles.'
+                                    }
+                                </div>
+                            ) : (
+                                localesFiltrados.map(local => (
+                                    <div
+                                        key={local._id}
+                                        className="local-card"
+                                        onClick={() => navigate(`/local/${local._id}`)}
+                                        tabIndex={0}
+                                        role="button"
+                                        onKeyDown={e => { if (e.key === 'Enter') navigate(`/local/${local._id}`); }}
+                                    >
+                                        <div className="local-image-container">
+                                            {local.imagen ? (
+                                                <img src={local.imagen} alt={local.nombreLocal} className="local-image" />
+                                            ) : (
+                                                <div className="local-image-placeholder">
+                                                    <span role="img" aria-label="tienda">🏪</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="local-info-content">
+                                            <h3 className="local-name">{local.nombreLocal}</h3>
+                                            {local.descripcion && (
+                                                <p className="local-description">{local.descripcion}</p>
+                                            )}
+
+                                            {local.valoracion !== undefined && (
+                                                <div className="local-rating">
+                                                    {renderStars(local.valoracion)}
+                                                    <span className="rating-number">({local.valoracion.toFixed(1)})</span>
+                                                </div>
+                                            )}
+
+                                            <div className="local-status-time">
+                                                {local.tiempoEntrega && (
+                                                    <span className="time-badge">⏱️ {local.tiempoEntrega}</span>
+                                                )}
+                                                {local.estado && (
+                                                    <span className={`status-badge ${local.estado.toLowerCase()}`}>
+                                                        {local.estado === 'abierto' ? '🟢 Abierto' : '🔴 Cerrado'}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {local.categorias && local.categorias.length > 0 && (
+                                                <div className="local-categories">
+                                                    {local.categorias.map((categoria, index) => (
+                                                        <span key={index} className="category-tag">
+                                                            {categoria}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))
-                            ) : (
-                                <p className="no-data-message">No se encontraron productos.</p>
                             )}
                         </div>
-                    </div>
-                </main>
+                    )}
+                </section>
             </div>
         </div>
     );

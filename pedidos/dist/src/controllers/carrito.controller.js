@@ -22,35 +22,30 @@ let CarritoController = class CarritoController {
     constructor(carritoService) {
         this.carritoService = carritoService;
     }
-    // ✅ MÉTODO EXISTENTE PARA COMIDAS
+    // ✅ ENDPOINT PARA COMIDAS (YA FUNCIONA)
     async agregarComida(idComprador, dto, req) {
         if (req.user?.sub !== idComprador) {
             throw new common_1.UnauthorizedException('No puedes modificar el carrito de otro usuario');
         }
+        console.log('🛒 Agregando comida al carrito:', dto);
         return this.carritoService.agregarComidaAlCarrito(idComprador, dto);
     }
-    // ✅ NUEVO MÉTODO PARA PROMOCIONES
+    // ✅ NUEVO ENDPOINT PARA PROMOCIONES
     async agregarPromocion(idComprador, dto, req) {
         if (req.user?.sub !== idComprador) {
             throw new common_1.UnauthorizedException('No puedes modificar el carrito de otro usuario');
         }
+        console.log('🎉 Agregando promoción al carrito:', dto);
         return this.carritoService.agregarPromocionAlCarrito(idComprador, dto);
     }
-    // ✅ OBTENER TOTAL (ACTUALIZADO)
-    async obtenerTotal(idComprador, req) {
-        if (req.user?.sub !== idComprador) {
-            throw new common_1.UnauthorizedException('No puedes ver el carrito de otro usuario');
-        }
-        return this.carritoService.calcularTotalCarrito(idComprador);
-    }
-    // ✅ OBTENER CARRITO COMPLETO
+    // ✅ OBTENER CARRITO
     async obtenerCarrito(idComprador, req) {
         if (req.user?.sub !== idComprador) {
             throw new common_1.UnauthorizedException('No puedes ver el carrito de otro usuario');
         }
         return this.carritoService.obtenerCarrito(idComprador);
     }
-    // ✅ ELIMINAR COMIDA
+    // ✅ ELIMINAR ITEM DE COMIDA
     async eliminarItem(idComprador, itemId, req) {
         if (req.user?.sub !== idComprador) {
             throw new common_1.UnauthorizedException('No puedes modificar el carrito de otro usuario');
@@ -70,6 +65,13 @@ let CarritoController = class CarritoController {
             throw new common_1.UnauthorizedException('No puedes modificar el carrito de otro usuario');
         }
         return this.carritoService.vaciarCarrito(idComprador);
+    }
+    // ✅ OBTENER TOTAL DEL CARRITO
+    async obtenerTotal(idComprador, req) {
+        if (req.user?.sub !== idComprador) {
+            throw new common_1.UnauthorizedException('No puedes ver el carrito de otro usuario');
+        }
+        return this.carritoService.calcularTotalCarrito(idComprador);
     }
 };
 exports.CarritoController = CarritoController;
@@ -93,15 +95,6 @@ __decorate([
     __metadata("design:paramtypes", [String, create_promocionCarrito_dto_1.CreatePromocionCarritoDto, Object]),
     __metadata("design:returntype", Promise)
 ], CarritoController.prototype, "agregarPromocion", null);
-__decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Get)(':idComprador/total'),
-    __param(0, (0, common_1.Param)('idComprador')),
-    __param(1, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
-], CarritoController.prototype, "obtenerTotal", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':idComprador'),
@@ -140,6 +133,15 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], CarritoController.prototype, "vaciarCarrito", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)(':idComprador/total'),
+    __param(0, (0, common_1.Param)('idComprador')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], CarritoController.prototype, "obtenerTotal", null);
 exports.CarritoController = CarritoController = __decorate([
     (0, common_1.Controller)('carrito'),
     __metadata("design:paramtypes", [carrito_service_1.CarritoService])

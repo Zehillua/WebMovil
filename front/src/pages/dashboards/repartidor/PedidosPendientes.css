@@ -1,371 +1,938 @@
-/* PedidosPendientes.css */
+/* PedidosPendientes.css (Adaptado a la paleta Pastel/Marrón con acentos Rojos/Verdes/Azules) */
 
-/* Variables de Color (Asegúrate de que estas sean las mismas que en tu index.css o un archivo global) */
+/* Importar fuentes de Google Fonts para consistencia */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;700&display=swap');
+
+/* Variables de Color (Centralizadas para consistencia) */
 :root {
     --color-dark-brown: #532a14;
-    --color-light-orange-pastel: #fef4e8; /* Color de fondo general */
-    --color-card-bg-light: #fff8f2; /* Fondo para tarjetas y secciones */
-    --color-title-brown: #6b3e26; /* Color para títulos y navbar principal */
-    --color-subtitle-orange: #8d5c3d; /* Color para subtítulos, botones, elementos secundarios */
-    --color-card-border: #d1a38d; /* Borde de tarjetas */
-    --color-text-brown-dark: #5a3a28; /* Texto principal */
-    --color-text-brown-light: #7a5540; /* Texto secundario/info */
-    --color-info-text: #6d4b3c; /* Texto informativo */
-    --color-card-shadow: rgba(0,0,0,0.08); /* Sombra suave para tarjetas */
-    --color-general-shadow: rgba(0,0,0,0.05); /* Sombra más sutil */
-    --logo-color: #ffffff; /* Color para el logo y algunos íconos en la navbar */
-    --color-success: #27ae60; /* Verde para éxito/confirmar */
-    --color-danger: #fa314a; /* Rojo para eliminar */
-    --color-placeholder-bg: #e0e0e0;
-    --color-placeholder-border: #bdbdbd;
-    --color-placeholder-text: #757575;
+    --color-light-orange-pastel: #fef4e8;
+    --color-card-bg-light: #fff8f2;
+    --color-title-brown: #6b3e26;
+    --color-subtitle-orange: #8d5c3d;
+    --color-card-border: #d1a38d;
+    --color-text-brown-dark: #5a3a28;
+    --color-text-brown-light: #9b7d69; /* Ajustado para ser más claro y consistente */
+    --color-general-shadow: rgba(0, 0, 0, 0.08); /* Sombra general más suave */
+    --color-card-shadow: rgba(0, 0, 0, 0.12); /* Sombra de tarjeta más pronunciada */
 
-    /* Colores específicos para estados de pedido y secciones info */
-    --color-estado-pendiente-bg: #fef4e8; /* Pastel para pendiente, similar al bg general */
-    --color-estado-pendiente-text: var(--color-subtitle-orange);
-    --color-estado-pendiente-border: var(--color-card-border);
+    /* Colores específicos para Repartidor Dashboard (acentos rojos para navbar) */
+    --color-repartidor-red-primary: #e74c3c; /* Rojo principal para Repartidor */
+    --color-repartidor-red-dark: #c0392b; /* Rojo oscuro para Repartidor */
 
-    --color-estado-en-camino-bg: #e6f7ff; /* Azul claro para en camino */
-    --color-estado-en-camino-text: #1890ff; /* Azul vibrante */
-    --color-estado-en-camino-border: #91d5ff;
+    /* Colores para estados de pedidos (adaptados a la paleta general) */
+    --color-estado-pendiente-bg: #fff3cd; /* Amarillo claro */
+    --color-estado-pendiente-text: #856404; /* Amarillo oscuro */
+    --color-estado-en-camino-bg: #cce5ff; /* Azul claro */
+    --color-estado-en-camino-text: #004085; /* Azul oscuro */
+    --color-estado-entregado-bg: #d4edda; /* Verde claro */
+    --color-estado-entregado-text: #155724; /* Verde oscuro */
+    --color-estado-cancelado-bg: #f8d7da; /* Rojo claro */
+    --color-estado-cancelado-text: #721c24; /* Rojo oscuro */
 
-    --color-seccion-cliente-bg: #e8f5e8; /* Verde muy claro */
-    --color-seccion-cliente-border: var(--color-success);
+    /* Colores para mensajes (success, error, info) */
+    --color-message-success-bg: #d4edda;
+    --color-message-success-text: #155724;
+    --color-message-error-bg: #f8d7da;
+    --color-message-error-text: #721c24;
+    --color-message-info-bg: #cfe2ff;
+    --color-message-info-text: #055160;
 
-    --color-seccion-local-bg: #fff3e0; /* Naranja muy claro */
-    --color-seccion-local-border: var(--color-subtitle-orange);
+    /* Colores para botones de confirmación */
+    --color-confirm-cancel-bg: var(--color-card-border);
+    --color-confirm-cancel-text: var(--color-text-brown-dark);
+    --color-confirm-ok-bg: var(--color-subtitle-orange);
+    --color-confirm-ok-text: white;
 
-    --color-seccion-pedido-bg: #f3e5f5; /* Púrpura muy claro */
-    --color-seccion-pedido-border: #9c27b0; /* Púrpura más oscuro */
+    /* Colores para el botón de "En Camino" y "Entregado" */
+    --color-btn-en-camino-bg: #4CAF50; /* Verde del usuario */
+    --color-btn-en-camino-hover: #45a049; /* Verde oscuro del usuario */
+    --color-btn-entregado-bg: #2196F3; /* Azul del usuario */
+    --color-btn-entregado-hover: #1976d2; /* Azul oscuro del usuario */
+
+    /* Colores para secciones de información */
+    --color-seccion-cliente-bg: #e4fce4; /* Verde pastel */
+    --color-seccion-cliente-border: #4caf50; /* Verde */
+    --color-seccion-local-bg: #fff8e0; /* Naranja pastel */
+    --color-seccion-local-border: #ff9800; /* Naranja */
+    --color-seccion-pedido-bg: #f3e5f5; /* Púrpura pastel */
+    --color-seccion-pedido-border: #9c27b0; /* Púrpura */
+
+    /* Fuentes */
+    --font-primary: 'Quicksand', sans-serif;
+    --font-heading: 'Comfortaa', cursive;
 }
 
-/* Base y Contenedor Principal */
+/* ========== ESTILOS BASE ========== */
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-primary);
     background-color: var(--color-light-orange-pastel);
     color: var(--color-text-brown-dark);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .pedidos-pendientes-root {
-    width: 100%;
+    padding: 1rem;
+    max-width: 900px; /* Max-width del usuario */
+    margin: 0 auto;
+    background: #f7fafd; /* Fondo del usuario */
     min-height: 100vh;
+    font-family: var(--font-primary); /* Usar fuente de la paleta */
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Centrar el contenido */
     box-sizing: border-box;
-    background-color: var(--color-light-orange-pastel); /* Asegura el fondo */
 }
 
-/* --- BANNER SUPERIOR (Clase reutilizada) --- */
-.top-banner {
-    width: 100%;
-    background-color: var(--color-dark-brown);
-    color: white;
-    padding: 0.75rem 1rem;
-    font-weight: bold;
-    box-shadow: 0 2px 5px var(--color-general-shadow);
+/* ========== HEADER DE LA PÁGINA ========== */
+.pedidos-pendientes-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem; /* Margen del usuario */
+    padding: 1rem 2.5rem; /* Ajuste de padding para consistencia */
+    background: white; /* Fondo del usuario */
+    border-radius: 15px; /* Redondeo consistente */
+    box-shadow: 0 4px 12px var(--color-general-shadow); /* Sombra consistente */
+    width: 100%; /* Ocupar todo el ancho */
+    max-width: 900px; /* Coincidir con root */
     box-sizing: border-box;
 }
 
-.top-banner-text {
-    font-size: 0.95rem;
-    letter-spacing: 0.3px;
-    flex-grow: 1;
-    text-align: center;
-    margin: 0 1rem;
-}
-
-/* --- Botón de volver (Clase reutilizada) --- */
-.icon-btn {
-    background: none;
+.pedidos-pendientes-volver {
+    background: var(--color-light-orange-pastel); /* Fondo pastel de la paleta */
     border: none;
-    cursor: pointer;
-    padding: 0.3rem;
+    font-size: 1.5rem;
+    color: var(--color-subtitle-orange); /* Color de acento de la paleta */
     border-radius: 50%;
-    transition: background 0.2s ease-in-out;
-    display: flex;
+    width: 40px; /* Tamaño más grande para consistencia */
+    height: 40px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    display: flex; /* Para centrar el emoji */
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Sombra sutil */
 }
 
-.icon-btn:hover {
-    background-color: rgba(255,255,255,0.15);
+.pedidos-pendientes-volver:hover {
+    background: var(--color-card-border); /* Tono de marrón claro en hover */
+    transform: translateX(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-.icon-btn img {
-    width: 24px;
-    height: 24px;
-    filter: brightness(0) invert(1); /* Hace que los iconos sean blancos */
+.pedidos-pendientes-title {
+    color: var(--color-title-brown); /* Color de título de la paleta */
+    font-size: 2rem; /* Tamaño más grande para consistencia */
+    font-weight: 700;
+    font-family: var(--font-heading); /* Fuente de título de la paleta */
+    text-align: center;
+    flex: 1;
+    letter-spacing: 0.5px;
 }
 
-/* --- Contenedor principal del contenido --- */
-.pedidos-pendientes-main-content {
-    width: 100%;
-    max-width: 1000px; /* Ancho máximo para el grid de pedidos */
-    margin: 2rem auto;
-    padding: 0 1rem;
+/* ========== ESTADOS DE CARGA, ERROR Y VACÍO ========== */
+.pedidos-pendientes-loading,
+.pedidos-pendientes-error,
+.pedidos-pendientes-empty {
+    text-align: center;
+    color: var(--color-text-brown-light);
+    font-size: 1.2rem; /* Tamaño del usuario */
+    padding: 3rem; /* Padding del usuario */
+    background: var(--color-card-bg-light); /* Fondo claro de la paleta */
+    border-radius: 20px; /* Redondeo consistente */
+    box-shadow: 0 8px 25px var(--color-card-shadow); /* Sombra consistente */
+    border: 2px solid var(--color-card-border); /* Borde consistente */
+    font-family: var(--font-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px; /* Altura mínima consistente */
+    margin-top: 2rem; /* Margen del usuario */
+    width: 90%; /* Ajuste de ancho */
+    max-width: 800px; /* Ajuste de ancho */
     box-sizing: border-box;
 }
 
-/* --- Mensajes de estado (Clases reutilizadas) --- */
-.loading, .no-pedidos {
-    text-align: center;
-    font-size: 1.2rem;
-    color: var(--color-text-brown-light);
-    margin-top: 3rem;
-    width: 100%;
-}
-
-.error {
-    text-align: center;
-    font-size: 1.2rem;
-    color: var(--color-danger);
-    margin-top: 3rem;
-    width: 100%;
-    font-weight: bold;
-}
-
-/* --- Grid de pedidos (Clase reutilizada) --- */
-.pedidos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Ancho mínimo un poco mayor */
-    gap: 1.5rem;
-    justify-content: center;
-}
-
-/* --- Tarjeta de pedido individual (Clase reutilizada) --- */
-.pedido-card {
-    background: var(--color-card-bg-light);
-    border: 1.5px solid var(--color-card-border);
-    border-radius: 12px;
-    padding: 1.8rem; /* Aumentado padding para espacio */
-    box-shadow: 0 4px 10px var(--color-card-shadow);
-    transition: transform 0.2s, box-shadow 0.2s;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.pedido-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px var(--color-card-shadow);
-}
-
-.pedido-card h3 {
-    color: var(--color-title-brown);
-    font-size: 1.6rem; /* Aumentado tamaño */
-    margin-top: 0;
-    margin-bottom: 0.8rem;
-    text-align: center;
-}
-
-/* --- Estilos de estado (Clases generales y específicas) --- */
-.estado { /* Clase base para todos los estados */
-    font-weight: bold;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    text-align: center;
-    width: fit-content;
-    margin: 0.5rem auto 1.5rem auto; /* Centrar y separar */
-    border: 1px solid;
-}
-
-.estado.pendiente {
-    background-color: var(--color-estado-pendiente-bg);
-    color: var(--color-estado-pendiente-text);
-    border-color: var(--color-estado-pendiente-border);
-}
-
-.estado.en-camino {
-    background-color: var(--color-estado-en-camino-bg);
-    color: var(--color-estado-en-camino-text);
-    border-color: var(--color-estado-en-camino-border);
-}
-
-/* --- Secciones de información dentro de la tarjeta --- */
-.pedido-info-sections {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem; /* Espacio entre las secciones de info */
-    margin-bottom: 1.5rem; /* Espacio antes del botón */
-}
-
-.info-section-card { /* Estilos comunes para las sub-secciones */
-    padding: 1rem 1.2rem;
-    border-radius: 8px;
-    border-left: 5px solid; /* Borde más pronunciado */
-    box-shadow: 0 2px 5px var(--color-general-shadow);
-}
-
-.seccion-cliente {
-    background-color: var(--color-seccion-cliente-bg);
-    border-left-color: var(--color-seccion-cliente-border);
-}
-
-.seccion-local {
-    background-color: var(--color-seccion-local-bg);
-    border-left-color: var(--color-seccion-local-border);
-}
-
-.seccion-pedido {
-    background-color: var(--color-seccion-pedido-bg);
-    border-left-color: var(--color-seccion-pedido-border);
-}
-
-.info-section-card h4 {
-    margin: 0 0 0.6rem 0;
-    color: var(--color-title-brown); /* Títulos de sub-secciones */
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.info-section-card p {
-    display: block;
-    margin: 0.3rem 0;
-    color: var(--color-text-brown-dark);
-    font-size: 0.95rem;
-    line-height: 1.4;
-}
-
-.info-section-card p strong {
+.pedidos-pendientes-loading .loading-spinner {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    animation: spin 1.5s linear infinite;
     color: var(--color-subtitle-orange);
 }
 
-.comidas-lista {
-    margin-top: 0.8rem;
-    border-top: 1px dashed var(--color-card-border);
-    padding-top: 0.8rem;
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
-.comidas-lista p {
-    margin-bottom: 0.5rem;
-    font-weight: bold;
+.pedidos-pendientes-error .error-icon,
+.pedidos-pendientes-empty .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+    color: var(--color-subtitle-orange);
+}
+
+.pedidos-pendientes-error h3,
+.pedidos-pendientes-empty h3 {
+    margin: 1rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    color: var(--color-title-brown);
+}
+
+.pedidos-pendientes-loading p,
+.pedidos-pendientes-error p,
+.pedidos-pendientes-empty p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
     color: var(--color-text-brown-dark);
 }
 
+.pedidos-pendientes-error .btn-retry {
+    background: linear-gradient(135deg, var(--color-subtitle-orange) 0%, var(--color-dark-brown) 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(141, 92, 61, 0.3);
+}
+
+.pedidos-pendientes-error .btn-retry:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(141, 92, 61, 0.4);
+}
+
+/* ========== LISTA DE PEDIDOS ========== */
+.pedidos-pendientes-list {
+    width: 100%;
+    max-width: 900px; /* Coincidir con root */
+    padding: 0 1rem; /* Ajuste de padding */
+    display: grid; /* Usar grid para mejor control */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Ajuste de minmax */
+    gap: 2rem; /* Ajuste de gap */
+    box-sizing: border-box;
+}
+
+.pedido-pendiente-card {
+    background: white; /* Fondo del usuario */
+    border-radius: 20px; /* Redondeo consistente */
+    box-shadow: 0 8px 32px var(--color-card-shadow); /* Sombra consistente */
+    padding: 1.5rem; /* Padding del usuario */
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; /* Transición completa */
+    border: 2px solid var(--color-card-border); /* Borde consistente */
+    display: flex;
+    flex-direction: column;
+}
+
+.pedido-pendiente-card:hover {
+    transform: translateY(-8px); /* Efecto de elevación más pronunciado */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    border-color: var(--color-repartidor-red-primary); /* Borde de acento en hover */
+}
+
+.pedido-pendiente-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem; /* Margen del usuario */
+    padding-bottom: 0.8rem; /* Ajuste de padding */
+    border-bottom: 1px dashed var(--color-card-border); /* Borde punteado consistente */
+    font-family: var(--font-heading);
+}
+
+.pedido-pendiente-nombre {
+    font-weight: 700; /* Más bold */
+    font-size: 1.5rem; /* Tamaño más grande */
+    color: var(--color-title-brown); /* Color de título de la paleta */
+}
+
+.pedido-pendiente-estado {
+    font-weight: 600; /* Peso de fuente consistente */
+    padding: 0.4rem 0.9rem; /* Ajuste de padding */
+    border-radius: 15px; /* Redondeo consistente */
+    font-size: 0.85rem; /* Tamaño del usuario */
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra sutil */
+    color: white; /* Texto blanco para los estados */
+}
+
+.pedido-pendiente-estado.pendiente {
+    background-color: var(--color-estado-pendiente-text); /* Usar el color de texto para el fondo */
+    border: 1px solid var(--color-estado-pendiente-text);
+}
+
+.pedido-pendiente-estado.en-camino {
+    background-color: var(--color-estado-en-camino-text); /* Usar el color de texto para el fondo */
+    border: 1px solid var(--color-estado-en-camino-text);
+}
+
+.pedido-pendiente-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Ajuste de gap */
+    flex-grow: 1; /* Para que ocupe el espacio disponible */
+}
+
+.seccion-cliente,
+.seccion-local,
+.seccion-pedido {
+    padding: 1rem; /* Padding del usuario */
+    border-radius: 12px; /* Redondeo consistente */
+    border-left: 4px solid; /* Borde del usuario */
+    background-color: var(--color-card-bg-light); /* Fondo claro de la paleta */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Sombra sutil */
+}
+
+.seccion-cliente {
+    background-color: var(--color-seccion-cliente-bg); /* Fondo pastel verde */
+    border-left-color: var(--color-seccion-cliente-border); /* Borde verde */
+}
+
+.seccion-local {
+    background-color: var(--color-seccion-local-bg); /* Fondo pastel naranja */
+    border-left-color: var(--color-seccion-local-border); /* Borde naranja */
+}
+
+.seccion-pedido {
+    background-color: var(--color-seccion-pedido-bg); /* Fondo pastel púrpura */
+    border-left-color: var(--color-seccion-pedido-border); /* Borde púrpura */
+}
+
+.seccion-cliente h4,
+.seccion-local h4,
+.seccion-pedido h4 {
+    margin: 0 0 0.5rem 0; /* Margen del usuario */
+    color: var(--color-title-brown); /* Color de título de la paleta */
+    font-size: 1.1rem; /* Tamaño ligeramente más grande */
+    font-family: var(--font-heading);
+    padding-bottom: 0.3rem;
+    border-bottom: 1px dashed var(--color-card-border); /* Borde punteado */
+}
+
+.info-item {
+    font-size: 0.95rem; /* Tamaño del usuario */
+    color: var(--color-text-brown-dark); /* Color de texto de la paleta */
+    display: block; /* Para que cada span sea un bloque */
+    margin: 0.3rem 0; /* Margen del usuario */
+}
+
+.info-item b {
+    color: var(--color-title-brown); /* Color de título de la paleta */
+    margin-right: 0.4rem;
+    font-weight: 600;
+}
+
+.total-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-repartidor-red-dark); /* Color rojo para el total */
+}
+
+.tip-amount {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-success); /* Color verde para la propina */
+}
+
+.comidas-lista {
+    margin-top: 1rem; /* Margen del usuario */
+    padding: 0.8rem; /* Padding del usuario */
+    background: var(--color-light-orange-pastel); /* Fondo pastel */
+    border-radius: 12px; /* Redondeo consistente */
+    border: 1px solid var(--color-card-border); /* Borde consistente */
+}
+
+.comidas-lista b {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--color-title-brown);
+    font-size: 1rem;
+}
+
 .comidas-lista ul {
-    list-style: none;
-    padding-left: 0;
+    list-style: none; /* Eliminar viñetas */
+    padding: 0;
     margin: 0;
 }
 
-.comidas-lista li {
-    margin-bottom: 0.3rem;
-    color: var(--color-text-brown-light);
-    font-size: 0.9rem;
+.comida-item {
+    margin-left: 0; /* Eliminar margen */
+    color: var(--color-text-brown-dark);
+    font-size: 0.9rem; /* Tamaño del usuario */
+    padding: 0.2rem 0; /* Padding del usuario */
 }
 
-/* --- Botones de acción (Clase reutilizada 'card-button' con modificadores) --- */
-.card-button { /* Estilos base ya definidos en RepartidorDashboard.css o Home.css */
-    background-color: var(--color-subtitle-orange); /* Default */
-    color: white;
-    padding: 0.9rem 1.8rem;
-    border-radius: 8px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    display: block; /* Para que ocupe todo el ancho de la tarjeta */
-    width: 100%;
-    margin-top: auto; /* Empuja el botón al final de la tarjeta */
+.btn-en-camino,
+.btn-entregado {
     border: none;
+    padding: 1rem 2rem; /* Padding del usuario */
+    border-radius: 15px; /* Redondeo consistente */
     cursor: pointer;
-    text-align: center; /* Centrar el texto del botón */
-    font-size: 1.1rem; /* Aumentar tamaño de fuente */
+    font-weight: 700; /* Más bold */
+    margin-top: 1.5rem; /* Margen del usuario */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Sombra general */
+    width: 100%;
+    max-width: 300px; /* Limitar ancho */
+    align-self: center; /* Centrar el botón */
+    color: white;
 }
 
-.card-button:hover {
-    background-color: var(--color-title-brown);
+.btn-en-camino {
+    background: linear-gradient(135deg, var(--color-btn-en-camino-bg) 0%, var(--color-btn-en-camino-hover) 100%); /* Gradiente verde */
+}
+
+.btn-en-camino:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px var(--color-card-shadow); /* Sombra al hover */
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4); /* Sombra verde */
 }
 
-/* Modificadores de color para los botones */
-.primary-button { /* Para "Marcar En Camino" */
-    background: var(--color-success); /* Verde fuerte */
-    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+.btn-entregado {
+    background: linear-gradient(135deg, var(--color-btn-entregado-bg) 0%, var(--color-btn-entregado-hover) 100%); /* Gradiente azul */
 }
 
-.primary-button:hover {
-    background: #229954; /* Verde un poco más oscuro */
-    box-shadow: 0 6px 12px rgba(39, 174, 96, 0.4);
+.btn-entregado:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4); /* Sombra azul */
 }
 
-.secondary-button { /* Para "Marcar Entregado" */
-    background: var(--color-subtitle-orange); /* Naranja/marrón */
-    box-shadow: 0 3px 6px rgba(141, 92, 61, 0.3);
-}
-
-.secondary-button:hover {
-    background: var(--color-title-brown); /* Marrón más oscuro */
-    box-shadow: 0 4px 8px rgba(141, 92, 61, 0.4);
-}
-
-/* --- Contenedor del estado "En Camino" con botón de entregar --- */
-.estado-en-camino-accion {
-    background-color: var(--color-estado-en-camino-bg); /* Fondo azul claro */
-    padding: 1.2rem;
-    border-radius: 8px;
-    border: 1.5px solid var(--color-estado-en-camino-border);
+.estado-en-camino-actions { /* Nuevo contenedor para mensaje y botón de entregado */
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
-    align-items: center; /* Centra los elementos */
-    margin-top: 1rem;
-    box-shadow: 0 2px 8px var(--color-general-shadow);
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--color-card-border);
+    width: 100%;
 }
 
-.en-camino-message {
-    color: var(--color-estado-en-camino-text);
-    font-weight: 500;
-    text-align: center;
+.estado-en-camino-actions .status-message {
     font-size: 1rem;
-    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--color-estado-en-camino-text);
+    text-align: center;
 }
 
-/* --- Media Queries para responsividad --- */
+.estado-entregado-final { /* Nuevo estilo para el mensaje de entregado final */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--color-estado-entregado-bg);
+    color: var(--color-estado-entregado-text);
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+}
+
+/* ========== MENSAJES (Alerts/Toasts) ========== */
+.message-box {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 2000;
+    animation: slideInTop 0.5s ease-out forwards;
+    min-width: 250px;
+    text-align: center;
+}
+
+.message-box-success {
+    background-color: var(--color-message-success-bg);
+    color: var(--color-message-success-text);
+    border: 1px solid var(--color-success);
+}
+
+.message-box-error {
+    background-color: var(--color-message-error-bg);
+    color: var(--color-message-error-text);
+    border: 1px solid var(--color-danger);
+}
+
+.message-box-info {
+    background-color: var(--color-message-info-bg);
+    color: var(--color-message-info-text);
+    border: 1px solid var(--color-confirm-ok-bg); /* Usar un color de acento para info */
+}
+
+.message-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.message-close-btn:hover {
+    opacity: 1;
+}
+
+@keyframes slideInTop {
+    from {
+        transform: translateX(-50%) translateY(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ========== MODAL DE CONFIRMACIÓN ========== */
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000; /* Mayor z-index */
+    animation: fadeInModal 0.3s ease;
+    padding: 1rem;
+}
+
+@keyframes fadeInModal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.confirm-modal {
+    background: var(--color-card-bg-light);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    border: 2px solid var(--color-card-border);
+    animation: slideUpModal 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.2) forwards;
+}
+
+@keyframes slideUpModal {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.confirm-modal p {
+    font-size: 1.1rem;
+    color: var(--color-text-brown-dark);
+    margin-bottom: 2rem;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.confirm-cancel-btn,
+.confirm-ok-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.confirm-cancel-btn {
+    background: var(--color-confirm-cancel-bg);
+    color: var(--color-confirm-cancel-text);
+}
+
+.confirm-cancel-btn:hover {
+    background: #bb9782; /* Tono ligeramente más oscuro */
+    transform: translateY(-2px);
+}
+
+.confirm-ok-btn {
+    background: linear-gradient(135deg, var(--color-confirm-ok-bg) 0%, var(--color-dark-brown) 100%);
+    color: var(--color-confirm-ok-text);
+}
+
+.confirm-ok-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(141, 92, 61, 0.3);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 992px) {
+    .pedidos-pendientes-header {
+        padding: 1rem 1.5rem;
+    }
+    .pedidos-pendientes-title {
+        font-size: 1.8rem;
+    }
+    .pedidos-pendientes-volver {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        width: 36px; /* Ajuste para consistencia */
+        height: 36px;
+    }
+    .pedidos-pendientes-loading,
+    .pedidos-pendientes-error,
+    .pedidos-pendientes-empty {
+        padding: 2rem;
+        min-height: 300px;
+    }
+    .pedidos-pendientes-loading .loading-spinner,
+    .pedidos-pendientes-error .error-icon,
+    .pedidos-pendientes-empty .empty-icon {
+        font-size: 3rem;
+    }
+    .pedidos-pendientes-error h3,
+    .pedidos-pendientes-empty h3 {
+        font-size: 1.6rem;
+    }
+    .pedidos-pendientes-loading p,
+    .pedidos-pendientes-error p,
+    .pedidos-pendientes-empty p {
+        font-size: 1rem;
+    }
+    .pedidos-pendientes-error .btn-retry {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    .pedidos-pendientes-list {
+        padding: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    .pedido-pendiente-card {
+        padding: 1.2rem;
+        border-radius: 18px;
+    }
+    .pedido-pendiente-header {
+        margin-bottom: 0.6rem;
+        padding-bottom: 0.6rem;
+    }
+    .pedido-pendiente-nombre {
+        font-size: 1.3rem;
+    }
+    .pedido-pendiente-estado {
+        font-size: 0.8rem;
+    }
+    .pedido-pendiente-info {
+        gap: 0.6rem;
+    }
+    .seccion-cliente h4,
+    .seccion-local h4,
+    .seccion-pedido h4 {
+        font-size: 1rem;
+    }
+    .info-item {
+        font-size: 0.9rem;
+    }
+    .total-price {
+        font-size: 1rem;
+    }
+    .tip-amount {
+        font-size: 0.9rem;
+    }
+    .comidas-lista {
+        margin: 0.8rem 0;
+        padding: 0.6rem;
+    }
+    .comidas-lista b {
+        font-size: 0.9rem;
+    }
+    .comida-item {
+        font-size: 0.85rem;
+    }
+    .btn-en-camino,
+    .btn-entregado {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+    }
+    .estado-en-camino-actions .status-message {
+        font-size: 0.9rem;
+    }
+    .estado-entregado-final {
+        padding: 0.8rem;
+        font-size: 1rem;
+    }
+    .message-box {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    .confirm-modal {
+        padding: 1.5rem;
+        max-width: 400px;
+    }
+    .confirm-modal p {
+        font-size: 1rem;
+    }
+    .confirm-cancel-btn,
+    .confirm-ok-btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
 @media (max-width: 768px) {
-    .pedidos-pendientes-main-content {
-        padding: 0 0.8rem;
-        margin: 1.5rem auto;
+    .pedidos-pendientes-header {
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 0.8rem 1rem;
+        border-radius: 0 0 14px 14px;
     }
-    .pedidos-grid {
-        grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
-        gap: 1rem;
+    .pedidos-pendientes-title {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
     }
-    .pedido-card {
-        padding: 1.2rem; /* Menor padding en móvil */
+    .pedidos-pendientes-volver {
+        width: 100%;
+        text-align: center;
+        padding: 0.7rem 1.2rem;
     }
-    .pedido-card h3 {
+    .pedidos-pendientes-loading,
+    .pedidos-pendientes-error,
+    .pedidos-pendientes-empty {
+        padding: 1.5rem;
+        min-height: 250px;
+    }
+    .pedidos-pendientes-loading .loading-spinner,
+    .pedidos-pendientes-error .error-icon,
+    .pedidos-pendientes-empty .empty-icon {
+        font-size: 2.5rem;
+    }
+    .pedidos-pendientes-error h3,
+    .pedidos-pendientes-empty h3 {
         font-size: 1.4rem;
     }
-    .estado {
-        font-size: 0.8rem;
-        padding: 0.3rem 0.8rem;
-    }
-    .info-section-card h4 {
-        font-size: 1rem;
-    }
-    .info-section-card p {
+    .pedidos-pendientes-loading p,
+    .pedidos-pendientes-error p,
+    .pedidos-pendientes-empty p {
         font-size: 0.9rem;
     }
-    .card-button {
-        padding: 0.8rem 1.2rem;
-        font-size: 1rem;
+    .pedidos-pendientes-error .btn-retry {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.85rem;
     }
-    .estado-en-camino-accion {
+    .pedidos-pendientes-list {
+        padding: 1rem;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .pedido-pendiente-card {
+        padding: 1rem;
+        border-radius: 15px;
+    }
+    .pedido-pendiente-header {
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    .pedido-pendiente-nombre {
+        font-size: 1.2rem;
+    }
+    .pedido-pendiente-estado {
+        font-size: 0.75rem;
+    }
+    .pedido-pendiente-info {
+        gap: 0.5rem;
+    }
+    .seccion-cliente h4,
+    .seccion-local h4,
+    .seccion-pedido h4 {
+        font-size: 0.95rem;
+    }
+    .info-item {
+        font-size: 0.85rem;
+    }
+    .total-price {
+        font-size: 0.95rem;
+    }
+    .tip-amount {
+        font-size: 0.85rem;
+    }
+    .comidas-lista {
+        margin: 0.6rem 0;
+        padding: 0.5rem;
+    }
+    .comidas-lista b {
+        font-size: 0.85rem;
+    }
+    .comida-item {
+        font-size: 0.8rem;
+    }
+    .btn-en-camino,
+    .btn-entregado {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.85rem;
+        margin-top: 1rem;
+    }
+    .estado-en-camino-actions .status-message {
+        font-size: 0.85rem;
+    }
+    .estado-entregado-final {
+        padding: 0.7rem;
+        font-size: 0.95rem;
+    }
+    .message-box {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.85rem;
+    }
+    .confirm-modal {
+        padding: 1.2rem;
+        max-width: 95%;
+    }
+    .confirm-modal p {
+        font-size: 0.9rem;
+    }
+    .confirm-cancel-btn,
+    .confirm-ok-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pedidos-pendientes-header {
+        padding: 0.6rem 0.8rem;
+        border-radius: 0 0 10px 10px;
+    }
+    .pedidos-pendientes-title {
+        font-size: 1.4rem;
+    }
+    .pedidos-pendientes-volver {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    .pedidos-pendientes-loading,
+    .pedidos-pendientes-error,
+    .pedidos-pendientes-empty {
+        padding: 1rem;
+        min-height: 200px;
+    }
+    .pedidos-pendientes-loading .loading-spinner,
+    .pedidos-pendientes-error .error-icon,
+    .pedidos-pendientes-empty .empty-icon {
+        font-size: 2rem;
+    }
+    .pedidos-pendientes-error h3,
+    .pedidos-pendientes-empty h3 {
+        font-size: 1.2rem;
+    }
+    .pedidos-pendientes-loading p,
+    .pedidos-pendientes-error p,
+    .pedidos-pendientes-empty p {
+        font-size: 0.85rem;
+    }
+    .pedidos-pendientes-error .btn-retry {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+    }
+    .pedidos-pendientes-list {
+        padding: 0.8rem;
+        gap: 0.8rem;
+    }
+    .pedido-pendiente-card {
+        padding: 0.8rem;
+        border-radius: 12px;
+    }
+    .pedido-pendiente-header {
+        margin-bottom: 0.4rem;
+        padding-bottom: 0.4rem;
+    }
+    .pedido-pendiente-nombre {
+        font-size: 1.1rem;
+    }
+    .pedido-pendiente-estado {
+        font-size: 0.7rem;
+    }
+    .pedido-pendiente-info {
+        gap: 0.4rem;
+    }
+    .seccion-cliente h4,
+    .seccion-local h4,
+    .seccion-pedido h4 {
+        font-size: 0.9rem;
+    }
+    .info-item {
+        font-size: 0.8rem;
+    }
+    .total-price {
+        font-size: 0.85rem;
+    }
+    .tip-amount {
+        font-size: 0.8rem;
+    }
+    .comidas-lista {
+        margin: 0.5rem 0;
+        padding: 0.4rem;
+    }
+    .comidas-lista b {
+        font-size: 0.8rem;
+    }
+    .comida-item {
+        font-size: 0.75rem;
+    }
+    .btn-en-camino,
+    .btn-entregado {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+        margin-top: 0.8rem;
+    }
+    .estado-en-camino-actions .status-message {
+        font-size: 0.8rem;
+    }
+    .estado-entregado-final {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+    .message-box {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+    }
+    .confirm-modal {
         padding: 1rem;
     }
-    .en-camino-message {
-        font-size: 0.9rem;
+    .confirm-modal p {
+        font-size: 0.85rem;
+    }
+    .confirm-cancel-btn,
+    .confirm-ok-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
     }
 }
