@@ -38,6 +38,14 @@ let LocatarioController = class LocatarioController {
             direccion: usuario.direccion,
         };
     }
+    async actualizarValoracion(id, body) {
+        const { nuevaValoracion } = body;
+        if (nuevaValoracion < 0 || nuevaValoracion > 5) {
+            throw new common_1.BadRequestException('Valoración debe estar entre 0 y 5');
+        }
+        const locatario = await this.locatarioService.actualizarValoracion(id, nuevaValoracion);
+        return locatario;
+    }
 };
 exports.LocatarioController = LocatarioController;
 __decorate([
@@ -53,6 +61,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], LocatarioController.prototype, "obtenerUsuarioPorId", null);
+__decorate([
+    (0, common_1.Patch)(':id/valoracion'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], LocatarioController.prototype, "actualizarValoracion", null);
 exports.LocatarioController = LocatarioController = __decorate([
     (0, common_1.Controller)('locatarios'),
     __metadata("design:paramtypes", [locatario_service_1.LocatarioService])

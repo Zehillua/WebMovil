@@ -83,9 +83,23 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Pedido.prototype, "dealer", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User' }),
-    __metadata("design:type", Object)
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Usuario' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Pedido.prototype, "repartidor", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({
+        type: {
+            _id: { type: String },
+            nombreUsuario: { type: String },
+            usuarioRepartidor: { type: String },
+            vehiculo: { type: String },
+            patente: { type: String },
+            valoracion: { type: Number, default: 0 },
+            telefono: { type: String }
+        }
+    }),
+    __metadata("design:type", Object)
+], Pedido.prototype, "datosRepartidor", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: false }),
     __metadata("design:type", Boolean)

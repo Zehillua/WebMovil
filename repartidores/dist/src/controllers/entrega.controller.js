@@ -20,13 +20,32 @@ let EntregaController = class EntregaController {
         this.entregaService = entregaService;
     }
     async registrarEntrega(entregaData) {
+        console.log('📥 Controlador: Registrando entrega');
         return this.entregaService.registrarEntrega(entregaData);
     }
     async obtenerEntregasRepartidor(repartidorId) {
-        return this.entregaService.obtenerEntregasRepartidor(repartidorId);
+        console.log(`📥 Controlador: Obteniendo entregas para repartidor ${repartidorId}`);
+        try {
+            const entregas = await this.entregaService.obtenerEntregasRepartidor(repartidorId);
+            console.log(`📤 Controlador: Devolviendo ${entregas.length} entregas`);
+            return entregas;
+        }
+        catch (error) {
+            console.error('❌ Error en controlador obtenerEntregasRepartidor:', error);
+            throw error;
+        }
     }
     async obtenerEstadisticas(repartidorId) {
-        return this.entregaService.obtenerEstadisticas(repartidorId);
+        console.log(`📊 Controlador: Obteniendo estadísticas para repartidor ${repartidorId}`);
+        try {
+            const estadisticas = await this.entregaService.obtenerEstadisticas(repartidorId);
+            console.log('📤 Controlador: Devolviendo estadísticas:', estadisticas);
+            return estadisticas;
+        }
+        catch (error) {
+            console.error('❌ Error en controlador obtenerEstadisticas:', error);
+            throw error;
+        }
     }
 };
 exports.EntregaController = EntregaController;

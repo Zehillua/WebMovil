@@ -61,12 +61,21 @@ export class Usuario extends Document {
     // Repartidor
     @Prop()
     usuarioRepartidor?: string;
+    
     @Prop()
     vehiculo?: string;
+
     @Prop()
     patente?: string;
-    @Prop()
-    valoracionRepartidor?: number;
-  }
+
+    @Prop({ default: 0, min: 0, max: 5 })
+    valoracionRepartidor?: number; //PROMEDIO ACTUAL
+
+    @Prop({ default: 0 })
+    totalValoraciones?: number; //CONTADOR DE VALORACIONES
+
+    @Prop({ default: 0 })
+    totalPuntosValoracion?: number; //SUMA TOTAL DE PUNTOS
+}
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);

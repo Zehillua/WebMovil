@@ -12,6 +12,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const stats_controller_1 = require("../controllers/stats.controller");
 const stats_service_1 = require("../services/stats.service");
 const pedido_realizado_schema_1 = require("../schemas/pedido-realizado.schema");
+const venta_reporte_schema_1 = require("../schemas/venta-reporte.schema");
 let StatsModule = class StatsModule {
 };
 exports.StatsModule = StatsModule;
@@ -19,11 +20,13 @@ exports.StatsModule = StatsModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([
-                { name: 'Usuario', schema: {} },
-                { name: 'PedidoRealizado', schema: pedido_realizado_schema_1.PedidoRealizadoSchema },
+                { name: 'Usuario', schema: {} }, // Schema simple para usuarios
+                { name: pedido_realizado_schema_1.PedidoRealizado.name, schema: pedido_realizado_schema_1.PedidoRealizadoSchema }, // ✅ CORREGIDO
+                { name: venta_reporte_schema_1.VentaReporte.name, schema: venta_reporte_schema_1.VentaReporteSchema }, // ✅ AGREGADO
             ]),
         ],
         controllers: [stats_controller_1.StatsController],
         providers: [stats_service_1.StatsService],
+        exports: [stats_service_1.StatsService], // ✅ EXPORTAR para otros módulos
     })
 ], StatsModule);

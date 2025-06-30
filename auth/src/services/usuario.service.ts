@@ -165,5 +165,32 @@ async crearUsuario(createUsuarioDto: any): Promise<Usuario> {
   async obtenerUsuarioPorId(id: string) {
     return this.usuarioModel.findById(id);
   }
+
+  async actualizarValoracion(
+    userId: string, 
+    nuevaValoracion: number, 
+    tipo: 'repartidor' | 'local'
+  ): Promise<Usuario> {
+    const usuario = await this.usuarioModel.findById(userId);
+    if (!usuario) throw new UnauthorizedException('Usuario no encontrado');
+
+    if (tipo === 'repartidor') {
+      // Calcular nuevo promedio
+      const totalActual = usuario.totalPuntosValoracion || 0;
+      const countActual = usuario.totalValoraciones || 0;
+      
+      const nuevoTotal = totalActual + nuevaValoracion;
+      const nuevoCount = countActual + 1;
+      const nuevoPromedio = nuevoTotal / nuevoCount;
+
+      usuario.valoracionRepartidor = Math.round(nuevoPromedio * 10) / 10; // Redondear a 1 decimal
+      usuario.totalValoraciones = nuevoCount;
+      usuario.totalPuntosValoracion = nuevoTotal;
+    }
+    // Agregar lógica similar para locatarios si es necesario
+
+    await usuario.save();
+    return usuario;
+  }
   
 }

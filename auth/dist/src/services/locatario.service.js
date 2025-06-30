@@ -28,6 +28,22 @@ let LocatarioService = class LocatarioService {
     async obtenerLocatarioPorId(id) {
         return this.usuarioModel.findById(id);
     }
+    async actualizarValoracion(locatarioId, nuevaValoracion) {
+        const locatario = await this.usuarioModel.findById(locatarioId);
+        if (!locatario)
+            throw new common_1.NotFoundException('Locatario no encontrado');
+        // Calcular nuevo promedio
+        const totalActual = locatario.totalPuntosValoracion || 0;
+        const countActual = locatario.totalValoraciones || 0;
+        const nuevoTotal = totalActual + nuevaValoracion;
+        const nuevoCount = countActual + 1;
+        const nuevoPromedio = nuevoTotal / nuevoCount;
+        locatario.valoracion = Math.round(nuevoPromedio * 10) / 10; // Redondear a 1 decimal
+        locatario.totalValoraciones = nuevoCount;
+        locatario.totalPuntosValoracion = nuevoTotal;
+        await locatario.save();
+        return locatario;
+    }
 };
 exports.LocatarioService = LocatarioService;
 exports.LocatarioService = LocatarioService = __decorate([

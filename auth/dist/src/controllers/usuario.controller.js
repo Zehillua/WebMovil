@@ -86,6 +86,14 @@ let UsuarioController = class UsuarioController {
             numeroCasaDepto: usuario.numeroCasaDepto,
         };
     }
+    async actualizarValoracion(id, body) {
+        const { nuevaValoracion, tipo } = body;
+        if (nuevaValoracion < 0 || nuevaValoracion > 5) {
+            throw new common_1.BadRequestException('Valoración debe estar entre 0 y 5');
+        }
+        const usuario = await this.usuarioService.actualizarValoracion(id, nuevaValoracion, tipo);
+        return usuario;
+    }
 };
 exports.UsuarioController = UsuarioController;
 __decorate([
@@ -142,6 +150,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "obtenerUsuarioPorId", null);
+__decorate([
+    (0, common_1.Patch)(':id/valoracion'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "actualizarValoracion", null);
 exports.UsuarioController = UsuarioController = __decorate([
     (0, common_1.Controller)('usuarios'),
     __metadata("design:paramtypes", [usuario_service_1.UsuarioService])

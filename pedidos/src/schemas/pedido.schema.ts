@@ -54,8 +54,30 @@ export class Pedido extends Document {
   @Prop({ default: false })
   dealer: boolean;
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
-  repartidor: ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Usuario' })
+  repartidor?: Types.ObjectId;
+
+  // ✅ AGREGAR CAMPO PARA DATOS COMPLETOS DEL REPARTIDOR:
+  @Prop({
+    type: {
+      _id: { type: String },
+      nombreUsuario: { type: String },
+      usuarioRepartidor: { type: String },
+      vehiculo: { type: String },
+      patente: { type: String },
+      valoracion: { type: Number, default: 0 },
+      telefono: { type: String }
+    }
+  })
+  datosRepartidor?: {
+    _id: string;
+    nombreUsuario: string;
+    usuarioRepartidor: string;
+    vehiculo: string;
+    patente: string;
+    valoracion: number;
+    telefono: string;
+  };
 
   @Prop({ default: false })
   pedidoEntregado: boolean;

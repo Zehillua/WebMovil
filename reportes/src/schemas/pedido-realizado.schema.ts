@@ -1,27 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-
-// ✅ DEFINIR INTERFACES SEPARADAS PARA LOS OBJETOS ANIDADOS
-interface UsuarioInfo {
-  id: Types.ObjectId;
-  nombre: string;
-  apellido: string;
-}
-
-interface LocalInfo {
-  id: Types.ObjectId;
-  nombreLocal: string;
-}
-
-interface RepartidorInfo {
-  id: Types.ObjectId;
-  nombre: string;
-}
-
-interface ComidaInfo {
-  nombre: string;
-  cantidad: number;
-}
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class PedidoRealizado extends Document {
@@ -40,46 +18,30 @@ export class PedidoRealizado extends Document {
   @Prop({ type: Date, default: Date.now })
   fechaRegistro: Date;
 
-  // ✅ ESPECIFICAR TIPO EXPLÍCITAMENTE
-  @Prop({ 
-    type: {
-      id: { type: Types.ObjectId, required: true },
-      nombre: { type: String, required: true },
-      apellido: { type: String, required: true }
-    },
-    required: true
-  })
-  usuario: UsuarioInfo;
+  @Prop({ type: MongooseSchema.Types.Mixed, required: true })
+  usuario: {
+    id: Types.ObjectId;
+    nombre: string;
+    apellido: string;
+  };
 
-  // ✅ ESPECIFICAR TIPO EXPLÍCITAMENTE
-  @Prop({ 
-    type: {
-      id: { type: Types.ObjectId, required: true },
-      nombreLocal: { type: String, required: true }
-    },
-    required: true
-  })
-  local: LocalInfo;
+  @Prop({ type: MongooseSchema.Types.Mixed, required: true })
+  local: {
+    id: Types.ObjectId;
+    nombreLocal: string;
+  };
 
-  // ✅ ESPECIFICAR TIPO EXPLÍCITAMENTE
-  @Prop({ 
-    type: {
-      id: { type: Types.ObjectId, required: true },
-      nombre: { type: String, required: true }
-    },
-    required: true
-  })
-  repartidor: RepartidorInfo;
+  @Prop({ type: MongooseSchema.Types.Mixed, required: true })
+  repartidor: {
+    id: Types.ObjectId;
+    nombre: string;
+  };
 
-  // ✅ ESPECIFICAR TIPO EXPLÍCITAMENTE PARA ARRAY
-  @Prop({ 
-    type: [{
-      nombre: { type: String, required: true },
-      cantidad: { type: Number, required: true }
-    }],
-    default: []
-  })
-  comidas: ComidaInfo[];
+  @Prop({ type: [MongooseSchema.Types.Mixed], default: [] })
+  comidas: Array<{
+    nombre: string;
+    cantidad: number;
+  }>;
 
   @Prop({ default: 0 })
   propina: number;

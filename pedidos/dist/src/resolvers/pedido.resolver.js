@@ -15,7 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PedidoEnCaminoResolver = exports.PedidoPendienteRepartidorResolver = exports.PedidoRepartidorResolver = exports.PedidoResolver = void 0;
+exports.RegistroMultipleBDResolver = exports.PedidoEnCaminoResolver = exports.PedidoPendienteRepartidorResolver = exports.PedidoRepartidorResolver = exports.PedidoResolver = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const common_1 = require("@nestjs/common");
 const gql_auth_guard_1 = require("../guards/gql-auth.guard");
@@ -38,7 +38,7 @@ let PedidoResolver = class PedidoResolver {
         console.log(`📊 Retornando ${pedidos.length} pedidos al frontend`);
         return pedidos;
     }
-    // Resolver para local (existente)
+    // ✅ CORREGIR MANEJO DE ERRORES:
     async local(pedido) {
         try {
             const res = await axios_1.default.get(`http://localhost:3000/locatarios/${pedido.idLocal}`);
@@ -50,7 +50,8 @@ let PedidoResolver = class PedidoResolver {
                     : (res.data.direccion || '')
             };
         }
-        catch (e) {
+        catch (error) { // ✅ ESPECIFICAR TIPO
+            console.error('Error obteniendo datos del local:', error instanceof Error ? error.message : error);
             return {
                 _id: pedido.idLocal,
                 nombreLocal: 'Local no disponible',
@@ -58,14 +59,12 @@ let PedidoResolver = class PedidoResolver {
             };
         }
     }
-    // NUEVO RESOLVER para datos del repartidor:
+    // ✅ CORREGIR MANEJO DE ERRORES:
     async repartidor(pedido) {
-        // Solo si el pedido tiene repartidor asignado
         if (!pedido.repartidor || !pedido.dealer) {
             return null;
         }
         try {
-            // Llamar al microservicio de usuarios para obtener datos del repartidor
             const res = await axios_1.default.get(`http://localhost:3000/usuarios/${pedido.repartidor}`);
             return {
                 _id: pedido.repartidor,
@@ -76,8 +75,8 @@ let PedidoResolver = class PedidoResolver {
                 telefono: res.data.telefono || ''
             };
         }
-        catch (e) {
-            console.error('Error obteniendo datos del repartidor:', e);
+        catch (error) { // ✅ ESPECIFICAR TIPO
+            console.error('Error obteniendo datos del repartidor:', error instanceof Error ? error.message : error);
             return {
                 _id: pedido.repartidor,
                 usuarioRepartidor: 'Repartidor no disponible',
@@ -166,11 +165,11 @@ exports.PedidoResolver = PedidoResolver = __decorate([
     (0, graphql_1.Resolver)(() => pedido_types_1.PedidoType),
     __metadata("design:paramtypes", [pedido_service_1.PedidoService])
 ], PedidoResolver);
-// Resolver para repartidor (sin cambios)
 let PedidoRepartidorResolver = class PedidoRepartidorResolver {
     constructor(pedidoService) {
         this.pedidoService = pedidoService;
     }
+    // ✅ CORREGIR MANEJO DE ERRORES:
     async usuario(pedido) {
         try {
             const res = await axios_1.default.get(`http://localhost:3000/usuarios/${pedido.idComprador}`);
@@ -185,7 +184,8 @@ let PedidoRepartidorResolver = class PedidoRepartidorResolver {
                 numeroCasaDepto: res.data.numeroCasaDepto || ''
             };
         }
-        catch (e) {
+        catch (error) { // ✅ ESPECIFICAR TIPO
+            console.error('Error obteniendo datos del usuario:', error instanceof Error ? error.message : error);
             return {
                 _id: pedido.idComprador,
                 nombre: 'Usuario no disponible',
@@ -196,6 +196,7 @@ let PedidoRepartidorResolver = class PedidoRepartidorResolver {
             };
         }
     }
+    // ✅ CORREGIR MANEJO DE ERRORES:
     async local(pedido) {
         try {
             const res = await axios_1.default.get(`http://localhost:3000/locatarios/${pedido.idLocal}`);
@@ -207,7 +208,8 @@ let PedidoRepartidorResolver = class PedidoRepartidorResolver {
                     : (res.data.direccion || '')
             };
         }
-        catch (e) {
+        catch (error) { // ✅ ESPECIFICAR TIPO
+            console.error('Error obteniendo datos del local:', error instanceof Error ? error.message : error);
             return {
                 _id: pedido.idLocal,
                 nombreLocal: 'Local no disponible',
@@ -239,17 +241,15 @@ let PedidoPendienteRepartidorResolver = class PedidoPendienteRepartidorResolver 
     constructor(pedidoService) {
         this.pedidoService = pedidoService;
     }
-    // NUEVA QUERY para pedidos pendientes del repartidor:
     async pedidosPendientesRepartidor(idRepartidor) {
         console.log(`🚀 GraphQL Query: pedidosPendientesRepartidor para ${idRepartidor}`);
         return this.pedidoService.obtenerPedidosPendientesRepartidorGraphQL(idRepartidor);
     }
-    // NUEVA MUTATION para marcar en camino:
     async marcarPedidoEnCamino(id) {
         console.log(`🚚 GraphQL Mutation: marcarPedidoEnCamino ${id}`);
         return this.pedidoService.marcarEnCamino(id);
     }
-    // Resolver para obtener datos del usuario
+    // ✅ CORREGIR MANEJO DE ERRORES:
     async usuario(pedido) {
         try {
             const res = await axios_1.default.get(`http://localhost:3000/usuarios/${pedido.idComprador}`);
@@ -264,7 +264,8 @@ let PedidoPendienteRepartidorResolver = class PedidoPendienteRepartidorResolver 
                 numeroCasaDepto: res.data.numeroCasaDepto || ''
             };
         }
-        catch (e) {
+        catch (error) { // ✅ ESPECIFICAR TIPO
+            console.error('Error obteniendo datos del usuario:', error instanceof Error ? error.message : error);
             return {
                 _id: pedido.idComprador,
                 nombre: 'Usuario no disponible',
@@ -275,7 +276,7 @@ let PedidoPendienteRepartidorResolver = class PedidoPendienteRepartidorResolver 
             };
         }
     }
-    // Resolver para obtener datos del local
+    // ✅ CORREGIR MANEJO DE ERRORES:
     async local(pedido) {
         try {
             const res = await axios_1.default.get(`http://localhost:3000/locatarios/${pedido.idLocal}`);
@@ -287,7 +288,8 @@ let PedidoPendienteRepartidorResolver = class PedidoPendienteRepartidorResolver 
                     : (res.data.direccion || '')
             };
         }
-        catch (e) {
+        catch (error) { // ✅ ESPECIFICAR TIPO
+            console.error('Error obteniendo datos del local:', error instanceof Error ? error.message : error);
             return {
                 _id: pedido.idLocal,
                 nombreLocal: 'Local no disponible',
@@ -335,17 +337,15 @@ let PedidoEnCaminoResolver = class PedidoEnCaminoResolver {
     constructor(pedidoService) {
         this.pedidoService = pedidoService;
     }
-    // NUEVA QUERY para pedidos en camino del repartidor:
     async pedidosEnCaminoRepartidor(idRepartidor) {
         console.log(`🚀 GraphQL Query: pedidosEnCaminoRepartidor para ${idRepartidor}`);
         return this.pedidoService.obtenerPedidosEnCaminoRepartidorGraphQL(idRepartidor);
     }
-    // NUEVA MUTATION para entregar pedido con código:
     async entregarPedido(id, codigoPedido) {
         console.log(`📦 GraphQL Mutation: entregarPedido ${id} con código ${codigoPedido}`);
         return this.pedidoService.entregarPedido(id, codigoPedido);
     }
-    // Resolver para obtener datos del usuario
+    // ✅ CORREGIR MANEJO DE ERRORES:
     async usuario(pedido) {
         try {
             const res = await axios_1.default.get(`http://localhost:3000/usuarios/${pedido.idComprador}`);
@@ -360,7 +360,8 @@ let PedidoEnCaminoResolver = class PedidoEnCaminoResolver {
                 numeroCasaDepto: res.data.numeroCasaDepto || ''
             };
         }
-        catch (e) {
+        catch (error) { // ✅ ESPECIFICAR TIPO
+            console.error('Error obteniendo datos del usuario:', error instanceof Error ? error.message : error);
             return {
                 _id: pedido.idComprador,
                 nombre: 'Usuario no disponible',
@@ -371,7 +372,7 @@ let PedidoEnCaminoResolver = class PedidoEnCaminoResolver {
             };
         }
     }
-    // Resolver para obtener datos del local
+    // ✅ CORREGIR MANEJO DE ERRORES:
     async local(pedido) {
         try {
             const res = await axios_1.default.get(`http://localhost:3000/locatarios/${pedido.idLocal}`);
@@ -383,7 +384,8 @@ let PedidoEnCaminoResolver = class PedidoEnCaminoResolver {
                     : (res.data.direccion || '')
             };
         }
-        catch (e) {
+        catch (error) { // ✅ ESPECIFICAR TIPO
+            console.error('Error obteniendo datos del local:', error instanceof Error ? error.message : error);
             return {
                 _id: pedido.idLocal,
                 nombreLocal: 'Local no disponible',
@@ -428,3 +430,32 @@ exports.PedidoEnCaminoResolver = PedidoEnCaminoResolver = __decorate([
     (0, graphql_1.Resolver)(() => pedido_types_1.PedidoEnCaminoType),
     __metadata("design:paramtypes", [pedido_service_1.PedidoService])
 ], PedidoEnCaminoResolver);
+// ✅ AGREGAR EL NUEVO RESOLVER PARA MÚLTIPLES BD:
+let RegistroMultipleBDResolver = class RegistroMultipleBDResolver {
+    constructor(pedidoService) {
+        this.pedidoService = pedidoService;
+    }
+    async registrarPedidoEnMultiplesBD(pedidoId) {
+        console.log(`📝 GraphQL: Registrando pedido ${pedidoId} en múltiples BD`);
+        try {
+            await this.pedidoService.guardarPedidoEnMultiplesBDPublico(pedidoId);
+            return 'Pedido registrado exitosamente en todas las bases de datos';
+        }
+        catch (error) { // ✅ ESPECIFICAR TIPO
+            console.error('Error en registro múltiple:', error instanceof Error ? error.message : error);
+            throw new Error(`Error registrando pedido: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+        }
+    }
+};
+exports.RegistroMultipleBDResolver = RegistroMultipleBDResolver;
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    __param(0, (0, graphql_1.Args)('pedidoId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], RegistroMultipleBDResolver.prototype, "registrarPedidoEnMultiplesBD", null);
+exports.RegistroMultipleBDResolver = RegistroMultipleBDResolver = __decorate([
+    (0, graphql_1.Resolver)(),
+    __metadata("design:paramtypes", [pedido_service_1.PedidoService])
+], RegistroMultipleBDResolver);

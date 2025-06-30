@@ -38,7 +38,7 @@ export class PedidoResolver {
     return pedidos;
   }
 
-  // Resolver para local (existente)
+  // ✅ CORREGIR MANEJO DE ERRORES:
   @ResolveField(() => LocalType)
   async local(@Parent() pedido: any): Promise<LocalType> {
     try {
@@ -50,7 +50,8 @@ export class PedidoResolver {
           ? res.data.direccion.join(', ') 
           : (res.data.direccion || '')
       };
-    } catch (e) {
+    } catch (error: unknown) { // ✅ ESPECIFICAR TIPO
+      console.error('Error obteniendo datos del local:', error instanceof Error ? error.message : error);
       return {
         _id: pedido.idLocal,
         nombreLocal: 'Local no disponible',
@@ -59,16 +60,14 @@ export class PedidoResolver {
     }
   }
 
-  // NUEVO RESOLVER para datos del repartidor:
+  // ✅ CORREGIR MANEJO DE ERRORES:
   @ResolveField(() => RepartidorType, { nullable: true })
   async repartidor(@Parent() pedido: any): Promise<RepartidorType | null> {
-    // Solo si el pedido tiene repartidor asignado
     if (!pedido.repartidor || !pedido.dealer) {
       return null;
     }
 
     try {
-      // Llamar al microservicio de usuarios para obtener datos del repartidor
       const res = await axios.get(`http://localhost:3000/usuarios/${pedido.repartidor}`);
       return {
         _id: pedido.repartidor,
@@ -78,8 +77,8 @@ export class PedidoResolver {
         valoracion: res.data.valoracion || 0,
         telefono: res.data.telefono || ''
       };
-    } catch (e) {
-      console.error('Error obteniendo datos del repartidor:', e);
+    } catch (error: unknown) { // ✅ ESPECIFICAR TIPO
+      console.error('Error obteniendo datos del repartidor:', error instanceof Error ? error.message : error);
       return {
         _id: pedido.repartidor,
         usuarioRepartidor: 'Repartidor no disponible',
@@ -114,11 +113,11 @@ export class PedidoResolver {
   }
 }
 
-// Resolver para repartidor (sin cambios)
 @Resolver(() => PedidoRepartidorType)
 export class PedidoRepartidorResolver {
   constructor(private readonly pedidoService: PedidoService) {}
 
+  // ✅ CORREGIR MANEJO DE ERRORES:
   @ResolveField(() => UsuarioType)
   async usuario(@Parent() pedido: any): Promise<UsuarioType> {
     try {
@@ -133,7 +132,8 @@ export class PedidoRepartidorResolver {
           : (res.data.direccion || ''),
         numeroCasaDepto: res.data.numeroCasaDepto || ''
       };
-    } catch (e) {
+    } catch (error: unknown) { // ✅ ESPECIFICAR TIPO
+      console.error('Error obteniendo datos del usuario:', error instanceof Error ? error.message : error);
       return {
         _id: pedido.idComprador,
         nombre: 'Usuario no disponible',
@@ -145,6 +145,7 @@ export class PedidoRepartidorResolver {
     }
   }
 
+  // ✅ CORREGIR MANEJO DE ERRORES:
   @ResolveField(() => LocalType)
   async local(@Parent() pedido: any): Promise<LocalType> {
     try {
@@ -156,7 +157,8 @@ export class PedidoRepartidorResolver {
           ? res.data.direccion.join(', ') 
           : (res.data.direccion || '')
       };
-    } catch (e) {
+    } catch (error: unknown) { // ✅ ESPECIFICAR TIPO
+      console.error('Error obteniendo datos del local:', error instanceof Error ? error.message : error);
       return {
         _id: pedido.idLocal,
         nombreLocal: 'Local no disponible',
@@ -166,27 +168,25 @@ export class PedidoRepartidorResolver {
   }
 }
 
-  @Resolver(() => PedidoPendienteRepartidorType)
-  export class PedidoPendienteRepartidorResolver {
-    constructor(private readonly pedidoService: PedidoService) {}
+@Resolver(() => PedidoPendienteRepartidorType)
+export class PedidoPendienteRepartidorResolver {
+  constructor(private readonly pedidoService: PedidoService) {}
 
-    // NUEVA QUERY para pedidos pendientes del repartidor:
-    @UseGuards(GqlAuthGuard)
-    @Query(() => [PedidoPendienteRepartidorType])
-    async pedidosPendientesRepartidor(@Args('idRepartidor') idRepartidor: string): Promise<any[]> {
-      console.log(`🚀 GraphQL Query: pedidosPendientesRepartidor para ${idRepartidor}`);
-      return this.pedidoService.obtenerPedidosPendientesRepartidorGraphQL(idRepartidor);
-    }
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [PedidoPendienteRepartidorType])
+  async pedidosPendientesRepartidor(@Args('idRepartidor') idRepartidor: string): Promise<any[]> {
+    console.log(`🚀 GraphQL Query: pedidosPendientesRepartidor para ${idRepartidor}`);
+    return this.pedidoService.obtenerPedidosPendientesRepartidorGraphQL(idRepartidor);
+  }
 
-    // NUEVA MUTATION para marcar en camino:
-    @UseGuards(GqlAuthGuard)
-    @Mutation(() => PedidoPendienteRepartidorType)
-    async marcarPedidoEnCamino(@Args('id') id: string): Promise<any> {
-      console.log(`🚚 GraphQL Mutation: marcarPedidoEnCamino ${id}`);
-      return this.pedidoService.marcarEnCamino(id);
-    }
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => PedidoPendienteRepartidorType)
+  async marcarPedidoEnCamino(@Args('id') id: string): Promise<any> {
+    console.log(`🚚 GraphQL Mutation: marcarPedidoEnCamino ${id}`);
+    return this.pedidoService.marcarEnCamino(id);
+  }
 
-  // Resolver para obtener datos del usuario
+  // ✅ CORREGIR MANEJO DE ERRORES:
   @ResolveField(() => UsuarioType)
   async usuario(@Parent() pedido: any): Promise<UsuarioType> {
     try {
@@ -201,7 +201,8 @@ export class PedidoRepartidorResolver {
           : (res.data.direccion || ''),
         numeroCasaDepto: res.data.numeroCasaDepto || ''
       };
-    } catch (e) {
+    } catch (error: unknown) { // ✅ ESPECIFICAR TIPO
+      console.error('Error obteniendo datos del usuario:', error instanceof Error ? error.message : error);
       return {
         _id: pedido.idComprador,
         nombre: 'Usuario no disponible',
@@ -213,7 +214,7 @@ export class PedidoRepartidorResolver {
     }
   }
 
-  // Resolver para obtener datos del local
+  // ✅ CORREGIR MANEJO DE ERRORES:
   @ResolveField(() => LocalType)
   async local(@Parent() pedido: any): Promise<LocalType> {
     try {
@@ -225,7 +226,8 @@ export class PedidoRepartidorResolver {
           ? res.data.direccion.join(', ') 
           : (res.data.direccion || '')
       };
-    } catch (e) {
+    } catch (error: unknown) { // ✅ ESPECIFICAR TIPO
+      console.error('Error obteniendo datos del local:', error instanceof Error ? error.message : error);
       return {
         _id: pedido.idLocal,
         nombreLocal: 'Local no disponible',
@@ -233,15 +235,12 @@ export class PedidoRepartidorResolver {
       };
     }
   }
-
-  
 }
 
 @Resolver(() => PedidoEnCaminoType)
 export class PedidoEnCaminoResolver {
   constructor(private readonly pedidoService: PedidoService) {}
 
-  // NUEVA QUERY para pedidos en camino del repartidor:
   @UseGuards(GqlAuthGuard)
   @Query(() => [PedidoEnCaminoType])
   async pedidosEnCaminoRepartidor(@Args('idRepartidor') idRepartidor: string): Promise<any[]> {
@@ -249,7 +248,6 @@ export class PedidoEnCaminoResolver {
     return this.pedidoService.obtenerPedidosEnCaminoRepartidorGraphQL(idRepartidor);
   }
 
-  // NUEVA MUTATION para entregar pedido con código:
   @UseGuards(GqlAuthGuard)
   @Mutation(() => PedidoEnCaminoType)
   async entregarPedido(
@@ -260,7 +258,7 @@ export class PedidoEnCaminoResolver {
     return this.pedidoService.entregarPedido(id, codigoPedido);
   }
 
-  // Resolver para obtener datos del usuario
+  // ✅ CORREGIR MANEJO DE ERRORES:
   @ResolveField(() => UsuarioType)
   async usuario(@Parent() pedido: any): Promise<UsuarioType> {
     try {
@@ -275,7 +273,8 @@ export class PedidoEnCaminoResolver {
           : (res.data.direccion || ''),
         numeroCasaDepto: res.data.numeroCasaDepto || ''
       };
-    } catch (e) {
+    } catch (error: unknown) { // ✅ ESPECIFICAR TIPO
+      console.error('Error obteniendo datos del usuario:', error instanceof Error ? error.message : error);
       return {
         _id: pedido.idComprador,
         nombre: 'Usuario no disponible',
@@ -287,7 +286,7 @@ export class PedidoEnCaminoResolver {
     }
   }
 
-  // Resolver para obtener datos del local
+  // ✅ CORREGIR MANEJO DE ERRORES:
   @ResolveField(() => LocalType)
   async local(@Parent() pedido: any): Promise<LocalType> {
     try {
@@ -299,12 +298,34 @@ export class PedidoEnCaminoResolver {
           ? res.data.direccion.join(', ') 
           : (res.data.direccion || '')
       };
-    } catch (e) {
+    } catch (error: unknown) { // ✅ ESPECIFICAR TIPO
+      console.error('Error obteniendo datos del local:', error instanceof Error ? error.message : error);
       return {
         _id: pedido.idLocal,
         nombreLocal: 'Local no disponible',
         direccion: 'Dirección no disponible'
       };
+    }
+  }
+}
+
+// ✅ AGREGAR EL NUEVO RESOLVER PARA MÚLTIPLES BD:
+@Resolver()
+export class RegistroMultipleBDResolver {
+  constructor(private readonly pedidoService: PedidoService) {}
+
+  @Mutation(() => String)
+  async registrarPedidoEnMultiplesBD(
+    @Args('pedidoId') pedidoId: string
+  ): Promise<string> {
+    console.log(`📝 GraphQL: Registrando pedido ${pedidoId} en múltiples BD`);
+    
+    try {
+      await this.pedidoService.guardarPedidoEnMultiplesBDPublico(pedidoId);
+      return 'Pedido registrado exitosamente en todas las bases de datos';
+    } catch (error: unknown) { // ✅ ESPECIFICAR TIPO
+      console.error('Error en registro múltiple:', error instanceof Error ? error.message : error);
+      throw new Error(`Error registrando pedido: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   }
 }

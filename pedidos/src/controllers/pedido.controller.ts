@@ -79,4 +79,41 @@ export class PedidoController {
   async marcarEntregado(@Param('id') id: string) {
     return this.pedidoService.marcarEntregado(id);
   }
+
+ @Get('admin/migrar-datos-repartidor')
+  async migrarDatosRepartidor() {
+    await this.pedidoService.migrarDatosRepartidorExistentes();
+    return { 
+      message: 'Migración de datos de repartidores completada',
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  // ✅ ENDPOINT PARA VALORAR PEDIDO REALIZADO:
+  @Post('realizado/:id/valorar')
+  async valorarPedidoRealizado(
+    @Param('id') id: string,
+    @Body() valoraciones: {
+      valoracionPedido: number;
+      valoracionDelivery: number;
+      valoracionLocal: number;
+    }
+  ) {
+    return this.pedidoService.valorarPedidoRealizado(id, valoraciones);
+  }
+
+  // ✅ ENDPOINT PARA OBTENER PEDIDOS REALIZADOS:
+  @Get('usuario/:idUsuario/realizados')
+  async obtenerPedidosRealizadosPorUsuario(@Param('idUsuario') idUsuario: string) {
+    return this.pedidoService.obtenerPedidosRealizadosPorUsuario(idUsuario);
+  }
+
+  // ✅ ENDPOINT PARA ENTREGAR PEDIDO CON CÓDIGO:
+  @Post(':id/entregar')
+  async entregarPedido(
+    @Param('id') id: string,
+    @Body() body: { codigoPedido: number }
+  ) {
+    return this.pedidoService.entregarPedido(id, body.codigoPedido);
+  }
 }

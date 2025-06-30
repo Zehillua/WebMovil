@@ -15,11 +15,11 @@ interface LocalInfo {
 }
 
 @Schema({ timestamps: true })
-export class Entrega extends Document {
-  @Prop({ type: Types.ObjectId, required: true })
+export class Entrega {
+  @Prop({ required: true, type: Types.ObjectId })
   repartidorId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ required: true, type: Types.ObjectId })
   pedidoId: Types.ObjectId;
 
   @Prop({ required: true })
@@ -31,8 +31,18 @@ export class Entrega extends Document {
   @Prop({ default: 0 })
   propina: number;
 
-  @Prop({ type: Date, default: Date.now })
+  @Prop({ required: true })
   fechaEntrega: Date;
+
+  // ✅ NUEVOS CAMPOS PARA VALORACIONES:
+  @Prop({ default: 0, min: 0, max: 5 })
+  valoracionRecibida: number;
+
+  @Prop()
+  fechaValoracion?: Date;
+
+  @Prop({ default: false })
+  valoracionRegistrada: boolean;
 
   // ✅ ESPECIFICAR TIPO EXPLÍCITAMENTE
   @Prop({ 

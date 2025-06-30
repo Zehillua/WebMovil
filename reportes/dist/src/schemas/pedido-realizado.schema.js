@@ -36,44 +36,19 @@ __decorate([
     __metadata("design:type", Date)
 ], PedidoRealizado.prototype, "fechaRegistro", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({
-        type: {
-            id: { type: mongoose_2.Types.ObjectId, required: true },
-            nombre: { type: String, required: true },
-            apellido: { type: String, required: true }
-        },
-        required: true
-    }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.Mixed, required: true }),
     __metadata("design:type", Object)
 ], PedidoRealizado.prototype, "usuario", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({
-        type: {
-            id: { type: mongoose_2.Types.ObjectId, required: true },
-            nombreLocal: { type: String, required: true }
-        },
-        required: true
-    }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.Mixed, required: true }),
     __metadata("design:type", Object)
 ], PedidoRealizado.prototype, "local", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({
-        type: {
-            id: { type: mongoose_2.Types.ObjectId, required: true },
-            nombre: { type: String, required: true }
-        },
-        required: true
-    }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.Mixed, required: true }),
     __metadata("design:type", Object)
 ], PedidoRealizado.prototype, "repartidor", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({
-        type: [{
-                nombre: { type: String, required: true },
-                cantidad: { type: Number, required: true }
-            }],
-        default: []
-    }),
+    (0, mongoose_1.Prop)({ type: [mongoose_2.Schema.Types.Mixed], default: [] }),
     __metadata("design:type", Array)
 ], PedidoRealizado.prototype, "comidas", void 0);
 __decorate([

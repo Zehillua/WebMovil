@@ -16,10 +16,13 @@ exports.StatsService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("mongoose");
 const mongoose_2 = require("@nestjs/mongoose");
+const pedido_realizado_schema_1 = require("../schemas/pedido-realizado.schema");
+const venta_reporte_schema_1 = require("../schemas/venta-reporte.schema");
 let StatsService = class StatsService {
-    constructor(usuarioModel, pedidoRealizadoModel) {
+    constructor(usuarioModel, pedidoRealizadoModel, ventaReporteModel) {
         this.usuarioModel = usuarioModel;
         this.pedidoRealizadoModel = pedidoRealizadoModel;
+        this.ventaReporteModel = ventaReporteModel;
     }
     // ========== MÉTODOS PARA PEDIDOS REALIZADOS ==========
     async registrarPedidoRealizado(pedidoData) {
@@ -53,7 +56,6 @@ let StatsService = class StatsService {
     }
     async obtenerPedidosRealizados(filtros) {
         const query = {};
-        // Filtros opcionales
         if (filtros?.fechaInicio && filtros?.fechaFin) {
             query['fechaEntrega'] = {
                 $gte: new Date(filtros.fechaInicio),
@@ -71,14 +73,62 @@ let StatsService = class StatsService {
             .sort({ fechaEntrega: -1 })
             .exec();
     }
+    // ========== MÉTODOS PARA VENTAS REPORTE ==========
+    async registrarVentaReporte(ventaData) {
+        console.log('📊 Registrando venta en reportes:', ventaData.pedidoId);
+        const venta = new this.ventaReporteModel({
+            pedidoId: ventaData.pedidoId,
+            nombrePedido: ventaData.nombrePedido,
+            precio: ventaData.precio,
+            fechaVenta: ventaData.fechaVenta,
+            usuario: {
+                id: ventaData.usuario.id,
+                nombre: ventaData.usuario.nombre,
+                apellido: ventaData.usuario.apellido
+            },
+            local: {
+                id: ventaData.local.id,
+                nombreLocal: ventaData.local.nombreLocal
+            },
+            repartidor: {
+                id: ventaData.repartidor.id,
+                nombre: ventaData.repartidor.nombre
+            },
+            comidas: ventaData.comidas || [],
+            esDelivery: ventaData.esDelivery || false,
+            propina: ventaData.propina || 0,
+            totalConPropina: ventaData.precio + (ventaData.propina || 0),
+            fechaRegistro: new Date()
+        });
+        const ventaGuardada = await venta.save();
+        console.log('✅ Venta registrada en reportes');
+        return ventaGuardada;
+    }
+    async obtenerVentasReporte(filtros) {
+        const query = {};
+        if (filtros?.fechaInicio && filtros?.fechaFin) {
+            query['fechaVenta'] = {
+                $gte: new Date(filtros.fechaInicio),
+                $lte: new Date(filtros.fechaFin)
+            };
+        }
+        if (filtros?.localId) {
+            query['local.id'] = filtros.localId;
+        }
+        return this.ventaReporteModel
+            .find(query)
+            .sort({ fechaVenta: -1 })
+            .exec();
+    }
     // ========== ESTADÍSTICAS GENERALES ==========
     async obtenerEstadisticasGenerales() {
+        // Usar pedidos realizados para estadísticas principales
         const pedidos = await this.pedidoRealizadoModel.find().exec();
         const totalPedidos = pedidos.length;
         const totalVentas = pedidos.reduce((sum, p) => sum + p.precio, 0);
         const totalPropinas = pedidos.reduce((sum, p) => sum + (p.propina || 0), 0);
         const totalCompleto = totalVentas + totalPropinas;
-        // Agrupar por local - ✅ CON TIPOS ESPECÍFICOS
+        // Agrupar por local
         const ventasPorLocalMap = pedidos.reduce((acc, pedido) => {
             const localId = pedido.local.id.toString();
             if (!acc[localId]) {
@@ -94,7 +144,7 @@ let StatsService = class StatsService {
             acc[localId].totalPropinas += (pedido.propina || 0);
             return acc;
         }, {});
-        // Agrupar por repartidor - ✅ CON TIPOS ESPECÍFICOS
+        // Agrupar por repartidor
         const entregasPorRepartidorMap = pedidos.reduce((acc, pedido) => {
             const repartidorId = pedido.repartidor.id.toString();
             if (!acc[repartidorId]) {
@@ -129,7 +179,7 @@ let StatsService = class StatsService {
             }
         })
             .exec();
-        // Agrupar por día - ✅ CON TIPOS ESPECÍFICOS
+        // Agrupar por día
         const ventasPorDiaMap = pedidos.reduce((acc, pedido) => {
             const fecha = new Date(pedido.fechaEntrega).toISOString().split('T')[0];
             if (!acc[fecha]) {
@@ -235,7 +285,7 @@ let StatsService = class StatsService {
             .sort({ fechaEntrega: -1 })
             .exec();
     }
-    // ========== MÉTODO DE LIMPIEZA (OPCIONAL) ==========
+    // ========== MÉTODO DE LIMPIEZA ==========
     async limpiarPedidosAntiguos(diasAntiguedad = 365) {
         const fechaLimite = new Date();
         fechaLimite.setDate(fechaLimite.getDate() - diasAntiguedad);
@@ -250,7 +300,9 @@ exports.StatsService = StatsService;
 exports.StatsService = StatsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_2.InjectModel)('Usuario')),
-    __param(1, (0, mongoose_2.InjectModel)('PedidoRealizado')),
+    __param(1, (0, mongoose_2.InjectModel)(pedido_realizado_schema_1.PedidoRealizado.name)),
+    __param(2, (0, mongoose_2.InjectModel)(venta_reporte_schema_1.VentaReporte.name)),
     __metadata("design:paramtypes", [mongoose_1.Model,
+        mongoose_1.Model,
         mongoose_1.Model])
 ], StatsService);

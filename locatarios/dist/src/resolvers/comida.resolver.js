@@ -18,7 +18,7 @@ const common_1 = require("@nestjs/common");
 const gql_auth_guard_1 = require("../guards/gql-auth.guard");
 const comida_input_1 = require("../dto/comida.input");
 const comida_service_1 = require("../services/comida.service");
-const comida_type_1 = require("../dto/comida.type"); // <-- Asegúrate de tener este archivo
+const comida_type_1 = require("../types/comida.type"); // <-- Asegúrate de tener este archivo
 let ComidaResolver = class ComidaResolver {
     constructor(comidaService) {
         this.comidaService = comidaService;

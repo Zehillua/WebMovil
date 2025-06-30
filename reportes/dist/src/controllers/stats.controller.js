@@ -26,6 +26,13 @@ let StatsController = class StatsController {
     async obtenerPedidosRealizados(filtros) {
         return this.statsService.obtenerPedidosRealizados(filtros);
     }
+    // ========== ENDPOINTS PARA VENTAS REPORTE ==========
+    async registrarVentaReporte(ventaData) {
+        return this.statsService.registrarVentaReporte(ventaData);
+    }
+    async obtenerVentasReporte(filtros) {
+        return this.statsService.obtenerVentasReporte(filtros);
+    }
     // ========== ENDPOINTS DE ESTADÍSTICAS ==========
     async obtenerEstadisticasGenerales() {
         return this.statsService.obtenerEstadisticasGenerales();
@@ -75,6 +82,20 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], StatsController.prototype, "obtenerPedidosRealizados", null);
+__decorate([
+    (0, common_1.Post)('venta-realizada'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "registrarVentaReporte", null);
+__decorate([
+    (0, common_1.Get)('ventas-realizadas'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "obtenerVentasReporte", null);
 __decorate([
     (0, common_1.Get)('generales'),
     __metadata("design:type", Function),

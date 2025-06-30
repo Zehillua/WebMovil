@@ -12,15 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EntregaSchema = exports.Entrega = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-let Entrega = class Entrega extends mongoose_2.Document {
+let Entrega = class Entrega {
 };
 exports.Entrega = Entrega;
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true }),
+    (0, mongoose_1.Prop)({ required: true, type: mongoose_2.Types.ObjectId }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Entrega.prototype, "repartidorId", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true }),
+    (0, mongoose_1.Prop)({ required: true, type: mongoose_2.Types.ObjectId }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Entrega.prototype, "pedidoId", void 0);
 __decorate([
@@ -36,9 +36,21 @@ __decorate([
     __metadata("design:type", Number)
 ], Entrega.prototype, "propina", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: Date, default: Date.now }),
+    (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", Date)
 ], Entrega.prototype, "fechaEntrega", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: 0, min: 0, max: 5 }),
+    __metadata("design:type", Number)
+], Entrega.prototype, "valoracionRecibida", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Date)
+], Entrega.prototype, "fechaValoracion", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Entrega.prototype, "valoracionRegistrada", void 0);
 __decorate([
     (0, mongoose_1.Prop)({
         type: {
