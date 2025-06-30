@@ -1,118 +1,276 @@
 .admin-dashboard {
-  padding: 2rem;
-  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.admin-dashboard h1 {
-  margin-bottom: 2rem;
-}
-
-.resumen-cards {
+/* ✅ NAVBAR */
+.navbar-admin {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem 2rem;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.logo-centered {
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
+
+.logout-btn {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* ✅ ESTADÍSTICAS CARDS - SOLO 3 CARDS */
+.resumen-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
-  margin-bottom: 2rem;
+  padding: 3rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .card-resumen {
-  background-color: #f8f8f8;
-  border-left: 6px solid #d87a9c;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  flex: 1;
-  text-align: center;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-
-.card-resumen h2 {
-  font-size: 2rem;
-  margin: 0;
-  color: #d87a9c;
-}
-
-.card-resumen p {
-  margin: 0.5rem 0 0;
-  font-weight: bold;
-  color: #555;
-}
-
-.tabla-revision {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-
-.tabla-revision th,
-.tabla-revision td {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-.tabla-revision th {
-  background-color: #f2f2f2;
-}
-
-.tabla-revision button {
-  margin-right: 0.5rem;
-  padding: 0.4rem 0.8rem;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.tabla-revision button:first-child {
-  background-color: #4caf50;
-  color: white;
-}
-
-.tabla-revision button:last-child {
-  background-color: #f44336;
-  color: white;
-}
-
-.estado {
-  font-weight: bold;
-  padding: 0.25rem 0.5rem;
-  border-radius: 5px;
-}
-
-.estado.revisado {
-  background-color: #c8e6c9;
-  color: #2e7d32;
-}
-
-.estado.sospechoso {
-  background-color: #ffcdd2;
-  color: #b71c1c;
-}
-
-.estado.pendiente {
-  background-color: #fff3cd;
-  color: #856404;
-}
-.bloque-locatario {
-  margin-bottom: 3rem;
-}
-
-.bloque-locatario h3 {
-  margin-bottom: 1rem;
-  color: #d87a9c;
-  border-left: 5px solid #d87a9c;
-  padding-left: 1rem;
-}
-.filtros-admin {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
   align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
-.filtros-admin input,
-.filtros-admin select {
-  padding: 0.5rem;
+.card-resumen:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.card-resumen.pedidos { 
+  border-left: 5px solid #3498db;
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, white 100%);
+}
+
+.card-resumen.ventas { 
+  border-left: 5px solid #2ecc71;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, white 100%);
+}
+
+.card-resumen.propinas { 
+  border-left: 5px solid #f39c12;
+  background: linear-gradient(135deg, rgba(243, 156, 18, 0.05) 0%, white 100%);
+}
+
+.card-icon {
+  font-size: 3rem;
+  opacity: 0.8;
+}
+
+.card-content h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.card-content p {
+  margin: 0.5rem 0 0 0;
+  color: #7f8c8d;
   font-size: 1rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  font-weight: 500;
+}
+
+/* ✅ MENÚ PRINCIPAL - SOLO 2 BOTONES */
+.admin-main-menu {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.admin-main-menu h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 3rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* ✅ GRID ESPECIAL PARA 2 BOTONES */
+.menu-buttons-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.menu-btn {
+  background: white;
+  border: none;
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  text-align: center;
+  min-height: 200px;
+}
+
+.menu-btn:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+}
+
+.menu-btn.ventas:hover { 
+  border-left: 5px solid #2ecc71;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.08) 0%, white 100%);
+}
+
+.menu-btn.repartidores:hover { 
+  border-left: 5px solid #e74c3c;
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.08) 0%, white 100%);
+}
+
+.btn-icon {
+  font-size: 5rem;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.menu-btn:hover .btn-icon {
+  transform: scale(1.1);
+}
+
+.btn-content h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.8rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.menu-btn:hover .btn-content h3 {
+  color: #2c3e50;
+  transform: translateY(-2px);
+}
+
+.loading-admin {
+  text-align: center;
+  padding: 4rem;
+  color: #7f8c8d;
+  font-size: 1.2rem;
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 1024px) {
+  .resumen-cards {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+  
+  .menu-buttons-two {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 400px;
+  }
+  
+  .menu-btn {
+    min-height: 150px;
+    padding: 2.5rem 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .resumen-cards {
+    padding: 1.5rem;
+  }
+  
+  .navbar-admin {
+    padding: 1rem;
+  }
+  
+  .logo-centered {
+    font-size: 1.2rem;
+  }
+  
+  .menu-btn {
+    padding: 2rem;
+    min-height: 140px;
+  }
+  
+  .btn-icon {
+    font-size: 4rem;
+  }
+  
+  .btn-content h3 {
+    font-size: 1.5rem;
+  }
+  
+  .card-resumen {
+    padding: 1.5rem;
+  }
+  
+  .card-icon {
+    font-size: 2.5rem;
+  }
+  
+  .card-content h2 {
+    font-size: 1.5rem;
+  }
+  
+  .admin-main-menu {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-main-menu h2 {
+    font-size: 1.5rem;
+  }
+  
+  .card-resumen {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .menu-btn {
+    padding: 1.5rem;
+    min-height: 120px;
+  }
+  
+  .btn-icon {
+    font-size: 3.5rem;
+  }
+  
+  .btn-content h3 {
+    font-size: 1.3rem;
+  }
+  
+  .menu-buttons-two {
+    gap: 1.5rem;
+  }
 }

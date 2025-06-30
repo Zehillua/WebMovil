@@ -1,23 +1,91 @@
 .repartidor-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ✅ NAVBAR */
+.navbar-repartidor {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.logo-centered {
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
+
+.logout-btn {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* ✅ ACCIONES PRINCIPALES */
+.main-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
   padding: 2rem;
-  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.repartidor-dashboard h1 {
-  margin-bottom: 2rem;
+.main-actions button {
+  background: white;
+  border: none;
+  border-radius: 16px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #2c3e50;
+  border-left: 4px solid #e74c3c;
 }
 
+.main-actions button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  background: #e74c3c;
+  color: white;
+}
+
+/* ✅ CARDS DE PEDIDOS */
 .card-pedido {
-  background: #f8f8f8;
-  border-left: 5px solid #d87a9c;
+  background: #fff;
+  border-left: 5px solid #e74c3c;
   padding: 1.5rem;
   margin-bottom: 2rem;
   border-radius: 8px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.card-pedido:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
 .card-pedido h3 {
   margin-top: 0;
+  color: #2c3e50;
 }
 
 .card-pedido ul {
@@ -28,22 +96,26 @@
 .card-pedido button {
   margin-top: 1rem;
   padding: 0.6rem 1rem;
-  background-color: #d87a9c;
+  background-color: #e74c3c;
   border: none;
   color: white;
   font-weight: bold;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.3s;
 }
 
 .card-pedido button:hover {
-  background-color: #c05d83;
+  background-color: #c0392b;
+  transform: translateY(-1px);
 }
 
+/* ✅ ESTADOS */
 .estado {
   font-weight: bold;
   padding: 0.25rem 0.6rem;
-  border-radius: 4px;
+  border-radius: 20px;
+  font-size: 0.85rem;
 }
 
 .estado.pendiente {
@@ -59,4 +131,24 @@
 .estado.entregado {
   background-color: #d4edda;
   color: #155724;
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 768px) {
+  .main-actions {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+  
+  .navbar-repartidor {
+    padding: 1rem;
+  }
+  
+  .logo-centered {
+    font-size: 1.2rem;
+  }
+  
+  .main-actions button {
+    padding: 1.5rem;
+  }
 }

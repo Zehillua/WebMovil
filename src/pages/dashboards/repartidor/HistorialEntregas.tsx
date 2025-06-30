@@ -213,7 +213,7 @@ const HistorialEntregas: React.FC = () => {
     return (
       <div className="historial-entregas-root">
         <div className="error">{error}</div>
-        <button onClick={() => navigate('/repartidor/dashboard')} className="btn-volver">
+        <button onClick={() => navigate('/repartidor')} className="btn-volver">
           Volver al Dashboard
         </button>
       </div>
@@ -225,7 +225,7 @@ const HistorialEntregas: React.FC = () => {
       {/* HEADER */}
       <div className="historial-header">
         <button 
-          onClick={() => navigate('/repartidor/dashboard')} 
+          onClick={() => navigate('/repartidor')} 
           className="btn-volver"
         >
           ← Volver

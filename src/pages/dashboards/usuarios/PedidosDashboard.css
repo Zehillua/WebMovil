@@ -219,6 +219,94 @@
   }
 }
 
+/* ✅ ESTILOS PARA PROMOCIONES EN PEDIDOS */
+.promociones-lista {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(238, 90, 36, 0.05) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 107, 107, 0.2);
+}
+
+.promociones-lista b {
+  color: #e74c3c;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.promocion-item {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(255, 107, 107, 0.1);
+}
+
+.promocion-item:last-child {
+  margin-bottom: 0;
+}
+
+.promocion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.promocion-nombre {
+  font-weight: bold;
+  color: #e74c3c;
+  flex: 1;
+}
+
+.promocion-cantidad {
+  background: #e74c3c;
+  color: white;
+  padding: 0.1rem 0.4rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.promocion-precio {
+  color: #27ae60;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.promocion-comidas {
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+.promocion-comida-item {
+  color: #4a5568;
+}
+
+/* ✅ RESPONSIVE PARA PROMOCIONES EN PEDIDOS */
+@media (max-width: 600px) {
+  .promocion-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .promociones-lista {
+    padding: 0.4rem;
+  }
+  
+  .promocion-item {
+    padding: 0.4rem;
+  }
+  
+  .promocion-comidas {
+    font-size: 0.8rem;
+  }
+}
+
 .codigo-entrega-info small {
   color: #666;
   font-style: italic;

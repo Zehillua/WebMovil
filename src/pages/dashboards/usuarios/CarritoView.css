@@ -18,6 +18,230 @@
   align-items: center;
   justify-content: space-between;
 }
+
+/* ✅ NUEVOS ESTILOS PARA PROMOCIONES EN EL CARRITO */
+.carrito-section-header {
+  padding: 1rem 0 0.5rem 0;
+  border-bottom: 2px solid #e3e8f0;
+  margin-bottom: 1rem;
+}
+
+.carrito-section-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.carrito-section-header.promo-section h3 {
+  color: #e74c3c;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ✅ ESTILOS ESPECIALES PARA ITEMS DE PROMOCIÓN */
+.carrito-item.promocion-item {
+  border: 2px solid #ff6b6b;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(238, 90, 36, 0.05) 100%);
+  position: relative;
+}
+
+.carrito-item.promocion-item::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  border-radius: 18px;
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.carrito-item.promocion-item:hover {
+  transform: scale(1.035);
+  box-shadow: 0 8px 32px rgba(255, 107, 107, 0.2);
+}
+
+/* ✅ BADGE PROMOCIONAL EN LA IMAGEN */
+.promo-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* ✅ NOMBRE DE PROMOCIÓN CON TAG */
+.carrito-nombre.promo-nombre {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.promo-tag {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  align-self: flex-start;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
+}
+
+/* ✅ COMIDAS INCLUIDAS EN LA PROMOCIÓN */
+.promo-comidas-incluidas {
+  background: rgba(102, 126, 234, 0.1);
+  padding: 0.5rem;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.promo-comidas-incluidas strong {
+  color: #667eea;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.comida-incluida-item {
+  color: #4a5568;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+  line-height: 1.3;
+}
+
+/* ✅ PRECIO PROMOCIONAL DESTACADO */
+.carrito-precio-unit.promo-precio {
+  color: #e74c3c;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* ✅ MOSTRAR AHORRO */
+.promo-ahorro {
+  background: rgba(39, 174, 96, 0.1);
+  padding: 0.5rem;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  border: 1px solid rgba(39, 174, 96, 0.2);
+  color: #27ae60;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.ahorro-amount {
+  display: block;
+  font-weight: bold;
+  color: #27ae60;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+/* ✅ TOTAL DE PROMOCIÓN DESTACADO */
+.carrito-total.promo-total {
+  color: #e74c3c;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* ✅ FOOTER ACTUALIZADO CON DESGLOSE */
+.carrito-total-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+}
+
+.total-desglose {
+  font-size: 0.9rem;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.subtotal-line {
+  text-align: right;
+}
+
+.subtotal-line.promo-line {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.total-principal {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1.18rem;
+  font-weight: 500;
+  color: #222;
+  border-top: 1px solid #ddd;
+  padding-top: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+/* ✅ RESPONSIVE PARA PROMOCIONES */
+@media (max-width: 600px) {
+  .carrito-section-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .promo-comidas-incluidas {
+    padding: 0.4rem;
+    font-size: 0.8rem;
+  }
+  
+  .promo-ahorro {
+    padding: 0.4rem;
+    font-size: 0.8rem;
+  }
+  
+  .carrito-total-footer {
+    font-size: 1rem;
+  }
+  
+  .total-desglose {
+    font-size: 0.8rem;
+  }
+  
+  .total-principal {
+    font-size: 1rem;
+  }
+  
+  .promo-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+  }
+}
+
 .carrito-volver {
   background: none;
   border: none;

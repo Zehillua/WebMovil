@@ -1,12 +1,10 @@
-import { ApolloProvider } from '@apollo/client';
-import { client } from './apollo/client';
 import AppRouter from './routes/AppRouter';
+import './App.css';
 
+// ✅ SIMPLE - SIN APOLLO AQUÍ (YA ESTÁ EN MAIN.TSX)
 function App() {
   return (
-    <ApolloProvider client={client}>
-      <AppRouter />
-    </ApolloProvider>
+    <AppRouter />
   );
 }
 

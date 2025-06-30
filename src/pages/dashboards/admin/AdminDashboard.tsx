@@ -1,132 +1,165 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../hooks/useAuth';
 import './AdminDashboard.css';
 
-interface Producto {
-  id: number;
-  nombre: string;
-  locatario: string;
-  categoria: string;
-  estado: 'Revisado' | 'Sospechoso' | 'Pendiente';
+interface EstadisticasGenerales {
+  totalPedidos: number;
+  totalVentas: number;
+  totalPropinas: number;
 }
 
 const AdminDashboard: React.FC = () => {
-  const [productos, setProductos] = useState<Producto[]>([
-    { id: 1, nombre: 'Empanada de pino', locatario: 'La Picá de Juan', categoria: 'Empanadas', estado: 'Pendiente' },
-    { id: 2, nombre: 'Pizza Margarita', locatario: 'Don Gusto', categoria: 'Pizza', estado: 'Pendiente' },
-    { id: 3, nombre: 'Completo italiano', locatario: 'Kiosco Anita', categoria: 'Hotdog', estado: 'Revisado' },
-    { id: 4, nombre: 'Pizza Napolitana', locatario: 'Don Gusto', categoria: 'Pizza', estado: 'Sospechoso' },
-  ]);
+  const navigate = useNavigate();
+  const { user, logout, isAdmin, loading } = useAuth();
+  const [estadisticas, setEstadisticas] = useState<EstadisticasGenerales | null>(null);
+  const [loadingStats, setLoadingStats] = useState(true);
 
-  const [locatariosActivos] = useState(3);
-  const [compradoresActivos] = useState(12);
-  const totalProductos = productos.length;
+  // ✅ SOLO VERIFICAR DESPUÉS DE QUE TERMINE DE CARGAR
+  useEffect(() => {
+    if (!loading) {
+      console.log('AdminDashboard - Datos cargados:', { user, isAdmin, loading });
+      
+      if (!isAdmin) {
+        console.log('❌ Usuario no es admin después de cargar, redirigiendo...');
+        navigate('/comprador', { replace: true });
+      } else {
+        console.log('✅ Usuario confirmado como admin');
+      }
+    }
+  }, [isAdmin, loading, navigate]);
 
-  const [filtroLocatario, setFiltroLocatario] = useState('');
-  const [filtroCategoria, setFiltroCategoria] = useState('');
-  const [filtroEstado, setFiltroEstado] = useState('');
+  useEffect(() => {
+    // Solo cargar estadísticas si es admin
+    if (isAdmin && !loading) {
+      cargarEstadisticasGenerales();
+    }
+  }, [isAdmin, loading]);
 
-  const cambiarEstado = (id: number, nuevoEstado: Producto['estado']) => {
-    const actualizados = productos.map((p) =>
-      p.id === id ? { ...p, estado: nuevoEstado } : p
-    );
-    setProductos(actualizados);
+  const cargarEstadisticasGenerales = async () => {
+    try {
+      const response = await fetch('http://localhost:3004/stats/generales');
+      if (response.ok) {
+        const data = await response.json();
+        setEstadisticas({
+          totalPedidos: data.resumenGeneral.totalPedidos,
+          totalVentas: data.resumenGeneral.totalVentas,
+          totalPropinas: data.resumenGeneral.totalPropinas,
+        });
+      }
+    } catch (error) {
+      console.error('Error cargando estadísticas:', error);
+    } finally {
+      setLoadingStats(false);
+    }
   };
 
-  // Obtener categorías únicas para el filtro
-  const categoriasDisponibles = Array.from(new Set(productos.map(p => p.categoria)));
+  const handleLogout = () => {
+    logout();
+    navigate('/', { replace: true });
+  };
 
-  // Filtrar productos antes de agruparlos
-  const productosFiltrados = productos.filter(p =>
-    p.locatario.toLowerCase().includes(filtroLocatario.toLowerCase()) &&
-    (filtroCategoria === '' || p.categoria === filtroCategoria) &&
-    (filtroEstado === '' || p.estado === filtroEstado)
-  );
+  const formatearMoneda = (valor: number) => {
+    return new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP'
+    }).format(valor);
+  };
 
-  // Agrupar por locatario
-  const productosPorLocatario = productosFiltrados.reduce((acc: Record<string, Producto[]>, producto) => {
-    if (!acc[producto.locatario]) acc[producto.locatario] = [];
-    acc[producto.locatario].push(producto);
-    return acc;
-  }, {});
+  // ✅ MOSTRAR LOADING MIENTRAS SE VERIFICA LA AUTENTICACIÓN
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '1.2rem',
+        color: '#666'
+      }}>
+        🔒 Verificando permisos de administrador...
+      </div>
+    );
+  }
+
+  // ✅ SI NO ES ADMIN, NO MOSTRAR NADA (EL useEffect SE ENCARGA DE REDIRIGIR)
+  if (!isAdmin) {
+    return null;
+  }
 
   return (
     <div className="admin-dashboard">
-      <h1>Panel Administrador</h1>
-
-      <div className="resumen-cards">
-        <div className="card-resumen">
-          <h2>{totalProductos}</h2>
-          <p>Total de Productos</p>
+      {/* HEADER */}
+      <nav className="navbar-admin">
+        <div className="logo-centered">
+          🏛️ Panel Administrador
+          {user && (
+            <small style={{ display: 'block', fontSize: '0.8rem', opacity: 0.8 }}>
+              Bienvenido, {user.nombre} {user.apellido}
+            </small>
+          )}
         </div>
-        <div className="card-resumen">
-          <h2>{locatariosActivos}</h2>
-          <p>Locatarios Activos</p>
-        </div>
-        <div className="card-resumen">
-          <h2>{compradoresActivos}</h2>
-          <p>Compradores Activos</p>
-        </div>
-      </div>
+        <button className="logout-btn" onClick={handleLogout} title="Cerrar sesión">
+          Salir
+        </button>
+      </nav>
 
-      {/* FILTROS */}
-      <div className="filtros-admin">
-        <input
-          type="text"
-          placeholder="Buscar locatario..."
-          value={filtroLocatario}
-          onChange={(e) => setFiltroLocatario(e.target.value)}
-        />
-        <select value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)}>
-          <option value="">Todas las categorías</option>
-          {categoriasDisponibles.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-        <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
-          <option value="">Todos los estados</option>
-          <option value="Pendiente">Pendiente</option>
-          <option value="Revisado">Revisado</option>
-          <option value="Sospechoso">Sospechoso</option>
-        </select>
-      </div>
-
-      <h2>Revisión de Productos por Locatario</h2>
-      {Object.entries(productosPorLocatario).map(([locatario, productos]) => (
-        <div key={locatario} className="bloque-locatario">
-          <h3>{locatario}</h3>
-          <table className="tabla-revision">
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Categoría</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {productos.map((p) => (
-                <tr key={p.id}>
-                  <td>{p.nombre}</td>
-                  <td>{p.categoria}</td>
-                  <td>
-                    <span className={`estado ${p.estado.toLowerCase()}`}>
-                      {p.estado}
-                    </span>
-                  </td>
-                  <td>
-                    <button onClick={() => cambiarEstado(p.id, 'Revisado')}>✔ Revisado</button>
-                    <button onClick={() => cambiarEstado(p.id, 'Sospechoso')}>⚠ Sospechoso</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* ✅ ESTADÍSTICAS SIMPLIFICADAS - SOLO 3 CARDS */}
+      {loadingStats ? (
+        <div className="loading-admin">Cargando estadísticas...</div>
+      ) : (
+        <div className="resumen-cards">
+          <div className="card-resumen pedidos">
+            <div className="card-icon">📦</div>
+            <div className="card-content">
+              <h2>{estadisticas?.totalPedidos || 0}</h2>
+              <p>Total Pedidos</p>
+            </div>
+          </div>
+          
+          <div className="card-resumen ventas">
+            <div className="card-icon">💰</div>
+            <div className="card-content">
+              <h2>{estadisticas ? formatearMoneda(estadisticas.totalVentas) : '$0'}</h2>
+              <p>Total Ventas</p>
+            </div>
+          </div>
+          
+          <div className="card-resumen propinas">
+            <div className="card-icon">🎁</div>
+            <div className="card-content">
+              <h2>{estadisticas ? formatearMoneda(estadisticas.totalPropinas) : '$0'}</h2>
+              <p>Total Propinas</p>
+            </div>
+          </div>
         </div>
-      ))}
-
-      {productosFiltrados.length === 0 && (
-        <p style={{ marginTop: '2rem' }}>No se encontraron productos que coincidan con los filtros.</p>
       )}
+
+      {/* ✅ MENÚ PRINCIPAL - SOLO 2 BOTONES */}
+      <div className="admin-main-menu">
+        <h2>📊 Rankings</h2>
+        <div className="menu-buttons-two">
+          <button 
+            className="menu-btn ventas"
+            onClick={() => navigate('/admin/top-ventas')}
+          >
+            <div className="btn-icon">🏆</div>
+            <div className="btn-content">
+              <h3>Top Ventas</h3>
+            </div>
+          </button>
+
+          <button 
+            className="menu-btn repartidores"
+            onClick={() => navigate('/admin/top-repartidores')}
+          >
+            <div className="btn-icon">⭐</div>
+            <div className="btn-content">
+              <h3>Top Repartidores</h3>
+            </div>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

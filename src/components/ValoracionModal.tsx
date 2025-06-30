@@ -32,37 +32,64 @@ const ValoracionModal: React.FC<ValoracionModalProps> = ({
   const [valoracionLocal, setValoracionLocal] = useState<number>(0);
 
   const [valorarPedido, { loading }] = useMutation(VALORAR_PEDIDO_REALIZADO, {
-    onCompleted: () => {
-      console.log('✅ Valoración guardada exitosamente');
+    onCompleted: (data) => {
+      console.log('✅ Valoración guardada exitosamente:', data);
       onSuccess();
       onClose();
     },
     onError: (error) => {
       console.error('❌ Error guardando valoración:', error);
-      alert('Error guardando la valoración. Intenta nuevamente.');
+      console.error('❌ Error message:', error.message);
+      console.error('❌ GraphQL errors:', error.graphQLErrors);
+      console.error('❌ Network error:', error.networkError);
+      alert(`Error guardando la valoración: ${error.message}`);
     }
   });
 
   const handleSubmit = async () => {
+    // ✅ VALIDACIONES MEJORADAS
     if (valoracionPedido === 0 || valoracionLocal === 0 || 
         (pedido.esDelivery && valoracionDelivery === 0)) {
       alert('Por favor completa todas las valoraciones');
       return;
     }
 
+    // ✅ VALIDAR RANGOS
+    if (valoracionPedido < 0.5 || valoracionPedido > 5 ||
+        valoracionLocal < 0.5 || valoracionLocal > 5 ||
+        (pedido.esDelivery && (valoracionDelivery < 0.5 || valoracionDelivery > 5))) {
+      alert('Las valoraciones deben estar entre 0.5 y 5 estrellas');
+      return;
+    }
+
+    const valoracionesData = {
+      valoracionPedido: Number(valoracionPedido),
+      valoracionDelivery: pedido.esDelivery ? Number(valoracionDelivery) : 5,
+      valoracionLocal: Number(valoracionLocal)
+    };
+
+    console.log('🚀 Enviando valoración:');
+    console.log('📊 Pedido ID:', pedido._id);
+    console.log('📊 Valoraciones:', valoracionesData);
+    console.log('📊 Es delivery:', pedido.esDelivery);
+
     try {
-      await valorarPedido({
+      const result = await valorarPedido({
         variables: {
           pedidoRealizadoId: pedido._id,
-          valoraciones: {
-            valoracionPedido,
-            valoracionDelivery: pedido.esDelivery ? valoracionDelivery : 5,
-            valoracionLocal
-          }
+          valoraciones: valoracionesData
         }
       });
-    } catch (error) {
-      console.error('Error valorando pedido:', error);
+      
+      console.log('✅ Resultado de la mutación:', result);
+      
+    } catch (error: any) {
+      console.error('❌ Error en handleSubmit:', error);
+      console.error('❌ Error details:', {
+        message: error?.message,
+        graphQLErrors: error?.graphQLErrors,
+        networkError: error?.networkError
+      });
     }
   };
 
@@ -82,6 +109,10 @@ const ValoracionModal: React.FC<ValoracionModalProps> = ({
           {pedido.esDelivery && (
             <p>Repartidor: {pedido.datosRepartidor.nombreUsuario}</p>
           )}
+          {/* ✅ DEBUG INFO */}
+          <small style={{ color: '#666', fontSize: '12px' }}>
+            ID: {pedido._id} | Delivery: {pedido.esDelivery ? 'Sí' : 'No'}
+          </small>
         </div>
 
         <div className="valoracion-section">
@@ -110,6 +141,13 @@ const ValoracionModal: React.FC<ValoracionModalProps> = ({
           </div>
         )}
 
+        {/* ✅ MOSTRAR VALORACIONES ACTUALES PARA DEBUG */}
+        <div style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+          <strong>Valoraciones actuales:</strong><br/>
+          Pedido: {valoracionPedido} | Local: {valoracionLocal} | 
+          Delivery: {pedido.esDelivery ? valoracionDelivery : 'N/A'}
+        </div>
+
         <div className="valoracion-buttons">
           <button 
             className="valoracion-cancel" 
@@ -131,7 +169,7 @@ const ValoracionModal: React.FC<ValoracionModalProps> = ({
   );
 };
 
-// ✅ COMPONENTE DE ESTRELLAS INTERACTIVAS (CORREGIDO):
+// ✅ COMPONENTE DE ESTRELLAS SIN CAMBIOS (ESTÁ BIEN)
 interface StarRatingProps {
   rating: number;
   setRating: (rating: number) => void;
