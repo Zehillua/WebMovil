@@ -16,7 +16,9 @@ interface Comida {
 }
 
 interface ComidaPromocion {
-  comidaId: string;
+  comidaId?: string | any;
+  _id?: string;            
+  id?: string;             
   nombre: string;
   cantidad: number;
   precioOriginal: number;
@@ -259,148 +261,232 @@ const LocalView: React.FC = () => {
   };
 
 
-  // ✅ FUNCIONES CORREGIDAS - VERIFICAR ID Y TOKEN
- const handleAceptar = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('Sesión expirada');
-      navigate('/', { replace: true });
-      return;
-    }
-    
-    if (!selectedComida || !id || !local) {
-      alert('Faltan datos necesarios');
-      return;
-    }
-    
-    console.log('🛒 Iniciando handleAceptar');
+ // ✅ FUNCIÓN CORREGIDA - AJUSTAR NOMBRES DE PROPIEDADES
+// ✅ CORREGIR LA FUNCIÓN handleAceptar - USAR NOMBRES CORRECTOS DEL DTO
+const handleAceptar = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Sesión expirada');
+    navigate('/', { replace: true });
+    return;
+  }
+  
+  if (!selectedComida || !id || !local) {
+    alert('Faltan datos necesarios');
+    return;
+  }
+  
+  console.log('🛒 Iniciando handleAceptar');
 
-    let idComprador = localStorage.getItem('idUsuario');
-    try {
-      const res = await fetch('http://localhost:3000/usuarios/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  let idComprador = localStorage.getItem('idUsuario');
+  try {
+    const res = await fetch('http://localhost:3000/usuarios/me', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      console.log('👤 Respuesta de /usuarios/me:', data);
+      idComprador = data.userId || data._id;
+    } else {
+      alert('No se pudo obtener el usuario');
+      return;
+    }
+  } catch {
+    alert('Error de conexión');
+    return;
+  }
+
+  // ✅ USAR NOMBRES CORRECTOS SEGÚN CreateComidaCarritoDto
+  const body = {
+    idComida: selectedComida._id,        // ✅ 'idComida' (como espera el DTO)
+    idLocatario: id,                     // ✅ 'idLocatario' (como espera el DTO)
+    nombreLocal: local.nombreLocal,      // ✅ Correcto
+    nombreComida: selectedComida.nombre, // ✅ Correcto
+    cantidad: Number(cantidad),          // ✅ Correcto
+    precio: Number(selectedComida.precio), // ✅ Correcto
+    imagenUrl: selectedComida.imagenUrl || null // ✅ Correcto
+  };
+
+  console.log('🛒 idComprador:', idComprador);
+  console.log('🛒 Body corregido enviado al carrito:', body);
+
+  try {
+    const response = await fetch(`http://localhost:3002/carrito/${idComprador}/agregar`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+      await response.json();
+      alert('✅ Producto agregado al carrito');
+      setShowModal(false);
+    } else {
+      const error = await response.json();
+      console.error('❌ Error del servidor:', error);
       
-      if (res.ok) {
-        const data = await res.json();
-        console.log('👤 Respuesta de /usuarios/me:', data);
-        idComprador = data.userId || data._id;
+      // ✅ MOSTRAR DETALLES DEL ERROR PARA DEBUGGING
+      if (error.message && Array.isArray(error.message)) {
+        console.error('❌ Errores de validación:', error.message);
+        alert('❌ Error de validación: ' + error.message.join(', '));
       } else {
-        alert('No se pudo obtener el usuario');
-        return;
-      }
-    } catch {
-      alert('Error de conexión');
-      return;
-    }
-
-    const body = {
-      idComida: selectedComida._id,
-      idLocatario: id,
-      nombreLocal: local.nombreLocal,
-      nombreComida: selectedComida.nombre,
-      cantidad,
-      precio: selectedComida.precio,
-      imagenUrl: selectedComida.imagenUrl
-    };
-
-    console.log('🛒 idComprador:', idComprador);
-    console.log('🛒 Body enviado al carrito:', body);
-
-    try {
-      const response = await fetch(`http://localhost:3002/carrito/${idComprador}/agregar`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(body)
-      });
-
-      if (response.ok) {
-        // ✅ QUITAR VARIABLE result NO USADA
-        await response.json();
-        alert('✅ Producto agregado al carrito');
-        setShowModal(false);
-      } else {
-        const error = await response.json();
         alert('❌ Error al agregar al carrito: ' + (error.message || 'Error'));
       }
-    } catch {
-      alert('❌ Error de conexión al agregar al carrito');
     }
+  } catch (error) {
+    console.error('❌ Error de conexión:', error);
+    alert('❌ Error de conexión al agregar al carrito');
+  }
+};
+
+// ✅ CORREGIR handleAceptarPromocion - FILTRAR ANTES DE VALIDAR
+const handleAceptarPromocion = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Sesión expirada');
+    navigate('/', { replace: true });
+    return;
+  }
+  
+  if (!selectedPromocion || !id || !local) {
+    alert('Faltan datos necesarios');
+    return;
+  }
+  
+  console.log('🎉 Iniciando handleAceptarPromocion');
+
+  let idComprador = localStorage.getItem('idUsuario');
+  try {
+    const res = await fetch('http://localhost:3000/usuarios/me', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      idComprador = data.userId || data._id;
+    } else {
+      alert('No se pudo obtener el usuario');
+      return;
+    }
+  } catch {
+    alert('Error de conexión');
+    return;
+  }
+
+  // ✅ DEBUG - VER ESTRUCTURA EXACTA DE LAS COMIDAS
+  console.log('🔍 Estructura completa de selectedPromocion:', selectedPromocion);
+  console.log('🔍 Comidas en detalle:', selectedPromocion.comidas);
+
+  // ✅ TRANSFORMAR COMIDAS Y FILTRAR NULLS INMEDIATAMENTE
+  const comidasTransformadas = selectedPromocion.comidas
+    .map((comida: any, index) => {
+      console.log(`🔍 Procesando comida ${index}:`, {
+        keys: Object.keys(comida),
+        comidaId: comida.comidaId,
+        tipoComidaId: typeof comida.comidaId
+      });
+
+      // ✅ OBTENER ID DE MÚLTIPLES FUENTES POSIBLES
+      let comidaId: string;
+      
+      if (comida.comidaId) {
+        // Si comidaId existe
+        if (typeof comida.comidaId === 'object' && comida.comidaId !== null) {
+          // Si es un objeto poblado de MongoDB
+          comidaId = comida.comidaId._id || comida.comidaId.toString();
+        } else {
+          // Si es un string directo
+          comidaId = String(comida.comidaId);
+        }
+      } else if (comida._id) {
+        // Fallback a _id
+        comidaId = String(comida._id);
+      } else if (comida.id) {
+        // Fallback a id
+        comidaId = String(comida.id);
+      } else {
+        console.error(`❌ Comida ${index} no tiene ID válido:`, comida);
+        return null; // Se filtrará después
+      }
+
+      console.log(`✅ Comida ${index} ID final:`, comidaId);
+
+      return {
+        comidaId: comidaId,
+        nombre: comida.nombre,
+        cantidad: comida.cantidad,
+        precioOriginal: comida.precioOriginal
+      };
+    })
+    .filter((comida): comida is NonNullable<typeof comida> => comida !== null); // ✅ FILTRAR NULLS CON TYPE GUARD
+
+  console.log('🔄 Comidas originales:', selectedPromocion.comidas);
+  console.log('✅ Comidas transformadas:', comidasTransformadas);
+
+  // ✅ VALIDAR QUE TODAS LAS COMIDAS TENGAN comidaId (AHORA SIN NULLS)
+  const comidasInvalidas = comidasTransformadas.filter(c => !c.comidaId || c.comidaId === 'undefined');
+  if (comidasInvalidas.length > 0) {
+    console.error('❌ Comidas sin ID válido:', comidasInvalidas);
+    alert('Error: Algunas comidas no tienen ID válido');
+    return;
+  }
+
+  // ✅ VERIFICAR QUE TENGAMOS COMIDAS VÁLIDAS
+  if (comidasTransformadas.length === 0) {
+    console.error('❌ No hay comidas válidas en la promoción');
+    alert('Error: La promoción no tiene comidas válidas');
+    return;
+  }
+
+  // ✅ BODY CON COMIDAS TRANSFORMADAS
+  const body = {
+    idPromocion: selectedPromocion._id,
+    idLocatario: id,
+    nombreLocal: local.nombreLocal,
+    nombrePromocion: selectedPromocion.nombre,
+    cantidad: Number(cantidadPromo),
+    precio: Number(selectedPromocion.precio),
+    imagenUrl: selectedPromocion.imagenUrl || null,
+    tipo: 'promocion',
+    comidas: comidasTransformadas
   };
 
-  const handleAceptarPromocion = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('Sesión expirada');
-      navigate('/', { replace: true });
-      return;
-    }
-    
-    if (!selectedPromocion || !id || !local) {
-      alert('Faltan datos necesarios');
-      return;
-    }
-    
-    console.log('🎉 Iniciando handleAceptarPromocion');
+  console.log('🎉 Body promoción corregido enviado al carrito:', body);
 
-    let idComprador = localStorage.getItem('idUsuario');
-    try {
-      const res = await fetch('http://localhost:3000/usuarios/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  try {
+    const response = await fetch(`http://localhost:3002/carrito/${idComprador}/agregar-promocion`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+      await response.json();
+      alert('✅ Promoción agregada al carrito');
+      setShowPromoModal(false);
+    } else {
+      const error = await response.json();
+      console.error('❌ Error del servidor:', error);
       
-      if (res.ok) {
-        const data = await res.json();
-        idComprador = data.userId || data._id;
+      if (error.message && Array.isArray(error.message)) {
+        console.error('❌ Errores de validación:', error.message);
+        alert('❌ Error de validación: ' + error.message.join(', '));
       } else {
-        alert('No se pudo obtener el usuario');
-        return;
-      }
-    } catch {
-      alert('Error de conexión');
-      return;
-    }
-
-    const body = {
-      idPromocion: selectedPromocion._id,
-      idLocatario: id,
-      nombreLocal: local.nombreLocal,
-      nombrePromocion: selectedPromocion.nombre,
-      cantidad: cantidadPromo,
-      precio: selectedPromocion.precio,
-      imagenUrl: selectedPromocion.imagenUrl,
-      tipo: 'promocion',
-      comidas: selectedPromocion.comidas
-    };
-
-    console.log('🎉 Body promoción enviado al carrito:', body);
-
-    try {
-      const response = await fetch(`http://localhost:3002/carrito/${idComprador}/agregar-promocion`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(body)
-      });
-
-      if (response.ok) {
-        // ✅ QUITAR VARIABLE result NO USADA
-        await response.json();
-        alert('✅ Promoción agregada al carrito');
-        setShowPromoModal(false);
-      } else {
-        const error = await response.json();
         alert('❌ Error al agregar promoción al carrito: ' + (error.message || 'Error'));
       }
-    } catch {
-      alert('❌ Error de conexión al agregar promoción al carrito');
     }
-  };
+  } catch (error) {
+    console.error('❌ Error de conexión:', error);
+    alert('❌ Error de conexión al agregar promoción al carrito');
+  }
+};
 
   // ✅ VALIDACIÓN TEMPRANA - SI NO HAY ID, MOSTRAR ERROR
   if (!id) {

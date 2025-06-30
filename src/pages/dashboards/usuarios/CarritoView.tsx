@@ -212,116 +212,147 @@ const CarritoView: React.FC = () => {
   }
 };
 
-  // ✅ FUNCIÓN ACTUALIZADA PARA CREAR PEDIDO CON PROMOCIONES
-  const handleCrearPedido = async () => {
-  setPagoLoading(true);
-  setPagoError('');
-  setPagoOk('');
-  
+  // ✅ FUNCIÓN handleCrearPedido CORREGIDA
+const handleCrearPedido = async () => {
   const token = localStorage.getItem('token');
   if (!token) {
-    setPagoError('Sesión expirada');
-    setPagoLoading(false);
-    navigate('/', { replace: true });
+    alert('Sesión expirada');
+    navigate('/login');
     return;
   }
 
+  // ✅ OBTENER ID DEL USUARIO Y DIRECCIÓN
+  let direccionUsuario = '';
+  let idComprador = '';
+  
   try {
-    const resUser = await fetch('http://localhost:3000/usuarios/me', {
+    const userResponse = await fetch('http://localhost:3000/usuarios/me', {
       headers: { Authorization: `Bearer ${token}` }
     });
     
-    if (!resUser.ok) {
-      setPagoError('Error de autenticación');
-      setPagoLoading(false);
-      navigate('/', { replace: true });
+    if (userResponse.ok) {
+      const userData = await userResponse.json();
+      idComprador = userData.userId || userData._id; // ✅ OBTENER ID DEL USUARIO
+      
+      // ✅ TRANSFORMAR DIRECCIÓN ARRAY A STRING
+      if (userData.direccion) {
+        if (Array.isArray(userData.direccion)) {
+          // Si es array, unir con comas
+          direccionUsuario = userData.direccion
+            .filter((item: string) => item && item.trim()) // ✅ TIPAR ITEM
+            .join(', ');
+        } else if (typeof userData.direccion === 'string') {
+          // Si ya es string, usar directamente
+          direccionUsuario = userData.direccion.trim();
+        } else {
+          // Si es objeto u otro tipo, convertir a string
+          direccionUsuario = String(userData.direccion);
+        }
+      }
+      
+      if (!direccionUsuario) {
+        direccionUsuario = 'Dirección no especificada';
+      }
+      
+      console.log('📍 Dirección transformada:', direccionUsuario);
+      
+    } else {
+      console.error('Error obteniendo datos del usuario');
+      direccionUsuario = 'Dirección no disponible';
+      alert('Error obteniendo datos del usuario');
       return;
     }
-    
-    const userData = await resUser.json();
-    const idComprador = userData.userId || userData._id;
+  } catch (error) {
+    console.error('Error de conexión obteniendo usuario:', error);
+    alert('Error de conexión al obtener datos del usuario');
+    return;
+  }
 
-    // ✅ RESTO DEL CÓDIGO SIN CAMBIOS...
-    const localesComidas = [...new Set(comidas.map(c => c.idLocatario))];
-    const localesPromociones = [...new Set(promociones.map(p => p.idLocatario))];
-    const todosLosLocales = [...new Set([...localesComidas, ...localesPromociones])];
+  // ✅ OBTENER idLocal DESDE LAS COMIDAS O PROMOCIONES
+  let idLocal = '';
+  if (comidas.length > 0) {
+    idLocal = comidas[0].idLocatario;
+  } else if (promociones.length > 0) {
+    idLocal = promociones[0].idLocatario;
+  } else {
+    alert('Error: No hay items en el carrito');
+    return;
+  }
 
-    for (const idLocal of todosLosLocales) {
-      const comidasLocal = comidas.filter(c => c.idLocatario === idLocal);
-      const promocionesLocal = promociones.filter(p => p.idLocatario === idLocal);
+  // ✅ CREAR PEDIDO CON VARIABLES CORRECTAS
+  const pedidoData = {
+    idComprador: idComprador, // ✅ USAR VARIABLE CORRECTA
+    idLocal: idLocal, // ✅ USAR VARIABLE CORRECTA
+    nombrePedido: `Pedido ${Date.now()}`,
+    pago: metodoPago,
+    precioPedido: totalBack, // ✅ USAR totalBack EN LUGAR DE calcularTotal()
+    comidas: comidas.map((item: ComidaCarrito) => ({ // ✅ TIPAR ITEM
+      nombre: item.nombreComida,
+      cantidad: item.cantidad,
+      tipo: 'comida'
+    })),
+    promociones: promociones.map((promo: PromocionCarrito) => ({ // ✅ TIPAR PROMO
+      nombrePromocion: promo.nombrePromocion,
+      cantidad: promo.cantidad,
+      precio: promo.precio,
+      comidas: promo.comidas?.map((c: any) => ({ // ✅ TIPAR C
+        nombre: c.nombre,
+        cantidad: c.cantidad
+      })) || [],
+      tipo: 'promocion'
+    })),
+    esDelivery: esDelivery,
+    direccionEntrega: esDelivery ? direccionUsuario : null, // ✅ DIRECCIÓN COMO STRING
+    numeroCasaDepto: numeroCasaDepto || null, // ✅ USAR VARIABLE CORRECTA
+    propina: propina, // ✅ USAR VARIABLE CORRECTA
+    cantidadPropina: propina ? cantidadPropina : 0 // ✅ USAR VARIABLE CORRECTA
+  };
 
-      const precioComidas = comidasLocal.reduce((acc, c) => acc + c.precio * c.cantidad, 0);
-      const precioPromociones = promocionesLocal.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
-      const precioTotalLocal = precioComidas + precioPromociones;
+  console.log('🎯 Datos del pedido a enviar:', pedidoData);
+  console.log('🔍 Tipo de direccionEntrega:', typeof pedidoData.direccionEntrega);
 
-      const nombresComidas = comidasLocal.map(c => c.nombreComida);
-      const nombresPromociones = promocionesLocal.map(p => p.nombrePromocion);
-      const nombrePedido = [...nombresComidas, ...nombresPromociones].join(', ') || 'Pedido mixto';
+  try {
+    const response = await fetch('http://localhost:3002/pedidos/crear', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(pedidoData)
+    });
 
-      const pedidoBody = {
-        idComprador,
-        idLocal,
-        nombrePedido,
-        pago: metodoPago,
-        precioPedido: precioTotalLocal + 
-          (metodoPago === 'tarjeta' && esDelivery && propina && cantidadPropina ? Number(cantidadPropina) : 0),
-        comidas: comidasLocal.map(c => ({
-          nombre: c.nombreComida,
-          cantidad: c.cantidad,
-          tipo: 'comida'
-        })),
-        promociones: promocionesLocal.map(p => ({
-          nombrePromocion: p.nombrePromocion,
-          cantidad: p.cantidad,
-          precio: p.precio,
-          comidas: p.comidas,
-          tipo: 'promocion'
-        })),
-        esDelivery: !!esDelivery,
-        direccionEntrega: esDelivery ? direccionEntrega : undefined,
-        numeroCasaDepto: esDelivery ? numeroCasaDepto : undefined,
-        propina: esDelivery ? !!propina : false,
-        cantidadPropina: esDelivery && propina && cantidadPropina ? Number(cantidadPropina) : undefined
-      };
-
-      console.log('🚀 Enviando pedido:', pedidoBody);
-
-      const res = await fetch('http://localhost:3002/pedidos/crear', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(pedidoBody)
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        console.error('❌ Error creando pedido:', errorData);
-        setPagoError('Error al crear el pedido: ' + (errorData.message || 'Error desconocido'));
-        setPagoLoading(false);
-        return;
+    if (response.ok) {
+      const pedidoCreado = await response.json();
+      console.log('✅ Pedido creado exitosamente:', pedidoCreado);
+      
+      // ✅ LIMPIAR ESTADOS CORRECTOS
+      setComidas([]); // ✅ LIMPIAR COMIDAS
+      setPromociones([]); // ✅ LIMPIAR PROMOCIONES
+      setTotalBack(0); // ✅ LIMPIAR TOTALES
+      setTotalComidas(0);
+      setTotalPromociones(0);
+      
+      alert('✅ Pedido creado exitosamente');
+      navigate('/comprador/pedidos');
+    } else {
+      const error = await response.json();
+      console.error('❌ Error creando pedido:', error);
+      
+      if (error.message && Array.isArray(error.message)) {
+        alert('❌ Error de validación: ' + error.message.join(', '));
+      } else {
+        alert('❌ Error al crear el pedido: ' + (error.message || 'Error desconocido'));
       }
     }
-
-    setPagoOk('¡Pedido realizado con éxito!');
-    setPagoLoading(false);
-    setShowPago(false);
-    setComidas([]);
-    setPromociones([]);
-    setTotalBack(0);
-    setTotalComidas(0);
-    setTotalPromociones(0);
-    
   } catch (error) {
-    console.error('Error creando pedido:', error);
-    setPagoError('Error de conexión');
-    setPagoLoading(false);
+    console.error('❌ Error de conexión:', error);
+    alert('❌ Error de conexión al crear el pedido');
   }
 };
 
 
-  const handleVerificarSaldoYCrear = async () => {
+  // ✅ FUNCIÓN handleVerificarSaldoYCrear CORREGIDA
+const handleVerificarSaldoYCrear = async () => {
   setPagoLoading(true);
   setPagoError('');
   
@@ -345,7 +376,11 @@ const CarritoView: React.FC = () => {
     }
     
     const dataSaldo = await resSaldo.json();
-    if (dataSaldo.saldo < (totalBack + (propina && cantidadPropina ? Number(cantidadPropina) : 0))) {
+    
+    // ✅ CALCULAR TOTAL CORRECTO
+    const totalConPropina = totalBack + (propina && cantidadPropina ? Number(cantidadPropina) : 0);
+    
+    if (dataSaldo.saldo < totalConPropina) {
       setPagoError('Saldo insuficiente');
       setPagoLoading(false);
       return;
@@ -355,7 +390,8 @@ const CarritoView: React.FC = () => {
   } catch (error) {
     console.error('Error verificando saldo:', error);
     setPagoError('Error de conexión');
-    setPagoLoading(false);
+  } finally {
+    setPagoLoading(false); // ✅ SIEMPRE DESACTIVAR LOADING
   }
 };
 
@@ -646,7 +682,7 @@ const CarritoView: React.FC = () => {
               <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
                 <strong>Total a pagar: </strong>
                 ${(
-                  metodoPago === 'tarjeta' && esDelivery && propina && cantidadPropina
+                  metodoPago === 'tarjeta' && esDelivery && propina && cantidadPropina // ✅ USAR propina
                     ? totalBack + Number(cantidadPropina)
                     : totalBack
                 ).toLocaleString()}
@@ -656,6 +692,7 @@ const CarritoView: React.FC = () => {
             {pagoError && <div className="pago-error">{pagoError}</div>}
             {pagoOk && <div className="pago-ok">{pagoOk}</div>}
             <div className="pago-modal-btns">
+              // ✅ EN LA VALIDACIÓN DEL BOTÓN CONFIRMAR:
               <button
                 className="pago-btn-confirm"
                 disabled={
