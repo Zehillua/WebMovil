@@ -1,77 +1,235 @@
+/* PedidosRepartidor.css */
+
+/* Variables de Color (Asegúrate de que estas sean las mismas que en tu index.css o un archivo global) */
+:root {
+    --color-dark-brown: #532a14;
+    --color-light-orange-pastel: #fef4e8; /* Color de fondo general */
+    --color-card-bg-light: #fff8f2; /* Fondo para tarjetas y secciones */
+    --color-title-brown: #6b3e26; /* Color para títulos y navbar principal */
+    --color-subtitle-orange: #8d5c3d; /* Color para subtítulos, botones, elementos secundarios */
+    --color-card-border: #d1a38d; /* Borde de tarjetas */
+    --color-text-brown-dark: #5a3a28; /* Texto principal */
+    --color-text-brown-light: #7a5540; /* Texto secundario/info */
+    --color-info-text: #6d4b3c; /* Texto informativo */
+    --color-card-shadow: rgba(0,0,0,0.08); /* Sombra suave para tarjetas */
+    --color-general-shadow: rgba(0,0,0,0.05); /* Sombra más sutil */
+    --logo-color: #ffffff; /* Color para el logo y algunos íconos en la navbar */
+    --color-success: #27ae60; /* Verde para éxito/confirmar */
+    --color-danger: #fa314a; /* Rojo para eliminar */
+    --color-placeholder-bg: #e0e0e0;
+    --color-placeholder-border: #bdbdbd;
+    --color-placeholder-text: #757575;
+}
+
+/* Estilos globales del body/html (idealmente en un index.css o global.css) */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-light-orange-pastel); /* Usamos el color de fondo pastel */
+    color: var(--color-text-brown-dark);
+}
+
+/* Contenedor raíz para la vista de pedidos del repartidor */
 .pedidos-repartidor-root {
-  padding: 1rem;
-  max-width: 800px;
-  margin: 0 auto;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    background-color: var(--color-light-orange-pastel); /* Asegura el fondo */
 }
 
-.pedidos-repartidor-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
+/* --- BANNER SUPERIOR (Clase reutilizada de Home y RepartidorDashboard) --- */
+.top-banner {
+    width: 100%;
+    background-color: var(--color-dark-brown); /* Marrón oscuro para el banner */
+    color: white;
+    padding: 0.75rem 1rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px var(--color-general-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
 }
 
-.pedidos-repartidor-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
+.top-banner-text {
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+    flex-grow: 1; /* Permite que el texto ocupe el espacio central */
+    text-align: center;
+    margin: 0 1rem; /* Margen para separar de los botones */
 }
 
-.pedido-repartidor-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* --- Botón de volver (Reutilizamos icon-btn y su imagen) --- */
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 50%;
+    transition: background 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.pedido-repartidor-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 0.5rem;
+.icon-btn:hover {
+    background-color: rgba(255,255,255,0.15); /* Efecto hover sutil */
 }
 
-.pedido-repartidor-nombre {
-  font-weight: bold;
-  font-size: 1.1rem;
+.icon-btn img {
+    width: 24px; /* Tamaño consistente con el RepartidorDashboard */
+    height: 24px;
+    filter: brightness(0) invert(1); /* Hace que los iconos sean blancos */
 }
 
-.pedido-repartidor-local {
-  color: #666;
-  font-style: italic;
+/* --- Contenedor principal del contenido --- */
+.pedidos-repartidor-main-content {
+    width: 100%;
+    max-width: 1000px; /* Ancho máximo para el grid de pedidos */
+    margin: 2rem auto; /* Espacio desde el banner y centrado */
+    padding: 0 1rem; /* Padding horizontal para que no se pegue a los bordes */
+    box-sizing: border-box;
 }
 
-.pedido-repartidor-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+/* --- Grid de pedidos (Reutilizada de CompradorDashboard) --- */
+.pedidos-grid { /* Usado para mostrar las tarjetas de pedidos */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 300px de ancho mínimo */
+    gap: 1.5rem; /* Espacio entre las tarjetas */
+    justify-content: center; /* Centra las tarjetas si no llenan la fila */
+}
+
+/* --- Tarjeta de pedido individual (Reutilizada de CompradorDashboard/CarritoView) --- */
+.pedido-card {
+    background: var(--color-card-bg-light); /* Fondo de tarjeta claro */
+    border: 1.5px solid var(--color-card-border); /* Borde de tarjeta */
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 10px var(--color-card-shadow); /* Sombra para profundidad */
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Para empujar el botón al final */
+}
+
+.pedido-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px var(--color-card-shadow);
+}
+
+.pedido-card h3 {
+    color: var(--color-title-brown); /* Título de la tarjeta */
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 0.8rem; /* Más espacio debajo del título */
+    text-align: center; /* Centra el nombre del pedido */
+}
+
+.pedido-card p {
+    margin: 0.4rem 0;
+    color: var(--color-text-brown-dark); /* Texto principal de la tarjeta */
+    font-size: 1rem;
+}
+
+.pedido-card p strong {
+    color: var(--color-subtitle-orange); /* Naranja para etiquetas importantes */
 }
 
 .comidas-lista {
-  margin: 0.5rem 0;
+    margin: 0.8rem 0; /* Más espacio para la lista de comidas */
+    border-top: 1px dashed var(--color-card-border); /* Separador sutil */
+    padding-top: 0.8rem;
 }
 
-.comida-item {
-  margin-left: 1rem;
-  color: #555;
+.comidas-lista p {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--color-text-brown-dark);
 }
 
-.btn-aceptar-pedido {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 1rem;
-  transition: background-color 0.2s;
+.comidas-lista ul {
+    list-style: none; /* Eliminar viñetas */
+    padding-left: 0;
+    margin: 0;
 }
 
-.btn-aceptar-pedido:hover {
-  background-color: #45a049;
+.comidas-lista li {
+    margin-bottom: 0.3rem;
+    color: var(--color-text-brown-light); /* Color más suave para los ítems */
+}
+
+/* --- Botón de aceptar pedido (Reutilizada de card-button) --- */
+.card-button {
+    background-color: var(--color-subtitle-orange); /* Naranja de los botones */
+    color: white;
+    padding: 0.9rem 1.8rem;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: block; /* Para que ocupe todo el ancho de la tarjeta */
+    width: 100%; /* El botón ocupa todo el ancho disponible */
+    margin-top: auto; /* Empuja el botón al final de la tarjeta */
+    border: none;
+    cursor: pointer;
+}
+
+.card-button:hover {
+    background-color: var(--color-title-brown); /* Marrón al hover */
+    transform: translateY(-2px);
+}
+
+/* --- Mensajes de estado (Reutilizadas de Home/CompradorDashboard) --- */
+.loading, .no-pedidos {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--color-text-brown-light); /* Color de texto suave */
+    margin-top: 3rem;
+    width: 100%; /* Asegura que ocupen el ancho */
+}
+
+
+/* --- Media Queries para responsividad --- */
+@media (max-width: 768px) {
+    .top-banner {
+        padding: 0.6rem 0.5rem;
+    }
+    .top-banner-text {
+        font-size: 0.85rem;
+        margin: 0 0.5rem;
+    }
+    .icon-btn img {
+        width: 20px;
+        height: 20px;
+    }
+    .pedidos-repartidor-main-content {
+        padding: 0 0.8rem;
+        margin: 1.5rem auto;
+    }
+    .pedidos-grid {
+        grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
+        gap: 1rem;
+    }
+    .pedido-card {
+        padding: 1rem;
+    }
+    .pedido-card h3 {
+        font-size: 1.3rem;
+    }
+    .pedido-card p {
+        font-size: 0.9rem;
+    }
+    .card-button {
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+    }
+    .loading, .no-pedidos {
+        font-size: 1rem;
+        margin-top: 2rem;
+    }
 }

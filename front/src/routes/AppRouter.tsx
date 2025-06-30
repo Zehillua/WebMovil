@@ -10,7 +10,9 @@ import RepartidorDashboard from '../pages/dashboards/repartidor/RepartidorDashbo
 import LocalView from '../pages/dashboards/usuarios/LocalView';
 import PedidosDashboard from '../pages/dashboards/usuarios/PedidosDashboard';
 import PedidosRepartidor from '../pages/dashboards/repartidor/PedidosRepartidor';
+import PedidosPendientes from '../pages/dashboards/repartidor/PedidosPendientes';
 import CarritoView from '../pages/dashboards/usuarios/CarritoView';
+import PedidosEnCamino from '../pages/dashboards/repartidor/PedidosEnCamino';
 import CarteraUsuarioDashboard from '../pages/dashboards/usuarios/CarteraUsuarioDashboard';
 
 export default function AppRouter() {
@@ -30,6 +32,8 @@ export default function AppRouter() {
       <Route path="/pedidos" element={<PedidosDashboard />} />
       <Route path="/locatario/pedidos" element={<PedidosDashboards/>} />
       <Route path="/repartidor/pedidos" element={<PedidosRepartidor />} />
+      <Route path="/repartidor/pendientes" element={<PedidosPendientes />} />
+      <Route path="/repartidor/en-camino" element={<PedidosEnCamino />} />
     </Routes>
   );
 }

@@ -1,382 +1,526 @@
-/* CompradorDashboard.css (Completamente Unificado y Adaptado) */
+/* CompradorDashboard.css */
 
+/* --- Variables de Color (Asegúrate de que estas sean las mismas que en tu index.css o un archivo global) --- */
 :root {
-  --color-dark-brown: #532a14;
-  --color-light-orange-pastel: #fef4e8;
-  --color-card-bg-light: #fff8f2;
-  --color-title-brown: #6b3e26;
-  --color-subtitle-orange: #8d5c3d;
-  --color-card-border: #d1a38d;
-  --color-text-brown-dark: #5a3a28;
-  --color-text-brown-light: #7a5540;
-  --color-info-text: #6d4b3c;
-  --color-card-shadow: rgba(0,0,0,0.08);
-  --color-general-shadow: rgba(0,0,0,0.05);
-  --logo-color: #ffffff;
+    --color-dark-brown: #532a14;
+    --color-light-orange-pastel: #fef4e8; /* Color de fondo general */
+    --color-card-bg-light: #fff8f2; /* Fondo para tarjetas y secciones */
+    --color-title-brown: #6b3e26; /* Color para títulos y navbar principal */
+    --color-subtitle-orange: #8d5c3d; /* Color para subtítulos, botones, elementos secundarios */
+    --color-card-border: #d1a38d; /* Borde de tarjetas */
+    --color-text-brown-dark: #5a3a28; /* Texto principal */
+    --color-text-brown-light: #7a5540; /* Texto secundario/info */
+    --color-info-text: #6d4b3c; /* Texto informativo */
+    --color-card-shadow: rgba(0,0,0,0.08); /* Sombra suave para tarjetas */
+    --color-general-shadow: rgba(0,0,0,0.05); /* Sombra más sutil */
+    --logo-color: #ffffff; /* Color para el logo y algunos íconos en la navbar */
+    --color-success: #27ae60; /* Verde para éxito/confirmar */
+    --color-danger: #fa314a; /* Rojo para eliminar */
+    --color-placeholder-bg: #e0e0e0;
+    --color-placeholder-border: #bdbdbd;
+    --color-placeholder-text: #757575;
 }
 
 html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--color-light-orange-pastel);
-  color: var(--color-text-brown-dark);
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-light-orange-pastel);
+    color: var(--color-text-brown-dark);
 }
 
 .comprador-dashboard {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-sizing: border-box;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    background-color: var(--color-light-orange-pastel);
 }
 
+/* --- Navbar (Menu Superior) --- */
 .navbar-dashboard {
-  width: 100%;
-  background-color: var(--color-title-brown);
-  color: white;
-  padding: 0.8rem 2rem;
-  border-radius: 0 0 16px 16px;
-  box-shadow: 0 2px 10px var(--color-card-shadow);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
+    width: 100%;
+    background-color: var(--color-dark-brown); /* Marrón oscuro para la navbar */
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 4px 10px var(--color-general-shadow); /* Sombra más pronunciada */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    box-sizing: border-box;
 }
 
 .logo-section .logo {
-  font-size: 2rem;
-  font-weight: bold;
-  color: white;
-  letter-spacing: 1px;
+    font-size: 1.8rem; /* Ajuste el tamaño del logo */
+    font-weight: bold;
+    color: var(--logo-color);
+    letter-spacing: 0.5px;
 }
 
 .search-section {
-  flex: 1;
-  display: flex;
-  justify-content: center;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    min-width: 200px; /* Asegura un ancho mínimo para el buscador */
 }
 
 .search-input {
-  width: 100%;
-  max-width: 400px;
-  padding: 0.7rem 1.2rem;
-  border-radius: 20px;
-  border: 1.5px solid var(--color-card-border);
-  font-size: 1rem;
-  color: var(--color-text-brown-dark);
-  background-color: #f9f9f9;
-  transition: box-shadow 0.2s, border-color 0.2s;
-  outline: none;
-  box-sizing: border-box;
+    width: 100%;
+    max-width: 450px; /* Aumenta el ancho máximo */
+    padding: 0.7rem 1.2rem;
+    border-radius: 25px; /* Más redondeado */
+    border: 1px solid var(--color-card-border);
+    font-size: 0.95rem;
+    color: var(--color-text-brown-dark);
+    background-color: white; /* Fondo blanco */
+    transition: box-shadow 0.2s, border-color 0.2s;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.search-input::placeholder {
+    color: var(--color-text-brown-light);
 }
 
 .search-input:focus {
-  border-color: var(--color-subtitle-orange);
-  box-shadow: 0 0 6px rgba(141, 92, 61, 0.2);
+    border-color: var(--color-subtitle-orange);
+    box-shadow: 0 0 8px rgba(141, 92, 61, 0.3); /* Sombra más visible al enfocar */
 }
 
 .icons-section {
-  display: flex;
-  gap: 1rem;
+    display: flex;
+    gap: 0.8rem; /* Espacio entre iconos */
 }
 
 .icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.3rem;
-  border-radius: 50%;
-  transition: background 0.2s ease-in-out;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem; /* Un poco más de padding */
+    border-radius: 50%;
+    transition: background 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .icon-btn:hover {
-  background-color: rgba(255,255,255,0.15);
+    background-color: rgba(255,255,255,0.15);
 }
 
 .icon-btn img {
-  width: 28px;
-  height: 28px;
-  filter: none;
+    width: 26px; /* Ajusta el tamaño del icono */
+    height: 26px; /* Ajusta el tamaño del icono */
+    filter: brightness(0) invert(1); /* Hace que los íconos se vean blancos */
 }
 
-/* Cuerpo principal */
+/* --- Cuerpo principal del Dashboard --- */
 .dashboard-body {
-  display: flex;
-  width: 100%;
-  max-width: 1200px;
-  padding: 2rem;
-  gap: 2rem;
-  box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    max-width: 1200px; /* Ancho máximo del contenido */
+    padding: 2.5rem 1.5rem; /* Más padding en general */
+    gap: 2rem; /* Espacio entre la sidebar y la sección de productos */
+    box-sizing: border-box;
+    flex-wrap: wrap; /* Permite que las columnas se apilen en pantallas pequeñas */
+    justify-content: center; /* Centra las columnas cuando se apilan */
 }
 
+/* --- Estilo de la Tarjeta General (para sidebar y productos) --- */
+.card-container {
+    background-color: var(--color-card-bg-light);
+    border: 1.5px solid var(--color-card-border);
+    border-radius: 12px;
+    box-shadow: 0 6px 15px var(--color-card-shadow);
+    padding: 2rem; /* Padding interno consistente */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    font-size: 1.8rem; /* Tamaño de título para las tarjetas */
+    color: var(--color-title-brown);
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center; /* Centrar el título */
+    font-weight: bold;
+    letter-spacing: 0.2px;
+}
+
+/* --- Sidebar (Locales del Vecindario) --- */
 .sidebar {
-  flex: 1;
-  background-color: var(--color-card-bg-light);
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1.5px solid var(--color-card-border);
-  box-shadow: 0 6px 12px var(--color-card-shadow);
-  min-width: 250px;
-  height: fit-content;
-  box-sizing: border-box;
+    flex: 1; /* Crece para ocupar espacio disponible */
+    min-width: 280px; /* Ancho mínimo para la sidebar */
+    max-width: 350px; /* Ancho máximo para la sidebar */
+    height: fit-content; /* Se ajusta al contenido */
 }
 
-.sidebar-title {
-  font-size: 1.5rem;
-  color: var(--color-title-brown);
-  margin: 0 0 1.5rem 0;
-  text-align: center;
+/* Input de texto genérico (usado en sidebar) */
+.text-input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
+    font-size: 1em;
+    color: var(--color-text-brown-dark);
+    background-color: white;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.sidebar-search-input {
-  width: 100%;
-  padding: 10px 15px;
-  margin-bottom: 1rem;
-  border: 1.5px solid var(--color-card-border);
-  border-radius: 8px;
-  font-size: 1em;
-  color: var(--color-text-brown-dark);
-  background-color: white;
-  box-sizing: border-box;
+.text-input:focus {
+    outline: none;
+    border-color: var(--color-subtitle-orange);
+    box-shadow: 0 0 0 2px rgba(141, 92, 61, 0.2);
 }
 
 .lista-locales {
-  list-style: none;
-  padding: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .lista-locales li {
-  margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
 }
 
-.local-button {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  background-color: white;
-  border: 2px solid var(--color-subtitle-orange);
-  border-radius: 8px;
-  color: var(--color-subtitle-orange);
-  font-weight: 600;
-  font-size: 1.1em;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s, transform 0.2s;
-  text-align: left;
+/* Botones de lista (para locales) */
+.list-button {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background-color: white;
+    border: 1px solid var(--color-card-border); /* Borde más sutil */
+    border-radius: 8px;
+    color: var(--color-text-brown-dark);
+    font-weight: 500;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    text-align: left;
+    display: block;
+    box-sizing: border-box;
 }
 
-.local-button:hover {
-  background-color: var(--color-subtitle-orange);
-  color: white;
-  transform: translateY(-2px);
+.list-button:hover {
+    background-color: var(--color-light-orange-pastel); /* Pastel claro al pasar el mouse */
+    border-color: var(--color-subtitle-orange);
 }
 
-.local-button.selected {
-  background-color: var(--color-title-brown);
-  color: white;
-  border-color: var(--color-title-brown);
+.list-button.selected-list-button {
+    background-color: var(--color-subtitle-orange); /* Naranja oscuro al seleccionar */
+    color: white;
+    border-color: var(--color-subtitle-orange);
+    font-weight: bold;
 }
 
-.clear-selection-button {
-  background-color: transparent;
-  color: var(--color-text-brown-light);
-  border: 1px solid var(--color-text-brown-light);
-  font-size: 0.9em;
-  margin-top: 10px;
-  width: 100%;
-  padding: 0.6em 1.2em;
-  border-radius: 8px;
+/* Botón para limpiar filtro */
+.clear-filter-button {
+    background-color: transparent;
+    color: var(--color-info-text); /* Color de texto informativo */
+    border: 1px dashed var(--color-card-border); /* Borde punteado */
+    font-size: 0.9em;
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    text-align: center;
+    box-sizing: border-box;
 }
 
-.clear-selection-button:hover {
-  background-color: var(--color-text-brown-light);
-  color: white;
+.clear-filter-button:hover {
+    background-color: var(--color-light-orange-pastel);
+    color: var(--color-subtitle-orange);
+    border-color: var(--color-subtitle-orange);
 }
 
-/* Zona de productos */
+/* --- Zona de productos --- */
 .productos-section {
-  flex: 3;
-  background-color: var(--color-card-bg-light);
-  padding: 2rem;
-  border-radius: 12px;
-  border: 1.5px solid var(--color-card-border);
-  box-shadow: 0 6px 12px var(--color-card-shadow);
-  box-sizing: border-box;
-  min-height: 400px;
-}
-
-.productos-title {
-  font-size: 2rem;
-  color: var(--color-title-brown);
-  text-align: center;
-  margin-bottom: 2rem;
+    flex: 3; /* Crece para ocupar más espacio */
+    min-width: 60%; /* Ancho mínimo para la sección de productos */
+    min-height: 400px;
 }
 
 .productos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ajuste de tamaño de columnas */
+    gap: 1.5rem; /* Espacio entre productos */
+    justify-content: center; /* Centra las tarjetas si no llenan la fila */
 }
 
-.producto-card {
-  background-color: white;
-  border-radius: 10px;
-  border: 1px solid var(--color-card-border);
-  box-shadow: 0 4px 8px var(--color-general-shadow);
-  overflow: hidden;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s, box-shadow 0.2s;
+/* Tarjeta de producto individual */
+.product-item-card {
+    background-color: white;
+    border-radius: 12px;
+    border: 1px solid var(--color-card-border);
+    box-shadow: 0 4px 10px var(--color-general-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: left; /* Alinear texto a la izquierda dentro de la tarjeta */
 }
 
-.producto-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px var(--color-card-shadow);
+.product-item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px var(--color-card-shadow);
 }
 
-.producto-imagen {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
+.product-image {
+    width: 100%;
+    height: 150px; /* Altura fija para las imágenes */
+    object-fit: cover;
+    border-bottom: 1px solid var(--color-card-border); /* Separador de imagen */
 }
 
-.producto-info {
-  padding: 1rem;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.product-details {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.producto-nombre {
-  font-size: 1.2em;
-  color: var(--color-text-brown-dark);
-  margin: 0 0 0.5rem 0;
+.product-name {
+    font-size: 1.15em;
+    color: var(--color-text-brown-dark);
+    margin: 0 0 0.4rem 0;
+    font-weight: bold;
 }
 
-.producto-local-info {
-  font-size: 0.9em;
-  color: var(--color-text-brown-light);
-  margin-bottom: 1rem;
+.product-local-name {
+    font-size: 0.85em;
+    color: var(--color-text-brown-light);
+    margin-bottom: 0.8rem;
 }
 
-.add-to-cart-button {
-  background-color: var(--color-subtitle-orange);
-  color: white;
-  border: none;
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  width: 100%;
+.product-price {
+    font-size: 1em;
+    color: var(--color-title-brown);
+    margin-top: auto; /* Empuja el precio y el botón hacia abajo */
+    margin-bottom: 0.8rem;
+    font-weight: bold;
 }
 
-.add-to-cart-button:hover {
-  background-color: var(--color-title-brown);
-  transform: translateY(-2px);
+.product-price strong {
+    color: var(--color-subtitle-orange);
 }
 
-/* Mensajes generales */
-.no-products-message,
+/* Botón Primario (reutilizable) */
+.button-primary {
+    background-color: var(--color-subtitle-orange); /* Color de VeciMarket para botones primarios */
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    text-align: center;
+}
+
+.button-primary:hover {
+    background-color: var(--color-title-brown); /* Un tono más oscuro al pasar el mouse */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* --- Mensajes de estado --- */
 .loading-message,
 .error-message,
 .no-data-message {
-  grid-column: 1 / -1;
-  text-align: center;
-  color: var(--color-text-brown-light);
-  font-size: 1.1em;
-  padding: 20px;
+    grid-column: 1 / -1; /* Ocupa todo el ancho de la cuadrícula */
+    text-align: center;
+    color: var(--color-text-brown-light);
+    font-size: 1.1em;
+    padding: 20px;
+    font-weight: 500;
 }
 
 .error-message {
-  color: #e53935;
-  font-weight: bold;
+    color: var(--color-danger); /* Rojo para errores */
+    font-weight: bold;
 }
 
-/* Responsive */
+/* --- Responsive Design --- */
+@media (max-width: 1024px) {
+    .dashboard-body {
+        flex-direction: column; /* Apila las secciones */
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+    .sidebar, .productos-section {
+        max-width: 100%; /* Ocupan todo el ancho disponible */
+        min-width: unset; /* Quita el min-width */
+    }
+    .sidebar .card-container,
+    .productos-section .card-container {
+        width: 100%;
+    }
+}
+
 @media (max-width: 768px) {
-  .navbar-dashboard {
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 1rem;
-    gap: 1rem;
-  }
-  .dashboard-body {
-    flex-direction: column;
-  }
-  .sidebar, .productos-section {
-    width: 100%;
-    padding: 1.5rem;
-  }
-  .productos-grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  }
+    .navbar-dashboard {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0.8rem 1rem;
+        gap: 0.8rem;
+    }
+    .logo-section {
+        flex-basis: 100%; /* El logo ocupa su propia línea */
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+    .search-section {
+        flex-basis: 100%; /* El buscador ocupa su propia línea */
+        order: 3; /* Se mueve abajo */
+    }
+    .icons-section {
+        order: 2; /* Los iconos se quedan en el medio */
+        flex-basis: 100%; /* Los iconos ocupan su propia línea */
+        justify-content: center;
+    }
+    .dashboard-body {
+        padding: 1rem;
+        gap: 1rem;
+    }
+    .card-container {
+        padding: 1.2rem;
+    }
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .productos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Ajuste para móviles */
+        gap: 1rem;
+    }
+    .product-image {
+        height: 120px;
+    }
+    .product-details {
+        padding: 0.8rem;
+    }
+    .product-name {
+        font-size: 1em;
+    }
+    .button-primary {
+        padding: 0.6rem 1rem;
+        font-size: 0.9em;
+    }
 }
 
+@media (max-width: 480px) {
+    .navbar-dashboard {
+        padding: 0.6rem 0.5rem;
+    }
+    .logo-section .logo {
+        font-size: 1.5rem;
+    }
+    .search-input {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+    .icon-btn img {
+        width: 22px;
+        height: 22px;
+    }
+    .card-container {
+        padding: 1rem;
+    }
+    .card-title {
+        font-size: 1.3rem;
+    }
+    .list-button, .clear-filter-button, .text-input {
+        font-size: 0.9em;
+        padding: 0.6rem 0.8rem;
+    }
+    .productos-grid {
+        grid-template-columns: 1fr; /* Una columna en pantallas muy pequeñas */
+    }
+}
 
+/* Estos estilos del modal no parecen usarse en este componente,
+   pero los mantengo por si son de un archivo global. Si no se usan,
+   puedes eliminarlos o moverlos a un archivo específico de modal. */
 .modal-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex; justify-content: center; align-items: center;
-  z-index: 1000;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000;
 }
 
 .modal-carrito {
-  background: #fdfcfb;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-  width: 90%;
-  max-width: 400px;
-  position: relative;
+    background: var(--color-card-bg-light);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 400px;
+    position: relative;
 }
 
 .modal-carrito h2 {
-  color: #5a3e36;
-  margin-bottom: 1rem;
+    color: var(--color-title-brown);
+    margin-bottom: 1rem;
 }
 
 .modal-carrito p {
-  margin-bottom: 1rem;
-  font-weight: bold;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    color: var(--color-text-brown-dark);
 }
 
 .modal-carrito input {
-  width: 100%;
-  padding: 0.5rem;
-  margin: 0.8rem 0;
-  border: 2px solid #a9746e;
-  border-radius: 6px;
-  font-size: 1rem;
+    width: 100%;
+    padding: 0.7rem;
+    margin: 0.8rem 0;
+    border: 1.5px solid var(--color-card-border);
+    border-radius: 6px;
+    font-size: 1rem;
+    color: var(--color-text-brown-dark);
+    background-color: white;
 }
 
 .modal-carrito button {
-  padding: 0.5rem 1.5rem;
-  background-color: #a9746e;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-top: 0.5rem;
+    padding: 0.7rem 1.8rem;
+    background-color: var(--color-subtitle-orange);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 0.8rem;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.modal-carrito button:hover {
+    background-color: var(--color-title-brown);
+    transform: translateY(-1px);
 }
 
 .close-button {
-  position: absolute;
-  top: 0.3rem;
-  right: 0.7rem;
-  font-size: 1.5rem;
-  background: none;
-  border: none;
-  color: #a9746e;
-  cursor: pointer;
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    font-size: 1.8rem; /* Tamaño más grande para el ícono de cerrar */
+    background: none;
+    border: none;
+    color: var(--color-info-text); /* Color más sutil */
+    cursor: pointer;
+    line-height: 1; /* Asegura que no haya espacio extra */
+}
+.close-button:hover {
+    color: var(--color-danger);
 }

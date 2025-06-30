@@ -200,8 +200,7 @@ let UsuarioService = class UsuarioService {
             throw new common_1.UnauthorizedException('Usuario no encontrado');
         return usuario.direccion;
     }
-    // En auth/src/services/usuario.service.ts - AGREGA:
-    async obtenerUsuarioPorId(id) {
+    async findById(id) {
         return this.usuarioModel.findById(id);
     }
 };

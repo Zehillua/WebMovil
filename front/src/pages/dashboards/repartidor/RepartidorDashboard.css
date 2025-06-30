@@ -1,125 +1,270 @@
+/* RepartidorDashboard.css */
+
+/* Variables de Color (Asegúrate de que estas sean consistentes en todos tus archivos CSS) */
 :root {
-  --color-dark-brown: #532a14;
-  --color-light-orange-pastel: #fef4e8;
-  --color-card-bg-light: #fff8f2;
-  --color-title-brown: #6b3e26;
-  --color-subtitle-orange: #8d5c3d;
-  --color-card-border: #d1a38d;
-  --color-text-brown-dark: #5a3a28;
-  --color-text-brown-light: #7a5540;
-  --color-card-shadow: rgba(0,0,0,0.08);
-  --color-general-shadow: rgba(0,0,0,0.05);
+    --color-dark-brown: #532a14;
+    --color-light-orange-pastel: #fef4e8;
+    --color-card-bg-light: #fff8f2;
+    --color-title-brown: #6b3e26;
+    --color-subtitle-orange: #8d5c3d;
+    --color-card-border: #d1a38d;
+    --color-text-brown-dark: #5a3a28;
+    --color-text-brown-light: #7a5540;
+    --color-info-text: #6d4b3c;
+    --color-card-shadow: rgba(0,0,0,0.08);
+    --color-general-shadow: rgba(0,0,0,0.05);
+    --logo-color: #ffffff; /* Color para el logo y algunos íconos en la navbar */
+    --color-success: #27ae60;
+    --color-danger: #fa314a;
+    --color-placeholder-bg: #e0e0e0;
+    --color-placeholder-border: #bdbdbd;
+    --color-placeholder-text: #757575;
 }
 
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  color: var(--color-text-brown-dark);
-  background-color: var(--color-light-orange-pastel);
+/* Base y Contenedor Principal */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-light-orange-pastel);
+    color: var(--color-text-brown-dark);
 }
 
+.repartidor-root {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    background-color: var(--color-light-orange-pastel);
+}
+
+/* --- ADAPTACIÓN DEL BANNER SUPERIOR DE HOME.CSS --- */
 .top-banner {
-  width: 100%;
-  background-color: var(--color-dark-brown);
-  color: white;
-  padding: 0.75rem;
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.1rem;
-  box-shadow: 0 2px 5px var(--color-card-shadow);
+    width: 100%;
+    background-color: var(--color-dark-brown); /* Usamos el marrón oscuro de Home */
+    color: white;
+    padding: 0.75rem 1rem; /* Padding vertical y horizontal de Home */
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 2px 5px var(--color-general-shadow);
+    display: flex; /* Para alinear íconos y texto */
+    justify-content: space-between; /* Para que los íconos estén en los extremos */
+    align-items: center;
+    box-sizing: border-box;
 }
 
-.dashboard-title {
-  text-align: center;
-  margin: 2rem 0;
-  font-size: 2rem;
-  color: var(--color-title-brown);
+.top-banner-text {
+    font-size: 0.95rem; /* Tamaño de fuente de Home */
+    letter-spacing: 0.3px;
+    flex-grow: 1; /* Para que ocupe el espacio central disponible */
+    text-align: center; /* Centra el texto */
+    margin: 0 1rem; /* Margen para separar del botón si está muy pegado */
 }
+
+/* --- Botón de ícono (ajustado para el nuevo top-banner) --- */
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 50%;
+    transition: background 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background-color: rgba(255,255,255,0.15);
+}
+
+.icon-btn img {
+    width: 24px; /* Un poco más pequeños para el banner más compacto */
+    height: 24px;
+    filter: brightness(0) invert(1); /* Hace que los iconos sean blancos */
+}
+
+/* --- Título del dashboard --- */
+.dashboard-title {
+    text-align: center;
+    margin: 2rem 0;
+    font-size: 2.5rem;
+    color: var(--color-title-brown);
+    font-weight: 700;
+}
+
+/* Contenedor principal de los botones de acción */
+.repartidor-dashboard-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin-top: 2rem;
+    box-sizing: border-box;
+}
+
+/* Botones de acción específicos del repartidor */
+.repartidor-action-btn {
+    background-color: var(--color-subtitle-orange);
+    color: white;
+    padding: 1.2rem 2.5rem;
+    font-size: 1.4rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px var(--color-general-shadow);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+    font-weight: 600;
+}
+
+.repartidor-action-btn:hover {
+    background-color: var(--color-title-brown);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px var(--color-card-shadow);
+}
+
+.repartidor-action-btn:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 768px) {
+    .top-banner {
+        padding: 0.6rem 0.5rem; /* Ajuste para móviles */
+    }
+    .top-banner-text {
+        font-size: 0.85rem;
+        margin: 0 0.5rem;
+    }
+    .icon-btn img {
+        width: 20px; /* Íconos más pequeños en móviles */
+        height: 20px;
+    }
+    .dashboard-title {
+        font-size: 2rem;
+        margin: 1.5rem 0;
+    }
+    .repartidor-dashboard-body {
+        padding: 1rem;
+        gap: 1rem;
+    }
+    .repartidor-action-btn {
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .repartidor-action-btn {
+        font-size: 1rem;
+        padding: 0.8rem 1rem;
+    }
+}
+
+/* Mantengo aquí los estilos que podrían ser usados en sub-vistas del repartidor,
+   aunque no sean directamente parte del dashboard principal */
 
 .pedidos-grid {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  padding: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
 }
 
 .pedido-card {
-  background: white;
-  border: 1.5px solid var(--color-card-border);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 10px var(--color-card-shadow);
-  transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--color-card-bg-light);
+    border: 1.5px solid var(--color-card-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 10px var(--color-card-shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .pedido-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px var(--color-card-shadow);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px var(--color-card-shadow);
 }
 
 .pedido-card h3 {
-  color: var(--color-title-brown);
-  font-size: 1.5rem;
-  margin-top: 0;
-  margin-bottom: 0.5rem;
+    color: var(--color-title-brown);
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
 }
 
 .pedido-card p {
-  margin: 0.4rem 0;
-  color: var(--color-text-brown-dark);
+    margin: 0.4rem 0;
+    color: var(--color-text-brown-dark);
 }
 
 .pedido-card ul {
-  padding-left: 1.5rem;
-  margin: 0.5rem 0;
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
 }
 
-button {
-  margin-top: 1rem;
-  padding: 0.8rem 1.2rem;
-  background-color: var(--color-subtitle-orange);
-  border: none;
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+button { /* Este es un estilo general para botones, ajustado para ser más neutral */
+    padding: 0.8rem 1.2rem;
+    background-color: var(--color-subtitle-orange);
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-  background-color: var(--color-title-brown);
-  transform: translateY(-2px);
+    background-color: var(--color-title-brown);
+    transform: translateY(-2px);
 }
 
 .estado {
-  font-weight: bold;
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
+    font-weight: bold;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
 }
 
 .estado.pendiente {
-  background-color: #fff3cd;
-  color: #856404;
+    background-color: #fce8d7;
+    color: var(--color-subtitle-orange);
 }
 
 .estado.en-camino {
-  background-color: #cce5ff;
-  color: #004085;
+    background-color: #d7e8fc;
+    color: #4a6fae;
 }
 
 .estado.entregado {
-  background-color: #d4edda;
-  color: #155724;
+    background-color: #e4fce4;
+    color: var(--color-success);
 }
 
 .loading, .no-pedidos {
-  text-align: center;
-  font-size: 1.2rem;
-  color: var(--color-text-brown-light);
-  margin-top: 3rem;
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--color-text-brown-light);
+    margin-top: 3rem;
 }

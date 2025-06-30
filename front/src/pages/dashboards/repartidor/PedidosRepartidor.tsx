@@ -1,6 +1,7 @@
+// PedidosRepartidor.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './PedidosRepartidor.css';
+import './PedidosRepartidor.css'; // Asegúrate de que esta ruta sea correcta
 
 interface Pedido {
   _id: string;
@@ -30,6 +31,7 @@ const PedidosRepartidor: React.FC = () => {
         return;
       }
 
+      // IMPORTANTE: Asegúrate de que el puerto del backend sea correcto (3002 o 3001)
       const resPedidos = await fetch(`http://localhost:3002/pedidos/delivery/disponibles`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -50,7 +52,7 @@ const PedidosRepartidor: React.FC = () => {
     const userData = await resUser.json();
     const idRepartidor = userData.userId || userData._id;
 
-    await fetch(`http://localhost:3002/pedidos/${pedidoId}/aceptar-repartidor`, {
+    const response = await fetch(`http://localhost:3002/pedidos/${pedidoId}/aceptar-repartidor`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -59,54 +61,65 @@ const PedidosRepartidor: React.FC = () => {
       body: JSON.stringify({ idRepartidor }),
     });
 
-    setPedidos(pedidos => pedidos.filter(p => p._id !== pedidoId));
+    if (response.ok) {
+      // Si el pedido fue aceptado con éxito, lo filtramos de la lista
+      setPedidos(pedidos => pedidos.filter(p => p._id !== pedidoId));
+    } else {
+      // Manejar errores, por ejemplo, mostrar una notificación
+      alert('Error al aceptar el pedido. Inténtalo de nuevo.');
+      console.error('Error al aceptar el pedido:', response.statusText);
+    }
   };
 
   return (
     <div className="pedidos-repartidor-root">
-      <div className="pedidos-repartidor-header">
-        <button className="pedidos-repartidor-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
-        <span className="pedidos-repartidor-title">Pedidos Delivery Disponibles</span>
-        <div style={{ width: 32 }}></div>
+      {/* Header adaptado al estilo top-banner */}
+      <div className="top-banner">
+        <button className="icon-btn" onClick={() => navigate(-1)} title="Volver">
+          <img src="https://img.icons8.com/ios-filled/28/ffffff/left.png" alt="Volver" /> {/* Icono de flecha */}
+        </button>
+        <span className="top-banner-text">Pedidos Disponibles</span> {/* Título más conciso */}
+        <div style={{ width: 28, height: 28 }}></div> {/* Espaciador para centrar el título */}
       </div>
-      {loading ? (
-        <div className="pedidos-repartidor-loading">Cargando pedidos...</div>
-      ) : pedidos.length === 0 ? (
-        <div className="pedidos-repartidor-empty">No hay pedidos delivery disponibles.</div>
-      ) : (
-        <div className="pedidos-repartidor-list">
-          {pedidos.map((pedido) => (
-            <div className="pedido-repartidor-card" key={pedido._id}>
-              <div className="pedido-repartidor-header">
-                <span className="pedido-repartidor-nombre">{pedido.nombrePedido}</span>
-                <span className="pedido-repartidor-local">{pedido.nombreLocal}</span>
-              </div>
-              <div className="pedido-repartidor-info">
-                <span><b>Retirar en:</b> {pedido.direccionLocal}</span>
-                <span><b>Entregar en:</b> {pedido.direccionEntrega}</span>
-                <span><b>Total:</b> ${pedido.precioPedido.toLocaleString()}</span>
+
+      <main className="pedidos-repartidor-main-content"> {/* Nuevo contenedor para el contenido principal */}
+        {loading ? (
+          <div className="loading">Cargando pedidos...</div> // Reutilizar clase loading
+        ) : pedidos.length === 0 ? (
+          <div className="no-pedidos">No hay pedidos delivery disponibles.</div> // Reutilizar clase no-pedidos
+        ) : (
+          <div className="pedidos-grid"> {/* Reutilizar clase pedidos-grid para las cards */}
+            {pedidos.map((pedido) => (
+              <div className="pedido-card" key={pedido._id}> {/* Reutilizar clase pedido-card */}
+                <h3>{pedido.nombrePedido}</h3> {/* Usar h3 como en pedido-card */}
+                <p><strong>Local:</strong> {pedido.nombreLocal}</p>
+                <p><strong>Retirar en:</strong> {pedido.direccionLocal}</p>
+                <p><strong>Entregar en:</strong> {pedido.direccionEntrega}</p>
+                <p><strong>Total:</strong> ${pedido.precioPedido.toLocaleString('es-CL')}</p> {/* Formato de moneda chilena */}
                 {pedido.propina && pedido.cantidadPropina && (
-                  <span><b>Propina:</b> ${pedido.cantidadPropina}</span>
+                  <p><strong>Propina:</strong> ${pedido.cantidadPropina.toLocaleString('es-CL')}</p>
                 )}
                 <div className="comidas-lista">
-                  <b>Comidas:</b>
-                  {pedido.comidas.map((c, idx) => (
-                    <div key={idx} className="comida-item">
-                      {c.nombre} x{c.cantidad}
-                    </div>
-                  ))}
+                  <p><strong>Comidas:</strong></p>
+                  <ul> {/* Usar lista para las comidas */}
+                    {pedido.comidas.map((c, idx) => (
+                      <li key={idx}>
+                        {c.nombre} x{c.cantidad}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
                 <button
-                  className="btn-aceptar-pedido"
+                  className="card-button" // Usar la clase de botón general
                   onClick={() => handleAceptarPedido(pedido._id)}
                 >
                   Aceptar Pedido
                 </button>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 };
