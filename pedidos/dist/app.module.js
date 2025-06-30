@@ -26,14 +26,17 @@ exports.AppModule = AppModule = __decorate([
                 isGlobal: true,
             }),
             schedule_1.ScheduleModule.forRoot(),
+            // ✅ GRAPHQL SIN CORS - SE MANEJA EN MAIN.TS
             graphql_1.GraphQLModule.forRoot({
                 driver: apollo_1.ApolloDriver,
                 autoSchemaFile: true,
+                playground: true,
+                introspection: true,
                 context: ({ req }) => ({ req }),
             }),
             mongoose_1.MongooseModule.forRootAsync({
                 useFactory: async (configService) => ({
-                    uri: configService.get('MONGO_URI'),
+                    uri: configService.get('MONGO_URI') || 'mongodb://localhost:27017/pedidos',
                 }),
                 inject: [config_1.ConfigService],
             }),

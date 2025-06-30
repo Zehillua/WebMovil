@@ -22,11 +22,42 @@ let LocatarioService = class LocatarioService {
         this.usuarioModel = usuarioModel;
     }
     async obtenerLocatarios() {
-        // Solo devuelve _id y nombreLocal
-        return this.usuarioModel.find({ tipoUsuario: 'locatario' }, { _id: 1, nombreLocal: 1 }).lean();
+        // ✅ DEVOLVER MÁS CAMPOS PARA EL DASHBOARD
+        return this.usuarioModel.find({ tipoUsuario: 'locatario' }, {
+            _id: 1,
+            nombreLocal: 1,
+            numeroLocal: 1,
+            direccion: 1,
+            valoracion: 1,
+            // Agregar campos que tengas en el schema y necesites mostrar
+        }).lean().exec().then(locales => locales.map(local => ({
+            ...local,
+            // Asegurar valores por defecto para el frontend
+            valoracion: local.valoracion || 0,
+            tiempoEntrega: '30-45 min', // Valor por defecto
+            categorias: [],
+            estado: 'abierto',
+            descripcion: `Local de comida - ${local.nombreLocal}`
+        })));
     }
     async obtenerLocatarioPorId(id) {
         return this.usuarioModel.findById(id);
+    }
+    async actualizarValoracion(locatarioId, nuevaValoracion) {
+        const locatario = await this.usuarioModel.findById(locatarioId);
+        if (!locatario)
+            throw new common_1.NotFoundException('Locatario no encontrado');
+        // Calcular nuevo promedio
+        const totalActual = locatario.totalPuntosValoracion || 0;
+        const countActual = locatario.totalValoraciones || 0;
+        const nuevoTotal = totalActual + nuevaValoracion;
+        const nuevoCount = countActual + 1;
+        const nuevoPromedio = nuevoTotal / nuevoCount;
+        locatario.valoracion = Math.round(nuevoPromedio * 10) / 10; // Redondear a 1 decimal
+        locatario.totalValoraciones = nuevoCount;
+        locatario.totalPuntosValoracion = nuevoTotal;
+        await locatario.save();
+        return locatario;
     }
 };
 exports.LocatarioService = LocatarioService;

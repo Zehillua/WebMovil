@@ -14,14 +14,17 @@ import { JwtStrategy } from './src/strategies/jwt.strategy';
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
+    // ✅ GRAPHQL SIN CORS - SE MANEJA EN MAIN.TS
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      playground: true,
+      introspection: true,
       context: ({ req }: { req: any }) => ({ req }),
     }),
     MongooseModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGO_URI'),
+        uri: configService.get<string>('MONGO_URI') || 'mongodb://localhost:27017/pedidos',
       }),
       inject: [ConfigService],
     }),

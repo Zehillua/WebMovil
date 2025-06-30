@@ -52,6 +52,38 @@ let UsuarioController = class UsuarioController {
         console.log('Usuario autenticado en /usuarios/me:', req.user);
         return req.user;
     }
+    async getAdminCheck(req) {
+        console.log('🔍 Admin check - Usuario autenticado:', req.user);
+        // Obtener información completa del usuario desde la base de datos
+        const userId = req.user.sub || req.user.userId;
+        console.log('🔍 ID del usuario para admin check:', userId);
+        const usuario = await this.usuarioService.obtenerUsuarioPorId(userId);
+        if (!usuario) {
+            throw new common_1.NotFoundException('Usuario no encontrado');
+        }
+        console.log('👤 Usuario encontrado para admin check:', {
+            id: usuario._id,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            correo: usuario.correo,
+            tipoUsuario: usuario.tipoUsuario,
+            isAdmin: usuario.isAdmin // ✅ DEBUG IMPORTANTE
+        });
+        // Retornar información específica para verificación de admin
+        return {
+            _id: usuario._id,
+            userId: usuario._id,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            correo: usuario.correo,
+            tipoUsuario: usuario.tipoUsuario,
+            isAdmin: usuario.isAdmin, // ✅ CAMPO CLAVE PARA ADMIN
+            // Campos adicionales si es necesario
+            nombreUsuario: usuario.nombreUsuario,
+            nombreLocal: usuario.nombreLocal,
+            usuarioRepartidor: usuario.usuarioRepartidor
+        };
+    }
     async getSaldo(req) {
         // req.user.userId viene del JWT payload
         const userId = req.user.userId;
@@ -71,6 +103,28 @@ let UsuarioController = class UsuarioController {
         const userId = req.user.userId;
         const direccion = await this.usuarioService.obtenerDireccion(userId);
         return { direccion };
+    }
+    // En auth/src/controllers/usuario.controller.ts - AGREGA:
+    async obtenerUsuarioPorId(id) {
+        const usuario = await this.usuarioService.obtenerUsuarioPorId(id);
+        if (!usuario)
+            throw new common_1.NotFoundException('Usuario no encontrado');
+        return {
+            _id: usuario._id,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            nombreUsuario: usuario.nombreUsuario,
+            direccion: usuario.direccion,
+            numeroCasaDepto: usuario.numeroCasaDepto,
+        };
+    }
+    async actualizarValoracion(id, body) {
+        const { nuevaValoracion, tipo } = body;
+        if (nuevaValoracion < 0 || nuevaValoracion > 5) {
+            throw new common_1.BadRequestException('Valoración debe estar entre 0 y 5');
+        }
+        const usuario = await this.usuarioService.actualizarValoracion(id, nuevaValoracion, tipo);
+        return usuario;
     }
 };
 exports.UsuarioController = UsuarioController;
@@ -98,6 +152,14 @@ __decorate([
 ], UsuarioController.prototype, "getMe", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me/admin-check'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "getAdminCheck", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('me/saldo'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -121,6 +183,21 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "getDireccion", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "obtenerUsuarioPorId", null);
+__decorate([
+    (0, common_1.Patch)(':id/valoracion'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "actualizarValoracion", null);
 exports.UsuarioController = UsuarioController = __decorate([
     (0, common_1.Controller)('usuarios'),
     __metadata("design:paramtypes", [usuario_service_1.UsuarioService])

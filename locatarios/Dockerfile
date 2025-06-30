@@ -15,6 +15,9 @@ RUN npm install -g npm@latest
 # Instala las dependencias
 RUN npm install --legacy-peer-deps
 
+# 🔧 Compila el código TypeScript
+RUN npm run build
+
 # Expone el puerto
 EXPOSE 3001
 

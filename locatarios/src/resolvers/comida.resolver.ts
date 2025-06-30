@@ -3,7 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../guards/gql-auth.guard';
 import { CrearComidaDto } from '../dto/comida.input';
 import { ComidaService } from '../services/comida.service';
-import { ComidaType } from '../dto/comida.type'; // <-- Asegúrate de tener este archivo
+import { ComidaType } from '../types/comida.type'; // <-- Asegúrate de tener este archivo
 
 @Resolver()
 export class ComidaResolver {

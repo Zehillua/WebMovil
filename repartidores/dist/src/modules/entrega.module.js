@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const entrega_controller_1 = require("../controllers/entrega.controller");
 const entrega_service_1 = require("../services/entrega.service");
+const entrega_resolver_1 = require("../resolvers/entrega.resolver"); // ✅ AGREGAR
 const entrega_schema_1 = require("../schemas/entrega.schema");
 let EntregaModule = class EntregaModule {
 };
@@ -23,6 +24,9 @@ exports.EntregaModule = EntregaModule = __decorate([
             ]),
         ],
         controllers: [entrega_controller_1.EntregaController],
-        providers: [entrega_service_1.EntregaService],
+        providers: [
+            entrega_service_1.EntregaService,
+            entrega_resolver_1.EntregaResolver // ✅ AGREGAR
+        ],
     })
 ], EntregaModule);

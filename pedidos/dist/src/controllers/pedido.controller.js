@@ -48,22 +48,37 @@ let PedidoController = class PedidoController {
     async obtenerPedidosDeliveryDisponibles() {
         return this.pedidoService.obtenerPedidosDeliveryDisponibles();
     }
-    // NUEVO ENDPOINT - Pedidos pendientes de un repartidor específico
     async obtenerPedidosPendientesRepartidor(idRepartidor, req) {
-        // Verificar que el repartidor solo puede ver sus propios pedidos
         if (req.user?.sub !== idRepartidor) {
             throw new common_1.UnauthorizedException('No puedes ver pedidos de otro repartidor');
         }
         return this.pedidoService.obtenerPedidosPendientesRepartidor(idRepartidor);
     }
+    // ✅ CORREGIR LÍNEA 70 - CAMBIAR NOMBRE DEL MÉTODO
     async aceptarPorRepartidor(id, body) {
-        return this.pedidoService.aceptarPorRepartidor(id, body.idRepartidor);
+        return this.pedidoService.aceptarPedidoRepartidor(id, body.idRepartidor); // ✅ CAMBIAR AQUÍ
     }
     async marcarEnCamino(id) {
         return this.pedidoService.marcarEnCamino(id);
     }
     async marcarEntregado(id) {
         return this.pedidoService.marcarEntregado(id);
+    }
+    async migrarDatosRepartidor() {
+        await this.pedidoService.migrarDatosRepartidorExistentes();
+        return {
+            message: 'Migración de datos de repartidores completada',
+            timestamp: new Date().toISOString()
+        };
+    }
+    async valorarPedidoRealizado(id, valoraciones) {
+        return this.pedidoService.valorarPedidoRealizado(id, valoraciones);
+    }
+    async obtenerPedidosRealizadosPorUsuario(idUsuario) {
+        return this.pedidoService.obtenerPedidosRealizadosPorUsuario(idUsuario);
+    }
+    async entregarPedido(id, body) {
+        return this.pedidoService.entregarPedido(id, body.codigoPedido);
     }
 };
 exports.PedidoController = PedidoController;
@@ -160,6 +175,35 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PedidoController.prototype, "marcarEntregado", null);
+__decorate([
+    (0, common_1.Get)('admin/migrar-datos-repartidor'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "migrarDatosRepartidor", null);
+__decorate([
+    (0, common_1.Post)('realizado/:id/valorar'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "valorarPedidoRealizado", null);
+__decorate([
+    (0, common_1.Get)('usuario/:idUsuario/realizados'),
+    __param(0, (0, common_1.Param)('idUsuario')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "obtenerPedidosRealizadosPorUsuario", null);
+__decorate([
+    (0, common_1.Post)(':id/entregar'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "entregarPedido", null);
 exports.PedidoController = PedidoController = __decorate([
     (0, common_1.Controller)('pedidos'),
     __metadata("design:paramtypes", [pedido_service_1.PedidoService])

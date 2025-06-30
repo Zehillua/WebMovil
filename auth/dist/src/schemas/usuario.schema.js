@@ -106,9 +106,17 @@ __decorate([
     __metadata("design:type", String)
 ], Usuario.prototype, "patente", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ default: 0, min: 0, max: 5 }),
     __metadata("design:type", Number)
 ], Usuario.prototype, "valoracionRepartidor", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: 0 }),
+    __metadata("design:type", Number)
+], Usuario.prototype, "totalValoraciones", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: 0 }),
+    __metadata("design:type", Number)
+], Usuario.prototype, "totalPuntosValoracion", void 0);
 exports.Usuario = Usuario = __decorate([
     (0, mongoose_1.Schema)({ collection: 'users' })
 ], Usuario);

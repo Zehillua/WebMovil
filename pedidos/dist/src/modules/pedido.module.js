@@ -11,18 +11,22 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const pedido_schema_1 = require("../schemas/pedido.schema");
 const carrito_schema_1 = require("../schemas/carrito.schema");
+const pedido_realizado_schema_1 = require("../schemas/pedido-realizado.schema");
 const pedido_service_1 = require("../services/pedido.service");
 const pedido_controller_1 = require("../controllers/pedido.controller");
 const pedido_resolver_1 = require("../resolvers/pedido.resolver");
+const pedido_realizado_resolver_1 = require("../resolvers/pedido-realizado.resolver");
 let PedidoModule = class PedidoModule {
 };
 exports.PedidoModule = PedidoModule;
 exports.PedidoModule = PedidoModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            // ✅ SOLO MONGODB - NO GRAPHQL (YA ESTÁ EN APP.MODULE)
             mongoose_1.MongooseModule.forFeature([
                 { name: pedido_schema_1.Pedido.name, schema: pedido_schema_1.PedidoSchema },
                 { name: carrito_schema_1.Carrito.name, schema: carrito_schema_1.CarritoSchema },
+                { name: pedido_realizado_schema_1.PedidoRealizado.name, schema: pedido_realizado_schema_1.PedidoRealizadoSchema },
             ]),
         ],
         controllers: [pedido_controller_1.PedidoController],
@@ -31,7 +35,10 @@ exports.PedidoModule = PedidoModule = __decorate([
             pedido_resolver_1.PedidoResolver,
             pedido_resolver_1.PedidoRepartidorResolver,
             pedido_resolver_1.PedidoPendienteRepartidorResolver,
-            pedido_resolver_1.PedidoEnCaminoResolver
+            pedido_resolver_1.PedidoEnCaminoResolver,
+            pedido_resolver_1.RegistroMultipleBDResolver,
+            pedido_realizado_resolver_1.PedidoRealizadoResolver
         ],
+        exports: [pedido_service_1.PedidoService], // ✅ EXPORTAR PARA OTROS MÓDULOS
     })
 ], PedidoModule);

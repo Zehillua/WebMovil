@@ -17,6 +17,18 @@ export class StatsController {
     return this.statsService.obtenerPedidosRealizados(filtros);
   }
 
+  // ========== ENDPOINTS PARA VENTAS REPORTE ==========
+
+  @Post('venta-realizada')
+  async registrarVentaReporte(@Body() ventaData: any) {
+    return this.statsService.registrarVentaReporte(ventaData);
+  }
+
+  @Get('ventas-realizadas')
+  async obtenerVentasReporte(@Query() filtros: any) {
+    return this.statsService.obtenerVentasReporte(filtros);
+  }
+
   // ========== ENDPOINTS DE ESTADÍSTICAS ==========
 
   @Get('generales')
