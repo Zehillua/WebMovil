@@ -2,16 +2,20 @@ import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
-import AdminDashboard from '../pages/dashboards/AdminDashboard';
-import LocatarioDashboard from '../pages/dashboards/LocatarioDashboard';
-import CompradorDashboard from '../pages/dashboards/CompradorDashboard';
-import RepartidorDashboard from '../pages/dashboards/RepartidorDashboard';
-import LocalView from '../pages/dashboards/LocalView';
-import CarritoView from '../pages/dashboards/CarritoView';
-import Perfil from '../pages/Perfil';
+import AdminDashboard from '../pages/dashboards/admin/AdminDashboard';
+import LocatarioDashboard from '../pages/dashboards/locatarios/LocatarioDashboard';
+import CompradorDashboard from '../pages/dashboards/usuarios/CompradorDashboard';
+import PedidosDashboards from '../pages/dashboards/locatarios/PedidosDashboards';
+import RepartidorDashboard from '../pages/dashboards/repartidor/RepartidorDashboard';
+import LocalView from '../pages/dashboards/usuarios/LocalView';
+import PedidosDashboard from '../pages/dashboards/usuarios/PedidosDashboard';
+import PedidosRepartidor from '../pages/dashboards/repartidor/PedidosRepartidor';
+import CarritoView from '../pages/dashboards/usuarios/CarritoView';
+import CarteraUsuarioDashboard from '../pages/dashboards/usuarios/CarteraUsuarioDashboard';
 
 export default function AppRouter() {
   return (
+    // SOLO Routes, NO BrowserRouter
     <Routes>
       <Route path="/" element={<Home />} />                 
       <Route path="/login" element={<Login />} />              
@@ -22,8 +26,10 @@ export default function AppRouter() {
       <Route path="/repartidor" element={<RepartidorDashboard />} />
       <Route path="/local/:id" element={<LocalView />} />
       <Route path="/carrito" element={<CarritoView />} />
-      <Route path="/perfil" element={<Perfil />} />
+      <Route path="/cartera" element={<CarteraUsuarioDashboard />} />
+      <Route path="/pedidos" element={<PedidosDashboard />} />
+      <Route path="/locatario/pedidos" element={<PedidosDashboards/>} />
+      <Route path="/repartidor/pedidos" element={<PedidosRepartidor />} />
     </Routes>
   );
 }
-

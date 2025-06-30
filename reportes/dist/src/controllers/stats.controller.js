@@ -19,27 +19,125 @@ let StatsController = class StatsController {
     constructor(statsService) {
         this.statsService = statsService;
     }
-    async obtenerLocales() {
-        return this.statsService.obtenerLocales();
+    // ========== ENDPOINTS PARA PEDIDOS REALIZADOS ==========
+    async registrarPedidoRealizado(pedidoData) {
+        return this.statsService.registrarPedidoRealizado(pedidoData);
     }
-    async estadisticasLocal(nombreLocal) {
-        return this.statsService.estadisticasLocal(nombreLocal);
+    async obtenerPedidosRealizados(filtros) {
+        return this.statsService.obtenerPedidosRealizados(filtros);
+    }
+    // ========== ENDPOINTS DE ESTADÍSTICAS ==========
+    async obtenerEstadisticasGenerales() {
+        return this.statsService.obtenerEstadisticasGenerales();
+    }
+    async obtenerEstadisticasPorFecha(fechaInicio, fechaFin) {
+        return this.statsService.obtenerEstadisticasPorFecha(fechaInicio, fechaFin);
+    }
+    async obtenerEstadisticasLocal(localId) {
+        return this.statsService.obtenerEstadisticasLocal(localId);
+    }
+    async obtenerEstadisticasRepartidor(repartidorId) {
+        return this.statsService.obtenerEstadisticasRepartidor(repartidorId);
+    }
+    // ========== ENDPOINTS DE RANKINGS ==========
+    async obtenerTopLocales(limite) {
+        const limiteNum = limite ? parseInt(limite) : 10;
+        return this.statsService.obtenerTopLocales(limiteNum);
+    }
+    async obtenerTopRepartidores(limite) {
+        const limiteNum = limite ? parseInt(limite) : 10;
+        return this.statsService.obtenerTopRepartidores(limiteNum);
+    }
+    // ========== ENDPOINTS DE BÚSQUEDA ==========
+    async buscarPedidosPorUsuario(usuarioId) {
+        return this.statsService.buscarPedidosPorUsuario(usuarioId);
+    }
+    async buscarPedidosPorNombre(nombrePedido) {
+        return this.statsService.buscarPedidosPorNombre(nombrePedido);
+    }
+    // ========== ENDPOINT DE LIMPIEZA ==========
+    async limpiarPedidosAntiguos(body) {
+        return this.statsService.limpiarPedidosAntiguos(body.diasAntiguedad);
     }
 };
 exports.StatsController = StatsController;
 __decorate([
-    (0, common_1.Get)('locales'),
+    (0, common_1.Post)('pedido-realizado'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "registrarPedidoRealizado", null);
+__decorate([
+    (0, common_1.Get)('pedidos-realizados'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "obtenerPedidosRealizados", null);
+__decorate([
+    (0, common_1.Get)('generales'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], StatsController.prototype, "obtenerLocales", null);
+], StatsController.prototype, "obtenerEstadisticasGenerales", null);
 __decorate([
-    (0, common_1.Get)('locales/:nombreLocal/estadisticas'),
-    __param(0, (0, common_1.Param)('nombreLocal')),
+    (0, common_1.Get)('por-fecha'),
+    __param(0, (0, common_1.Query)('fechaInicio')),
+    __param(1, (0, common_1.Query)('fechaFin')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "obtenerEstadisticasPorFecha", null);
+__decorate([
+    (0, common_1.Get)('local/:localId'),
+    __param(0, (0, common_1.Param)('localId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], StatsController.prototype, "estadisticasLocal", null);
+], StatsController.prototype, "obtenerEstadisticasLocal", null);
+__decorate([
+    (0, common_1.Get)('repartidor/:repartidorId'),
+    __param(0, (0, common_1.Param)('repartidorId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "obtenerEstadisticasRepartidor", null);
+__decorate([
+    (0, common_1.Get)('top-locales'),
+    __param(0, (0, common_1.Query)('limite')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "obtenerTopLocales", null);
+__decorate([
+    (0, common_1.Get)('top-repartidores'),
+    __param(0, (0, common_1.Query)('limite')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "obtenerTopRepartidores", null);
+__decorate([
+    (0, common_1.Get)('usuario/:usuarioId/pedidos'),
+    __param(0, (0, common_1.Param)('usuarioId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "buscarPedidosPorUsuario", null);
+__decorate([
+    (0, common_1.Get)('buscar/:nombrePedido'),
+    __param(0, (0, common_1.Param)('nombrePedido')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "buscarPedidosPorNombre", null);
+__decorate([
+    (0, common_1.Post)('limpiar-antiguos'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "limpiarPedidosAntiguos", null);
 exports.StatsController = StatsController = __decorate([
     (0, common_1.Controller)('stats'),
     __metadata("design:paramtypes", [stats_service_1.StatsService])

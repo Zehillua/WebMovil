@@ -11,13 +11,17 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const stats_controller_1 = require("../controllers/stats.controller");
 const stats_service_1 = require("../services/stats.service");
+const pedido_realizado_schema_1 = require("../schemas/pedido-realizado.schema");
 let StatsModule = class StatsModule {
 };
 exports.StatsModule = StatsModule;
 exports.StatsModule = StatsModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            mongoose_1.MongooseModule.forFeature([{ name: 'Usuario', schema: {} }]), // Schema vacío para acceso dinámico
+            mongoose_1.MongooseModule.forFeature([
+                { name: 'Usuario', schema: {} },
+                { name: 'PedidoRealizado', schema: pedido_realizado_schema_1.PedidoRealizadoSchema },
+            ]),
         ],
         controllers: [stats_controller_1.StatsController],
         providers: [stats_service_1.StatsService],

@@ -1,6 +1,7 @@
-import { Controller, Post, Get, Body, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Patch, Delete, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
 import { PedidoService } from '../services/pedido.service';
 import { CreatePedidoDto } from '../dtos/create-pedido.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('pedidos')
 export class PedidoController {
@@ -48,6 +49,20 @@ export class PedidoController {
   @Get('delivery/disponibles')
   async obtenerPedidosDeliveryDisponibles() {
     return this.pedidoService.obtenerPedidosDeliveryDisponibles();
+  }
+
+  // NUEVO ENDPOINT - Pedidos pendientes de un repartidor específico
+  @UseGuards(JwtAuthGuard)
+  @Get('repartidor/:idRepartidor/pendientes')
+  async obtenerPedidosPendientesRepartidor(
+    @Param('idRepartidor') idRepartidor: string,
+    @Req() req: any
+  ) {
+    // Verificar que el repartidor solo puede ver sus propios pedidos
+    if (req.user?.sub !== idRepartidor) {
+      throw new UnauthorizedException('No puedes ver pedidos de otro repartidor');
+    }
+    return this.pedidoService.obtenerPedidosPendientesRepartidor(idRepartidor);
   }
 
   @Patch(':id/aceptar-repartidor')

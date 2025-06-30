@@ -1,0 +1,226 @@
+/* CarteraUsuarioDashboard.css (Adaptado del diseño de CompradorDashboard.css) */
+
+/* Variables de Color (Importadas/Duplicadas del CompradorDashboard.css para consistencia) */
+:root {
+    --color-dark-brown: #532a14;
+    --color-light-orange-pastel: #fef4e8;
+    --color-card-bg-light: #fff8f2;
+    --color-title-brown: #6b3e26;
+    --color-subtitle-orange: #8d5c3d;
+    --color-card-border: #d1a38d;
+    --color-text-brown-dark: #5a3a28;
+    --color-text-brown-light: #7a5540;
+    --color-info-text: #6d4b3c;
+    --color-card-shadow: rgba(0,0,0,0.08);
+    --color-general-shadow: rgba(0,0,0,0.05);
+    --logo-color: #ffffff; /* Color para el logo y algunos íconos en la navbar */
+}
+
+/* Estilos globales del body/html si no están ya en un CSS global */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-light-orange-pastel);
+    color: var(--color-text-brown-dark);
+}
+
+
+/* Estilos del contenedor principal del Dashboard (usando una clase similar al comprador) */
+.cartera-dashboard {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    background-color: var(--color-light-orange-pastel); /* Asegura el fondo */
+}
+
+/* Navbar (usando la clase existente de comprador) */
+.navbar-dashboard {
+    width: 100%;
+    background-color: var(--color-title-brown); /* Color de la navbar principal */
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 2px 10px var(--color-card-shadow);
+    display: flex;
+    justify-content: flex-start; /* Alinea los elementos al inicio */
+    align-items: center;
+    gap: 1rem;
+    box-sizing: border-box; /* Añadido para un mejor manejo del padding/width */
+}
+
+.navbar-dashboard .logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--logo-color); /* Blanco para el logo en la navbar */
+    letter-spacing: 1px;
+    margin-left: auto; /* Centra el logo */
+    margin-right: auto;
+}
+
+/* Botón de ícono (como el de volver o carrito en el comprador dashboard) */
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 50%;
+    transition: background 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background-color: rgba(255,255,255,0.15); /* Efecto hover sutil */
+}
+
+.icon-btn img {
+    width: 28px;
+    height: 28px;
+    filter: brightness(0) invert(1); /* Hace que los iconos sean blancos para la navbar oscura */
+}
+
+
+/* Cuerpo principal del contenido (similar al dashboard-body del comprador) */
+.dashboard-body {
+    display: flex;
+    width: 100%;
+    max-width: 1200px; /* Ancho máximo para el contenido */
+    padding: 2rem;
+    justify-content: center; /* Centra la tarjeta de la cartera */
+    align-items: flex-start; /* Alinea al inicio verticalmente */
+    flex: 1; /* Permite que ocupe el espacio disponible */
+    box-sizing: border-box;
+}
+
+/* Tarjeta de la Cartera (con estilo de tarjeta del comprador) */
+.cartera-card {
+    background: var(--color-card-bg-light); /* Fondo de tarjeta */
+    border-radius: 12px; /* Border-radius de las tarjetas del comprador */
+    box-shadow: 0 6px 12px var(--color-card-shadow); /* Sombra de tarjeta */
+    border: 1.5px solid var(--color-card-border); /* Borde de tarjeta */
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.cartera-card h2 {
+    color: var(--color-title-brown); /* Título de tarjeta */
+    margin-bottom: 1.5rem; /* Ajuste el margen inferior */
+    font-size: 1.8rem; /* Tamaño de fuente ligeramente más grande */
+}
+
+.saldo-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem; /* Espaciado entre elementos */
+    background: var(--color-subtitle-orange); /* Color de realce */
+    color: white;
+    border-radius: 10px; /* Borde redondeado */
+    padding: 1.2rem 1.8rem; /* Mayor padding */
+    margin-bottom: 2rem; /* Más espacio abajo */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra sutil para el saldo box */
+}
+
+.saldo-label {
+    font-weight: 500;
+    font-size: 1.1rem; /* Un poco más grande */
+}
+
+.saldo-monto {
+    font-size: 1.8rem; /* Tamaño de fuente del monto */
+    font-weight: bold;
+    letter-spacing: 0.5px; /* Pequeño espaciado entre letras */
+}
+
+.cartera-icon {
+    width: 45px; /* Icono un poco más grande */
+    height: 45px;
+    filter: brightness(0) invert(1); /* Para que el icono sea blanco sobre fondo naranja */
+}
+
+.recarga-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.recarga-label {
+    margin-bottom: 0.8rem; /* Más espacio */
+    color: var(--color-text-brown-dark);
+    font-weight: 600; /* Más negrita */
+    font-size: 1.1rem;
+}
+
+/* Input de recarga (usando el estilo del input de búsqueda del comprador) */
+.search-input { /* Usamos esta clase para el input de monto */
+    width: 100%;
+    max-width: 300px; /* Un poco más estrecho que el de búsqueda de la navbar */
+    padding: 0.7rem 1.2rem;
+    border-radius: 20px; /* Bordes más redondeados */
+    border: 1.5px solid var(--color-card-border);
+    font-size: 1rem;
+    color: var(--color-text-brown-dark);
+    background-color: #f9f9f9;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 1.5rem; /* Margen inferior para separar del botón */
+}
+
+.search-input:focus {
+    border-color: var(--color-subtitle-orange);
+    box-shadow: 0 0 6px rgba(141, 92, 61, 0.2);
+}
+
+/* Botón de recargar (usando el estilo del botón de añadir al carrito) */
+.add-to-cart-button { /* Usamos esta clase para el botón de recarga */
+    background-color: var(--color-subtitle-orange);
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem; /* Mayor padding */
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1em; /* Un poco más grande */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%;
+    max-width: 300px; /* Igual ancho que el input */
+}
+
+.add-to-cart-button:hover {
+    background-color: var(--color-title-brown);
+    transform: translateY(-2px);
+}
+
+
+.recarga-mensaje {
+    margin-top: 1.5rem; /* Más espacio */
+    font-weight: bold;
+    color: var(--color-text-brown-light);
+    font-size: 1.1rem;
+}
+
+/* Responsive (adaptado del comprador dashboard) */
+@media (max-width: 768px) {
+    .navbar-dashboard {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 1rem;
+        gap: 1rem;
+    }
+    .dashboard-body {
+        padding: 1.5rem; /* Menor padding en móviles */
+    }
+    .cartera-card {
+        padding: 1.5rem; /* Menor padding en la tarjeta en móviles */
+    }
+}

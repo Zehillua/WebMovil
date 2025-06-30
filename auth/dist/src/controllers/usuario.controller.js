@@ -72,6 +72,20 @@ let UsuarioController = class UsuarioController {
         const direccion = await this.usuarioService.obtenerDireccion(userId);
         return { direccion };
     }
+    // En auth/src/controllers/usuario.controller.ts - AGREGA:
+    async obtenerUsuarioPorId(id) {
+        const usuario = await this.usuarioService.obtenerUsuarioPorId(id);
+        if (!usuario)
+            throw new common_1.NotFoundException('Usuario no encontrado');
+        return {
+            _id: usuario._id,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            nombreUsuario: usuario.nombreUsuario,
+            direccion: usuario.direccion,
+            numeroCasaDepto: usuario.numeroCasaDepto,
+        };
+    }
 };
 exports.UsuarioController = UsuarioController;
 __decorate([
@@ -121,6 +135,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "getDireccion", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "obtenerUsuarioPorId", null);
 exports.UsuarioController = UsuarioController = __decorate([
     (0, common_1.Controller)('usuarios'),
     __metadata("design:paramtypes", [usuario_service_1.UsuarioService])

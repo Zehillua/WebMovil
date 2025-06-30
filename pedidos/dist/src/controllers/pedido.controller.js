@@ -16,6 +16,7 @@ exports.PedidoController = void 0;
 const common_1 = require("@nestjs/common");
 const pedido_service_1 = require("../services/pedido.service");
 const create_pedido_dto_1 = require("../dtos/create-pedido.dto");
+const jwt_auth_guard_1 = require("../guards/jwt-auth.guard");
 let PedidoController = class PedidoController {
     constructor(pedidoService) {
         this.pedidoService = pedidoService;
@@ -46,6 +47,14 @@ let PedidoController = class PedidoController {
     }
     async obtenerPedidosDeliveryDisponibles() {
         return this.pedidoService.obtenerPedidosDeliveryDisponibles();
+    }
+    // NUEVO ENDPOINT - Pedidos pendientes de un repartidor específico
+    async obtenerPedidosPendientesRepartidor(idRepartidor, req) {
+        // Verificar que el repartidor solo puede ver sus propios pedidos
+        if (req.user?.sub !== idRepartidor) {
+            throw new common_1.UnauthorizedException('No puedes ver pedidos de otro repartidor');
+        }
+        return this.pedidoService.obtenerPedidosPendientesRepartidor(idRepartidor);
     }
     async aceptarPorRepartidor(id, body) {
         return this.pedidoService.aceptarPorRepartidor(id, body.idRepartidor);
@@ -120,6 +129,15 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PedidoController.prototype, "obtenerPedidosDeliveryDisponibles", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('repartidor/:idRepartidor/pendientes'),
+    __param(0, (0, common_1.Param)('idRepartidor')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PedidoController.prototype, "obtenerPedidosPendientesRepartidor", null);
 __decorate([
     (0, common_1.Patch)(':id/aceptar-repartidor'),
     __param(0, (0, common_1.Param)('id')),
