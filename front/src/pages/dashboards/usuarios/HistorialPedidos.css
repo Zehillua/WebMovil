@@ -1,0 +1,429 @@
+.historial-pedidos-root {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 1rem 4rem 1rem;
+  background: #f7fafd;
+  min-height: 100vh;
+}
+
+.historial-pedidos-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 0 1.2rem 0;
+  background: #fff;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 2px 12px #27ae6022;
+  margin-bottom: 2rem;
+}
+
+.historial-volver {
+  background: #f7fafd;
+  border: none;
+  font-size: 1.5rem;
+  color: #27ae60;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.historial-volver:hover {
+  background: #e8f5e8;
+}
+
+.historial-title {
+  color: #27ae60;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+}
+
+.historial-loading,
+.historial-empty {
+  color: #888;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.historial-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.historial-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #27ae6022;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.historial-card:hover {
+  box-shadow: 0 4px 24px #27ae6044;
+  transform: translateY(-2px);
+}
+
+.historial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.historial-nombre {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #27ae60;
+}
+
+.historial-estado {
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: #e8f5e8;
+  color: #27ae60;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  border: 1px solid #27ae60;
+  white-space: nowrap;
+}
+
+.historial-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  color: #555;
+  font-size: 1rem;
+}
+
+.historial-info span {
+  width: 100%;
+}
+
+.comidas-lista {
+  margin-top: 0.5rem;
+}
+
+.comida-item {
+  margin-left: 1rem;
+  color: #666;
+}
+
+/* ✅ NUEVOS ESTILOS PARA SECCIONES: */
+.historial-section {
+  margin-bottom: 2rem;
+}
+
+.historial-section-title {
+  color: #27ae60;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+/* ✅ ESTILOS PARA PEDIDOS PENDIENTES: */
+.historial-card-pendiente {
+  border-left: 4px solid #ff9800;
+  background: linear-gradient(135deg, #fff8e1 0%, #ffffff 100%);
+  animation: pendientePulse 2s ease-in-out infinite;
+}
+
+@keyframes pendientePulse {
+  0%, 100% {
+    box-shadow: 0 2px 12px #27ae6022;
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(255, 152, 0, 0.2);
+  }
+}
+
+.valoracion-btn {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+.valoracion-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(255, 152, 0, 0.4);
+  background: linear-gradient(135deg, #f57c00, #ef6c00);
+}
+
+/* ✅ ESTILOS PARA INFORMACIÓN DEL REPARTIDOR: */
+.repartidor-info {
+  background: linear-gradient(135deg, #f0f8ff 0%, #e3f2fd 100%);
+  border: 1px solid #bbdefb;
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-left: 4px solid #2196f3;
+}
+
+.repartidor-info h6 {
+  margin: 0 0 0.8rem 0;
+  color: #1976d2;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.repartidor-detalles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.repartidor-detalles span {
+  font-size: 0.9rem;
+  color: #424242;
+  padding: 0.2rem 0;
+}
+
+.repartidor-valoracion {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+  padding: 0.3rem 0;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+.repartidor-valoracion .stars-container {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+/* ✅ ESTILOS PARA VALORACIONES COMPLETADAS: */
+.valoraciones-completadas {
+  background: linear-gradient(135deg, #e8f5e8 0%, #f1f8f1 100%);
+  border: 1px solid #c8e6c9;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-left: 4px solid #27ae60;
+}
+
+.valoraciones-completadas h6 {
+  margin: 0 0 0.8rem 0;
+  color: #2e7d32;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.valoracion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #e8f5e8;
+  font-size: 0.9rem;
+}
+
+.valoracion-item:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.valoracion-item span:first-child {
+  color: #2e7d32;
+  font-weight: 600;
+  min-width: 80px;
+}
+
+.stars-container {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+/* ✅ ESTILOS PARA ESTRELLAS DE VISUALIZACIÓN: */
+.star-display {
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.star-filled {
+  color: #ffd700;
+  text-shadow: 0 0 3px rgba(255, 215, 0, 0.6);
+}
+
+.star-half-filled {
+  background: linear-gradient(90deg, #ffd700 50%, #ddd 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);
+}
+
+.star-empty {
+  color: #ddd;
+}
+
+.rating-number {
+  margin-left: 0.5rem;
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+}
+
+/* ✅ CÓDIGO DE ENTREGA: */
+.codigo-entrega-info {
+  background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%);
+  border: 2px solid #2196f3;
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.codigo-entrega-numero {
+  display: block;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #1976d2;
+  margin: 0.5rem 0;
+  letter-spacing: 2px;
+  background: white;
+  padding: 0.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ✅ MEJORAS RESPONSIVAS: */
+@media (max-width: 600px) {
+  .historial-pedidos-root {
+    padding: 0.5rem 0.1rem 4rem 0.1rem;
+  }
+  
+  .historial-card {
+    padding: 0.8rem 1rem;
+  }
+  
+  .historial-info {
+    gap: 0.8rem;
+  }
+
+  .historial-section-title {
+    font-size: 1.1rem;
+    padding: 0 0.5rem;
+  }
+
+  .valoracion-btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .valoracion-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .stars-container {
+    align-self: flex-end;
+  }
+
+  .valoraciones-completadas {
+    padding: 0.8rem;
+    margin-top: 0.8rem;
+  }
+
+  .repartidor-info {
+    padding: 0.8rem;
+  }
+
+  .repartidor-valoracion {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .codigo-entrega-numero {
+    font-size: 1.2em;
+  }
+}
+
+/* ✅ ANIMACIONES ADICIONALES: */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.historial-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.historial-card:nth-child(1) { animation-delay: 0.1s; }
+.historial-card:nth-child(2) { animation-delay: 0.2s; }
+.historial-card:nth-child(3) { animation-delay: 0.3s; }
+.historial-card:nth-child(4) { animation-delay: 0.4s; }
+.historial-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* ✅ ESTADOS MEJORADOS: */
+.historial-estado-entregado {
+  background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+  color: #2e7d32;
+  border: 1px solid #4caf50;
+}
+
+.historial-estado-pendiente {
+  background: linear-gradient(135deg, #fff8e1, #ffecb3);
+  color: #f57c00;
+  border: 1px solid #ff9800;
+}
+
+.historial-estado-cancelado {
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  color: #d32f2f;
+  border: 1px solid #f44336;
+}
+
+/* ✅ HOVER EFFECTS MEJORADOS: */
+.valoracion-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
+}
+
+.star-display:hover {
+  transform: scale(1.1);
+}
+
+.rating-number:hover {
+  background: rgba(255, 255, 255, 1);
+}

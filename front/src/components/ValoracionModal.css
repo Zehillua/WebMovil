@@ -1,0 +1,238 @@
+.valoracion-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 1rem;
+}
+
+.valoracion-modal {
+  background: #fff;
+  border-radius: 20px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  animation: valoracionFadeIn 0.3s ease-out;
+}
+
+@keyframes valoracionFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.valoracion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem 1rem 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.valoracion-header h3 {
+  margin: 0;
+  color: #27ae60;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.valoracion-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.valoracion-close:hover {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.valoracion-pedido-info {
+  padding: 1rem 2rem;
+  background: #f8fcff;
+  border-bottom: 1px solid #eee;
+}
+
+.valoracion-pedido-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #27ae60;
+  font-size: 1.1rem;
+}
+
+.valoracion-pedido-info p {
+  margin: 0.2rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.valoracion-section {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.valoracion-section:last-of-type {
+  border-bottom: none;
+}
+
+.valoracion-section h5 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ✅ ESTILOS PARA LAS ESTRELLAS: */
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.star-container {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+.star {
+  font-size: 2rem;
+  transition: all 0.2s ease;
+  display: inline-block;
+  line-height: 1;
+}
+
+.star-full {
+  color: #ffd700;
+  text-shadow: 0 0 3px rgba(255, 215, 0, 0.5);
+  transform: scale(1.1);
+}
+
+.star-half {
+  background: linear-gradient(90deg, #ffd700 50%, #ddd 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);
+  transform: scale(1.05);
+}
+
+.star-empty {
+  color: #ddd;
+  transition: all 0.2s ease;
+}
+
+.star-container:hover .star {
+  transform: scale(1.2);
+}
+
+.rating-text {
+  margin-left: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+/* ✅ BOTONES DEL MODAL: */
+.valoracion-buttons {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  justify-content: flex-end;
+}
+
+.valoracion-cancel,
+.valoracion-submit {
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.valoracion-cancel {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.valoracion-cancel:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.valoracion-submit {
+  background: #27ae60;
+  color: white;
+}
+
+.valoracion-submit:hover:not(:disabled) {
+  background: #219a52;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.valoracion-submit:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ✅ RESPONSIVE: */
+@media (max-width: 600px) {
+  .valoracion-modal {
+    margin: 1rem;
+    border-radius: 16px;
+  }
+
+  .valoracion-header,
+  .valoracion-pedido-info,
+  .valoracion-section,
+  .valoracion-buttons {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .star {
+    font-size: 1.8rem;
+  }
+
+  .valoracion-buttons {
+    flex-direction: column;
+  }
+
+  .valoracion-cancel,
+  .valoracion-submit {
+    width: 100%;
+  }
+}
+
+/* ✅ ANIMACIÓN DE HOVER PARA ESTRELLAS: */
+@keyframes starPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1.1); }
+}
+
+.star-container:hover .star-full {
+  animation: starPulse 0.3s ease;
+}
