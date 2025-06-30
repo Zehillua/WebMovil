@@ -38,7 +38,8 @@ interface Pedido {
   propina?: boolean;
   cantidadPropina?: number;
   dealer?: boolean;
-  repartidor?: Repartidor | null; // CAMBIAR de string a Repartidor
+  repartidor?: string; // ✅ CAMBIAR A string (solo ID)
+  datosRepartidor?: Repartidor | null; // ✅ AGREGAR datos completos
   estadoRechazado?: boolean;
   listo?: boolean;
   enCamino?: boolean;
@@ -232,16 +233,16 @@ const PedidosDashboard: React.FC = () => {
                   }
                 </span>                  
                 {/* INFORMACIÓN DETALLADA DEL REPARTIDOR: */}
-                {pedido.dealer && pedido.repartidor ? (
+                {pedido.dealer && pedido.datosRepartidor ? (
                   <div className="repartidor-info">
                     <b>🚗 Repartidor asignado:</b>
                     <div className="repartidor-detalles">
-                      <span><b>Nombre:</b> {pedido.repartidor.usuarioRepartidor}</span>
-                      <span><b>Vehículo:</b> {pedido.repartidor.vehiculo}</span>
-                      <span><b>Patente:</b> {pedido.repartidor.patente}</span>
-                      <span><b>⭐ Valoración:</b> {pedido.repartidor.valoracion.toFixed(1)}/5</span>
-                      {pedido.repartidor.telefono && (
-                        <span><b>📱 Teléfono:</b> {pedido.repartidor.telefono}</span>
+                      <span><b>Nombre:</b> {pedido.datosRepartidor.usuarioRepartidor}</span>
+                      <span><b>Vehículo:</b> {pedido.datosRepartidor.vehiculo}</span>
+                      <span><b>Patente:</b> {pedido.datosRepartidor.patente}</span>
+                      <span><b>⭐ Valoración:</b> {pedido.datosRepartidor.valoracion.toFixed(1)}/5</span>
+                      {pedido.datosRepartidor.telefono && (
+                        <span><b>📱 Teléfono:</b> {pedido.datosRepartidor.telefono}</span>
                       )}
                     </div>
                   </div>

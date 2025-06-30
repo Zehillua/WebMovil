@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@apollo/client'; // ✅ AGREGAR IMPORT
+import { GET_PEDIDOS_PENDIENTES_VALORACION } from '../../../apollo/queries'; // ✅ AGREGAR IMPORT
 import './CompradorDashboard.css';
 
 interface Local {
@@ -10,7 +12,16 @@ interface Local {
 const CompradorDashboard: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [locales, setLocales] = useState<Local[]>([]);
+  const [userId, setUserId] = useState<string>(''); // ✅ AGREGAR STATE
   const navigate = useNavigate();
+
+  // ✅ NUEVA QUERY para pedidos pendientes de valoración:
+  const { data: dataPendientes } = useQuery(GET_PEDIDOS_PENDIENTES_VALORACION, {
+    variables: { userId },
+    skip: !userId,
+    pollInterval: 30000, // Revisar cada 30 segundos
+    errorPolicy: 'all'
+  });
 
   // Protección de ruta: redirige si no hay token
   useEffect(() => {
@@ -19,6 +30,35 @@ const CompradorDashboard: React.FC = () => {
     }
   }, [navigate]);
 
+  // ✅ NUEVO USEEFFECT para obtener userId:
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/', { replace: true });
+        return;
+      }
+      
+      try {
+        const resUser = await fetch('http://localhost:3000/usuarios/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!resUser.ok) {
+          navigate('/', { replace: true });
+          return;
+        }
+        
+        const userData = await resUser.json();
+        setUserId(userData.userId || userData._id);
+      } catch (error) {
+        console.error('Error obteniendo datos de usuario:', error);
+        navigate('/', { replace: true });
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
 
   // Obtener locales tipo locatario desde el backend
   useEffect(() => {
@@ -42,6 +82,10 @@ const CompradorDashboard: React.FC = () => {
   const localesFiltrados = locales.filter((l) =>
     l.nombreLocal.toLowerCase().includes(busqueda.toLowerCase())
   );
+
+  // ✅ CALCULAR PEDIDOS PENDIENTES:
+  const pedidosPendientes = dataPendientes?.pedidosPendientesValoracion || [];
+  const tieneValoracionesPendientes = pedidosPendientes.length > 0;
 
   return (
     <div className="comprador-dashboard">
@@ -95,6 +139,29 @@ const CompradorDashboard: React.FC = () => {
           </button>
           <button className="icon-btn" onClick={() => navigate('/perfil')} title="Perfil">
             <img src="https://img.icons8.com/ios-filled/28/d87a9c/user.png" alt="Perfil" />
+          </button>
+          
+          {/* ✅ BOTÓN DE HISTORIAL CON BADGE DE NOTIFICACIÓN: */}
+          <button
+            className={`icon-btn ${tieneValoracionesPendientes ? 'icon-btn-notification' : ''}`}
+            onClick={() => navigate('/historial')}
+            title={tieneValoracionesPendientes 
+              ? `Historial (${pedidosPendientes.length} pendientes de valorar)` 
+              : "Historial de Pedidos"
+            }
+          >
+            <div className="icon-container">
+              <img
+                src="https://img.icons8.com/ios-filled/28/d87a9c/clock--v1.png"
+                alt="Historial"
+              />
+              {/* ✅ BADGE DE NOTIFICACIÓN: */}
+              {tieneValoracionesPendientes && (
+                <span className="notification-badge">
+                  {pedidosPendientes.length}
+                </span>
+              )}
+            </div>
           </button>
         </div>
       </nav>

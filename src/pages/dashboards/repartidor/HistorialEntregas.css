@@ -1,0 +1,452 @@
+.historial-entregas-root {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1rem 4rem 1rem;
+  background: #f7fafd;
+  min-height: 100vh;
+}
+
+/* ✅ HEADER */
+.historial-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 0 1.5rem 0;
+  background: #fff;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 2px 12px rgba(216, 122, 156, 0.15);
+  margin-bottom: 2rem;
+}
+
+.btn-volver {
+  background: #f7fafd;
+  border: 1px solid #d87a9c;
+  color: #d87a9c;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.btn-volver:hover {
+  background: #d87a9c;
+  color: white;
+}
+
+.historial-title {
+  color: #d87a9c;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+  margin: 0;
+}
+
+/* ✅ ESTADÍSTICAS PRINCIPALES */
+.estadisticas-container {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(216, 122, 156, 0.1);
+}
+
+.estadisticas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.stat-card.entregas {
+  border-left: 4px solid #28a745;
+}
+
+.stat-card.valoracion {
+  border-left: 4px solid #ffc107;
+}
+
+.stat-card.ganancias {
+  border-left: 4px solid #17a2b8;
+}
+
+.stat-card.propinas {
+  border-left: 4px solid #d87a9c;
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  opacity: 0.8;
+}
+
+.stat-content h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-content p {
+  margin: 0.2rem 0 0 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.stars-display {
+  margin-top: 0.5rem;
+}
+
+.stars-display .star-filled {
+  color: #ffc107;
+  font-size: 1rem;
+}
+
+.stars-display .star-half-filled {
+  color: #ffc107;
+  opacity: 0.6;
+  font-size: 1rem;
+}
+
+.stars-display .star-empty {
+  color: #ddd;
+  font-size: 1rem;
+}
+
+/* ✅ ESTADÍSTICAS ADICIONALES */
+.estadisticas-adicionales {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+  gap: 2rem;
+}
+
+.stat-adicional {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-adicional .label {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.stat-adicional .value {
+  color: #333;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* ✅ SECCIÓN DE ENTREGAS */
+.entregas-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(216, 122, 156, 0.1);
+}
+
+.section-title {
+  color: #d87a9c;
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #f8f9fa;
+  padding-bottom: 0.5rem;
+}
+
+/* ✅ NO HAY ENTREGAS */
+.no-entregas {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #666;
+}
+
+.no-entregas-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.no-entregas h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+/* ✅ LISTA DE ENTREGAS */
+.entregas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.entrega-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border-left: 4px solid #d87a9c;
+  transition: all 0.3s ease;
+}
+
+.entrega-card:hover {
+  box-shadow: 0 4px 15px rgba(216, 122, 156, 0.15);
+  transform: translateX(5px);
+}
+
+.entrega-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.pedido-nombre {
+  color: #d87a9c;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.entrega-fecha {
+  color: #666;
+  font-size: 0.9rem;
+  background: rgba(216, 122, 156, 0.1);
+  padding: 0.3rem 0.6rem;
+  border-radius: 15px;
+}
+
+/* ✅ DETALLES DE LA ENTREGA */
+.entrega-detalles {
+  display: grid;
+  gap: 1rem;
+}
+
+.detalle-cliente,
+.detalle-local {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.direccion {
+  color: #666;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+/* ✅ VALORES */
+.detalle-valores {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.valor-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0.3rem 0;
+}
+
+.valor-item:last-child {
+  margin-bottom: 0;
+}
+
+.valor-item.propina {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.valor-item.total {
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-top: 1px solid #e9ecef;
+  padding-top: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+/* ✅ VALORACIÓN RECIBIDA */
+.valoracion-recibida {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffffff 100%);
+  border: 1px solid #ffcc02;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.valoracion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.valoracion-numero {
+  background: #ffcc02;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.stars-container {
+  margin-bottom: 0.5rem;
+}
+
+.stars-container .star-filled {
+  color: #ffc107;
+  font-size: 1.2rem;
+  margin-right: 0.1rem;
+}
+
+.stars-container .star-half-filled {
+  color: #ffc107;
+  opacity: 0.6;
+  font-size: 1.2rem;
+  margin-right: 0.1rem;
+}
+
+.stars-container .star-empty {
+  color: #ddd;
+  font-size: 1.2rem;
+  margin-right: 0.1rem;
+}
+
+.fecha-valoracion {
+  color: #666;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.sin-valoracion {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+/* ✅ INFORMACIÓN ADICIONAL */
+.info-adicional {
+  display: flex;
+  justify-content: space-between;
+  background: #f8f9fa;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* ✅ LOADING Y ERROR */
+.loading,
+.error {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.error {
+  color: #dc3545;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 768px) {
+  .historial-entregas-root {
+    padding: 0.5rem;
+  }
+
+  .estadisticas-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .estadisticas-adicionales {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .entrega-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .info-adicional {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .valor-item {
+    font-size: 0.9rem;
+  }
+
+  .historial-header {
+    padding: 1rem;
+  }
+
+  .historial-title {
+    font-size: 1.2rem;
+  }
+}
+
+/* ✅ ANIMACIONES */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.entrega-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.stat-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.entrega-card:nth-child(1) { animation-delay: 0.1s; }
+.entrega-card:nth-child(2) { animation-delay: 0.2s; }
+.entrega-card:nth-child(3) { animation-delay: 0.3s; }
+.entrega-card:nth-child(4) { animation-delay: 0.4s; }
+.entrega-card:nth-child(5) { animation-delay: 0.5s; }

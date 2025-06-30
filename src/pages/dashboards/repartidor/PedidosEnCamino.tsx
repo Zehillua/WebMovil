@@ -136,7 +136,6 @@ const PedidosEnCamino: React.FC = () => {
             <div className="pedido-en-camino-card" key={pedido._id}>
               <div className="pedido-en-camino-header">
                 <span className="pedido-en-camino-nombre">{pedido.nombrePedido}</span>
-                <span className="pedido-en-camino-codigo">Código: {pedido.codigoPedido}</span>
               </div>
               
               <div className="pedido-en-camino-info">

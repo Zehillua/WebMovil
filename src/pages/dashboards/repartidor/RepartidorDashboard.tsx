@@ -22,8 +22,8 @@ const RepartidorDashboard: React.FC = () => {
       <div className="main-actions">
         <button onClick={() => navigate('/repartidor/pedidos')}>Pedidos Disponibles</button>
         <button onClick={() => navigate('/repartidor/pendientes')}>Pedidos Pendientes</button>
-        <button onClick={() => navigate('/repartidor/en-camino')}>Pedidos En Camino</button> {/* ✅ NUEVO BOTÓN */}
-        <button>Historial de Entregas</button>
+        <button onClick={() => navigate('/repartidor/en-camino')}>Pedidos En Camino</button>
+        <button onClick={() => navigate('/repartidor/historial')}>Historial de Entregas</button> {/* ✅ ACTUALIZADO */}
         <button>Estadísticas</button>
       </div>
     </div>
