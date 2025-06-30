@@ -9,55 +9,81 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CarritoSchema = exports.Carrito = exports.PromocionCarritoSchema = exports.ComidaCarritoSchema = exports.PromocionCarrito = exports.ComidaCarrito = void 0;
+exports.ComidaPromocionSchema = exports.PromocionCarritoSchema = exports.ItemCarritoSchema = exports.CarritoSchema = exports.Carrito = exports.PromocionCarrito = exports.ItemCarrito = exports.ComidaPromocion = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-// ✅ SCHEMA PARA COMIDAS (ACTUALIZADO)
-let ComidaCarrito = class ComidaCarrito {
+// ✅ SCHEMA PARA COMIDAS EN PROMOCIONES
+let ComidaPromocion = class ComidaPromocion {
 };
-exports.ComidaCarrito = ComidaCarrito;
+exports.ComidaPromocion = ComidaPromocion;
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true, ref: 'Locatario' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], ComidaPromocion.prototype, "comidaId", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], ComidaPromocion.prototype, "nombre", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], ComidaPromocion.prototype, "cantidad", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], ComidaPromocion.prototype, "precioOriginal", void 0);
+exports.ComidaPromocion = ComidaPromocion = __decorate([
+    (0, mongoose_1.Schema)()
+], ComidaPromocion);
+// ✅ SCHEMA PARA ITEMS DE COMIDA
+let ItemCarrito = class ItemCarrito {
+};
+exports.ItemCarrito = ItemCarrito;
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], ItemCarrito.prototype, "idComida", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
-], ComidaCarrito.prototype, "idLocatario", void 0);
+], ItemCarrito.prototype, "idLocatario", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
-], ComidaCarrito.prototype, "nombreLocal", void 0);
+], ItemCarrito.prototype, "nombreLocal", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
-], ComidaCarrito.prototype, "nombreComida", void 0);
+], ItemCarrito.prototype, "nombreComida", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", Number)
-], ComidaCarrito.prototype, "cantidad", void 0);
+], ItemCarrito.prototype, "cantidad", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", Number)
-], ComidaCarrito.prototype, "precio", void 0);
+], ItemCarrito.prototype, "precio", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
-], ComidaCarrito.prototype, "imagenUrl", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }) // ✅ AHORA ES REQUERIDO
-    ,
-    __metadata("design:type", String)
-], ComidaCarrito.prototype, "idComida", void 0);
+], ItemCarrito.prototype, "imagenUrl", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: 'comida' }),
     __metadata("design:type", String)
-], ComidaCarrito.prototype, "tipo", void 0);
-exports.ComidaCarrito = ComidaCarrito = __decorate([
+], ItemCarrito.prototype, "tipo", void 0);
+exports.ItemCarrito = ItemCarrito = __decorate([
     (0, mongoose_1.Schema)()
-], ComidaCarrito);
+], ItemCarrito);
 // ✅ SCHEMA PARA PROMOCIONES
 let PromocionCarrito = class PromocionCarrito {
 };
 exports.PromocionCarrito = PromocionCarrito;
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true, ref: 'Locatario' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], PromocionCarrito.prototype, "idPromocion", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], PromocionCarrito.prototype, "idLocatario", void 0);
 __decorate([
@@ -81,44 +107,36 @@ __decorate([
     __metadata("design:type", String)
 ], PromocionCarrito.prototype, "imagenUrl", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], PromocionCarrito.prototype, "idPromocion", void 0);
-__decorate([
     (0, mongoose_1.Prop)({ default: 'promocion' }),
     __metadata("design:type", String)
 ], PromocionCarrito.prototype, "tipo", void 0);
 __decorate([
-    (0, mongoose_1.Prop)([{
-            comidaId: { type: String, required: true },
-            nombre: { type: String, required: true },
-            cantidad: { type: Number, required: true },
-            precioOriginal: { type: Number, required: true }
-        }]),
+    (0, mongoose_1.Prop)({ type: [ComidaPromocion] }),
     __metadata("design:type", Array)
 ], PromocionCarrito.prototype, "comidas", void 0);
 exports.PromocionCarrito = PromocionCarrito = __decorate([
     (0, mongoose_1.Schema)()
 ], PromocionCarrito);
-exports.ComidaCarritoSchema = mongoose_1.SchemaFactory.createForClass(ComidaCarrito);
-exports.PromocionCarritoSchema = mongoose_1.SchemaFactory.createForClass(PromocionCarrito);
-// ✅ CARRITO ACTUALIZADO
+// ✅ SCHEMA PRINCIPAL DEL CARRITO
 let Carrito = class Carrito extends mongoose_2.Document {
 };
 exports.Carrito = Carrito;
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true, ref: 'Usuario', unique: true }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, required: true, unique: true }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Carrito.prototype, "idComprador", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: [exports.ComidaCarritoSchema], default: [] }),
+    (0, mongoose_1.Prop)({ type: [ItemCarrito], default: [] }),
     __metadata("design:type", Array)
 ], Carrito.prototype, "items", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: [exports.PromocionCarritoSchema], default: [] }),
+    (0, mongoose_1.Prop)({ type: [PromocionCarrito], default: [] }),
     __metadata("design:type", Array)
 ], Carrito.prototype, "promociones", void 0);
 exports.Carrito = Carrito = __decorate([
-    (0, mongoose_1.Schema)()
+    (0, mongoose_1.Schema)({ timestamps: true })
 ], Carrito);
 exports.CarritoSchema = mongoose_1.SchemaFactory.createForClass(Carrito);
+exports.ItemCarritoSchema = mongoose_1.SchemaFactory.createForClass(ItemCarrito);
+exports.PromocionCarritoSchema = mongoose_1.SchemaFactory.createForClass(PromocionCarrito);
+exports.ComidaPromocionSchema = mongoose_1.SchemaFactory.createForClass(ComidaPromocion);
