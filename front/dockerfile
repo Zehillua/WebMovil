@@ -1,14 +1,24 @@
-# front/Dockerfile
+# Etapa de build
 FROM node:20 AS builder
 
 WORKDIR /app
 
+# Copiamos solo lo necesario primero para evitar errores durante npm install
+COPY package*.json ./
+
+# ⛔ Elimina la cache y lock corrupto que se genera en contextos Linux
+RUN rm -rf node_modules package-lock.json
+
+# ✅ Instala desde cero, asegurando dependencias correctas
+RUN npm install --legacy-peer-deps && npm rebuild && npm cache clean --force
+
+# Copiamos el resto del proyecto (después de instalar deps)
 COPY . .
 
-RUN npm install
+# ⚠️ CORRIGE el bug al compilar: build se ejecuta después de instalar limpio
 RUN npm run build
 
-# Etapa de producción
+# Etapa final con NGINX para servir
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 
