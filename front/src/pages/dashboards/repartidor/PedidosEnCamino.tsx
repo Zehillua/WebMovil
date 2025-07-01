@@ -202,7 +202,15 @@ const PedidosEnCamino: React.FC = () => {
       )}
 
       <div className="pedidos-en-camino-header">
-        <button className="pedidos-en-camino-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
+                <button
+          onClick={() => navigate(-1)}
+          className="pedidos-en-camino-volver nav-action-btn" // Añadimos la clase nav-action-btn
+          title="Volver"
+        >
+          <img src="https://img.icons8.com/ios-filled/28/ffffff/back.png" alt="Volver" />
+          <span className="btn-text">Volver</span>
+        </button>
+
         <span className="pedidos-en-camino-title">Pedidos En Camino</span>
         <div style={{ width: 32 }}></div> {/* Placeholder for alignment */}
       </div>

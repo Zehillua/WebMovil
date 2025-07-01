@@ -216,7 +216,15 @@ const PedidosDashboards: React.FC = () => {
       )}
 
       <div className="pedidos-dashboard-header">
-        <button className="pedidos-dashboard-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
+                <button
+          onClick={() => navigate(-1)}
+          className="pedidos-dashboard-volver nav-action-btn" // Añadimos la clase nav-action-btn para el estilo de ícono+texto
+          title="Volver"
+        >
+          <img src="https://img.icons8.com/ios-filled/28/ffffff/back.png" alt="Volver" /> {/* Icono de "volver" */}
+          <span className="btn-text">Volver</span>
+        </button>
+
         <span className="pedidos-dashboard-title">Pedidos de mi Local</span>
         <div style={{ width: 32 }}></div> {/* Placeholder for alignment */}
       </div>

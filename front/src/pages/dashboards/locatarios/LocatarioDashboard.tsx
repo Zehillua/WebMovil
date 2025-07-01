@@ -499,8 +499,8 @@ const LocatarioDashboard: React.FC = () => {
         )}
       </div>
 
-      {/* ✅ FORMULARIO PARA AGREGAR PRODUCTO (ORIGINAL) */}
-      {mostrarFormulario && (
+    {/* ✅ FORMULARIO PARA AGREGAR PRODUCTO (ORIGINAL) */}
+    {mostrarFormulario && (
         <div className="overlay" onClick={() => setMostrarFormulario(false)}>
           <form className="formulario-flotante" onClick={(e) => e.stopPropagation()} onSubmit={handleAgregarProducto}>
             <button className="cerrar" onClick={() => setMostrarFormulario(false)}>×</button>
@@ -510,11 +510,49 @@ const LocatarioDashboard: React.FC = () => {
             <input type="number" name="cantidad" placeholder="Cantidad" value={formulario.cantidad} onChange={handleInputChange} className="form-input" />
             <input type="text" name="ingredientes" placeholder="Ingredientes (separados por coma)" value={formulario.ingredientes} onChange={handleInputChange} className="form-input" />
             <textarea name="descripcion" placeholder="Descripción" value={formulario.descripcion} onChange={handleTextareaChange} className="form-textarea" />
-            <input type="file" accept="image/*" onChange={handleFileChange} className="file-input" />
+            
+            {/* INICIO DE LA SECCIÓN PARA SUBIR IMAGEN DEL PRODUCTO */}
+            <div className="form-section"> {/* Puedes reutilizar form-section o crear uno nuevo */}
+                <div className="section-header">
+                    <span className="step-number">📸</span> {/* Puedes usar un número o un icono */}
+                    <h3>Imagen del Producto</h3>
+                </div>
+                <div className="image-upload-container"> {/* Reutiliza la clase del contenedor de imagen */}
+                    <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleFileChange} 
+                        className="file-input" 
+                        id="imagen-producto-add" // Asegúrate de que el ID sea único y coincida con el 'htmlFor' del label
+                    />
+                    <label htmlFor="imagen-producto-add" className="file-upload-label">
+                        <div className="upload-content">
+                            {imagenFile ? (
+                                <div className="file-selected">
+                                    <span className="file-icon">📸</span>
+                                    <span className="file-name">{imagenFile.name}</span>
+                                    <span className="file-size">
+                                        ({(imagenFile.size / 1024 / 1024).toFixed(2)} MB)
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className="upload-placeholder">
+                                    <span className="upload-icon">📷</span>
+                                    <span className="upload-text">Subir imagen del producto</span>
+                                    <span className="upload-subtitle">PNG, JPG hasta 3MB</span>
+                                </div>
+                            )}
+                        </div>
+                    </label>
+                </div>
+            </div>
+            {/* FIN DE LA SECCIÓN PARA SUBIR IMAGEN DEL PRODUCTO */}
+
             <button type="submit" className="btn-submit">Agregar</button>
           </form>
         </div>
-      )}
+    )}
+
 
       {/* ✅ MODAL MEJORADO PARA AGREGAR PROMOCIÓN */}
       {mostrarFormularioPromo && (

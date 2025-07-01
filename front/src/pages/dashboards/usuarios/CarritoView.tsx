@@ -369,7 +369,15 @@ const CarritoView: React.FC = () => {
     <div className="carrito-root">
       {/* Barra superior */}
       <div className="carrito-header">
-        <button className="carrito-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
+        <button
+          onClick={() => navigate(-1)}
+          className="carrito-volver nav-action-btn" // Añadimos la clase nav-action-btn para el estilo de ícono+texto
+          title="Volver"
+        >
+          <img src="https://img.icons8.com/ios-filled/28/ffffff/back.png" alt="Volver" /> {/* Icono de "volver" */}
+          <span className="btn-text">Volver</span>
+        </button>
+
         <div className="carrito-header-right">
           <span>🛒 Mi Carrito</span>
         </div>

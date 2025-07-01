@@ -83,17 +83,18 @@ html, body {
 .carrito-volver {
     background: none;
     border: none;
-    font-size: 1.8rem; /* Tamaño del emoji */
-    color: white; /* Color del emoji */
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.6rem 1rem; /* Ajuste de padding */
+    border-radius: 25px;
     cursor: pointer;
-    margin-right: 1.5rem; /* Más margen */
-    transition: background 0.3s ease, transform 0.2s ease;
-    border-radius: 50%;
-    width: 48px; /* Tamaño del botón */
-    height: 48px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.5rem; /* Ajuste del espacio entre icono y texto */
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap; /* ¡Clave para evitar que el texto se rompa! */
+    flex-shrink: 0; /* Evita que el botón se encoja */
 }
 .carrito-volver:hover {
     background: rgba(255,255,255,0.25); /* Efecto hover más notorio */

@@ -165,7 +165,15 @@ const PedidosRepartidor: React.FC = () => {
       )}
 
       <div className="pedidos-repartidor-header">
-        <button className="pedidos-repartidor-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
+                <button
+          onClick={() => navigate(-1)}
+          className="pedidos-repartidor-volver nav-action-btn" // Añadimos la clase nav-action-btn para el estilo de ícono+texto
+          title="Volver"
+        >
+          <img src="https://img.icons8.com/ios-filled/28/ffffff/back.png" alt="Volver" /> {/* Icono de "volver" */}
+          <span className="btn-text">Volver</span>
+        </button>
+
         <span className="pedidos-repartidor-title">Pedidos Delivery Disponibles</span>
         <div style={{ width: 32 }}></div> {/* Placeholder for alignment */}
       </div>

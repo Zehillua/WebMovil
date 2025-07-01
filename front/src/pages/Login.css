@@ -1,5 +1,5 @@
 /* Login.css (Unificado - Basado en Proyecto 2 con variables de Home) */
-
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;700&display=swap');
 /* Variables de color de tu home.css para consistencia en todo el proyecto */
 /* Si estas variables ya están en un index.css global, puedes considerar eliminarlas de aquí
    para evitar duplicidad, pero para la autonomía de este componente, las incluimos. */

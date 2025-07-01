@@ -1,5 +1,5 @@
 /* CarteraUsuarioDashboard.css (Adaptado del diseño de CompradorDashboard.css) */
-
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;700&display=swap');
 /* Variables de Color (Importadas/Duplicadas del CompradorDashboard.css para consistencia) */
 :root {
     --color-dark-brown: #532a14;

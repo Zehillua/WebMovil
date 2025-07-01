@@ -1,5 +1,5 @@
 /* CompradorDashboard.css */
-
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;700&display=swap');
 /* --- Variables de Color de VeciMarket (Tonos Pastel) --- */
 :root {
     --color-primary-dark: #6B3E26; /* Marrón oscuro para títulos principales, navbar */
@@ -92,7 +92,7 @@ html, body {
 }
 
 .search-input-navbar {
-    width: 100%;
+    width: 90%;
     padding: 0.8rem 1.5rem;
     border-radius: 30px;
     border: none;

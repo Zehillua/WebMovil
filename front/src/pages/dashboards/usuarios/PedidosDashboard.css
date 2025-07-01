@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;700&display=swap');
 /* --- Variables de Color y Tipografía (Mantener consistencia) --- */
 :root {
     --color-dark-brown: #532a14;
@@ -56,7 +57,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 1.5rem 1.5rem 1rem 1.5rem; /* Ajustar padding */
-    background: var(--color-card-bg-light);
+    background: var(--color-dark-brown);
     border-radius: 15px; /* Menos pronunciado */
     box-shadow: 0 4px 15px var(--color-general-shadow); /* Sombra más suave */
     margin-bottom: 2.5rem; /* Aumentar margen inferior */
@@ -64,29 +65,40 @@ body {
 }
 
 .pedidos-dashboard-volver {
-    background: var(--color-light-orange-pastel);
-    border: 2px solid var(--color-subtitle-orange); /* Borde con color de acento */
-    font-size: 1.4rem; /* Ligeramente más pequeño */
-    color: var(--color-subtitle-orange); /* Color de acento */
-    border-radius: 50%;
-    width: 40px; /* Aumentar tamaño del botón */
-    height: 40px; /* Aumentar tamaño del botón */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.6rem 1rem; /* Ajuste de padding */
+    border-radius: 25px;
     cursor: pointer;
-    transition: all 0.3s ease; /* Transición más suave */
     display: flex;
     align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra sutil */
+    gap: 0.5rem; /* Ajuste del espacio entre icono y texto */
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap; /* ¡Clave para evitar que el texto se rompa! */
+    flex-shrink: 0; /* Evita que el botón se encoja */
 }
 .pedidos-dashboard-volver:hover {
-    background: var(--color-subtitle-orange); /* Fondo oscuro en hover */
+    background: none;
+    border: none;
     color: white;
-    transform: translateY(-2px); /* Efecto de elevación */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.6rem 1rem; /* Ajuste de padding */
+    border-radius: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Ajuste del espacio entre icono y texto */
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap; /* ¡Clave para evitar que el texto se rompa! */
+    flex-shrink: 0; /* Evita que el botón se encoja */
 }
 
 .pedidos-dashboard-title {
-    color: var(--color-title-brown); /* Marrón oscuro */
+    color: var(--color-light-orange-pastel)!important; /* Marrón oscuro */
     font-size: 1.8rem; /* Más grande y prominente */
     font-weight: 700;
     text-align: center;
@@ -165,7 +177,7 @@ body {
     background: var(--color-card-bg-light);
     border-radius: 18px; /* Ligeramente más redondeado */
     box-shadow: 0 6px 20px var(--color-card-shadow); /* Sombra más prominente */
-    padding: 1.5rem 2rem; /* Más padding */
+    padding: 1.5rem 1.5rem; /* Más padding */
     display: flex;
     flex-direction: column;
     gap: 1rem; /* Más espacio entre secciones */
@@ -188,20 +200,20 @@ body {
 .pedido-header-right {
     display: flex;
     align-items: center;
-    gap: 0.8rem; /* Más espacio entre estado y botones */
+    gap: 0.9rem; /* Más espacio entre estado y botones */
 }
 
 .pedido-nombre {
     font-weight: 700; /* Más negrita */
     font-size: 1.3rem; /* Más grande */
-    color: var(--color-title-brown)!important; /* Color de título */
+    color: var(--color-card-bg-light)!important; /* Color de título */
     font-family: var(--font-heading); /* Fuente decorativa */
 }
 
 .pedido-local {
     font-weight: 500;
     font-size: 1rem;
-    color: var(--color-text-brown-light);
+    color: var(--color-card-bg-light);
     margin-left: 0.5rem;
 }
 

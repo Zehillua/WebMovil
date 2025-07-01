@@ -222,7 +222,7 @@ const EdicionProductos: React.FC = () => {
       <nav className="navbar-locatario">
         <button 
           className="back-btn"
-          onClick={() => navigate('/locatario/dashboard')}
+          onClick={() => navigate('/locatario')}
           title="Volver al dashboard"
         >
           ← Volver

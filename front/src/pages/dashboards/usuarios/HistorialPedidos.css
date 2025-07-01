@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;700&display=swap');
 /* --- Variables de Color y Tipografía (Mantener consistencia) --- */
 :root {
     --color-dark-brown: #532a14;
@@ -58,7 +59,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 1.5rem 1.5rem 1rem 1.5rem; /* Ajustar padding */
-    background: var(--color-card-bg-light);
+    background: var(--color-dark-brown);
     border-radius: 15px; /* Menos pronunciado */
     box-shadow: 0 4px 15px var(--color-general-shadow); /* Sombra más suave */
     margin-bottom: 2.5rem; /* Aumentar margen inferior */
@@ -66,21 +67,22 @@ body {
 }
 
 .historial-volver {
-    background: var(--color-light-orange-pastel);
-    border: 2px solid var(--color-subtitle-orange); /* Borde con color de acento */
-    font-size: 1.6rem; /* Aumentar ligeramente el tamaño del icono */
-    color: var(--color-subtitle-orange); /* Color de acento */
-    border-radius: 50%;
-    width: 44px; /* Aumentar el tamaño del botón */
-    height: 44px; /* Aumentar el tamaño del botón */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.6rem 1rem; /* Ajuste de padding */
+    border-radius: 25px;
     cursor: pointer;
-    transition: all 0.3s ease; /* Transición suave para todos los cambios */
     display: flex;
     align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* Sombra más definida */
-    margin-left: 0; /* Ya se maneja con el padding del header */
+    gap: 0.5rem; /* Ajuste del espacio entre icono y texto */
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap; /* ¡Clave para evitar que el texto se rompa! */
+    flex-shrink: 0; /* Evita que el botón se encoja */
 }
+
 
 .historial-volver:hover {
     background: var(--color-subtitle-orange); /* Fondo oscuro en hover */
@@ -95,7 +97,7 @@ body {
 }
 
 .historial-title {
-    color: var(--color-title-brown)!important; /* Marrón oscuro */
+    color: var(--color-light-orange-pastel)!important; /* Marrón oscuro */
     font-size: 1.8rem; /* Más grande y prominente */
     font-weight: 700;
     text-align: center;

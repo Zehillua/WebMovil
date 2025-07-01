@@ -100,7 +100,15 @@ const PedidosPendientes: React.FC = () => {
   return (
     <div className="pedidos-pendientes-root">
       <div className="pedidos-pendientes-header">
-        <button className="pedidos-pendientes-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
+                <button
+          onClick={() => navigate(-1)}
+          className="pedidos-pendientes-volver nav-action-btn" // Añadimos la clase nav-action-btn
+          title="Volver"
+        >
+          <img src="https://img.icons8.com/ios-filled/28/ffffff/back.png" alt="Volver" />
+          <span className="btn-text">Volver</span>
+        </button>
+
         <span className="pedidos-pendientes-title">Mis Pedidos Pendientes</span>
         <div style={{ width: 32 }}></div>
       </div>

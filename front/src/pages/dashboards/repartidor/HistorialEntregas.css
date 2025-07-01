@@ -109,7 +109,7 @@ html, body {
 }
 
 .historial-title {
-    color: var(--color-historial-pink-primary); /* Color de título con acento */
+    color: var(--color-dark-brown)!important; /* Color de título con acento */
     font-size: 2rem; /* Tamaño de título consistente */
     font-weight: 700;
     font-family: var(--font-heading); /* Fuente de título de la paleta */

@@ -121,7 +121,15 @@ const HistorialPedidos: React.FC = () => {
   return (
     <div className="historial-pedidos-root">
       <div className="historial-pedidos-header">
-        <button className="historial-volver" onClick={() => navigate(-1)} title="Volver">⬅️</button>
+                <button
+          onClick={() => navigate(-1)}
+          className="historial-volver nav-action-btn" // Añadimos la clase nav-action-btn para el estilo de ícono+texto
+          title="Volver"
+        >
+          <img src="https://img.icons8.com/ios-filled/28/ffffff/back.png" alt="Volver" /> {/* Icono de "volver" */}
+          <span className="btn-text">Volver</span>
+        </button>
+
         <span className="historial-title">📋 Historial de Pedidos</span>
         <div style={{ width: 32 }}></div>
       </div>
