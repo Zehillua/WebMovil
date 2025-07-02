@@ -1,6 +1,5 @@
-// Login.tsx (Unificado - Lógica de Proyecto 1 con Diseño de Proyecto 2)
 import React, { useState } from 'react';
-import { useMutation } from '@tanstack/react-query'; // Importa useMutation del Proyecto 1
+import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
@@ -18,6 +17,20 @@ const loginUser = async (datos: { correo: string; clave: string }) => {
   return response.json();
 };
 
+const checkIfAdmin = async (token: string) => {
+  const response = await fetch('http://localhost:3000/usuarios/me/admin-check', {
+    method: 'GET',
+    headers: { 
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json' 
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Error al verificar admin');
+  }
+  return response.json();
+};
+
 const Login = () => {
   const [correo, setCorreo] = useState('');
   const [clave, setClave] = useState('');
@@ -26,26 +39,58 @@ const Login = () => {
   // Lógica de mutación con react-query - Tomada directamente del Proyecto 1
   const mutation = useMutation({
     mutationFn: loginUser,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      // Guardar el token
       localStorage.setItem('token', data.access_token);
-      localStorage.setItem('tipoUsuario', data.tipoUsuario);
+      
+      try {
+        // Primero verificar si es admin
+        const adminCheck = await checkIfAdmin(data.access_token);
+        
+        if (adminCheck.isAdmin) {
+          localStorage.setItem('tipoUsuario', 'admin');
+          navigate('/admin');
+          return;
+        }
+        
+        // Si no es admin, usar el tipoUsuario del login
+        localStorage.setItem('tipoUsuario', data.tipoUsuario);
+        
         // Mapeo de tipoUsuario a ruta
-      const rutasPorTipo: Record<string, string> = {
-        usuario: '/comprador',
-        locatario: '/locatario',
-        repartidor: '/repartidor',
-        admin: '/admin',
-      };
+        const rutasPorTipo: Record<string, string> = {
+          usuario: '/comprador',
+          locatario: '/locatario',
+          repartidor: '/repartidor',
+        };
 
-      const ruta = rutasPorTipo[data.tipoUsuario];
-      if (ruta) {
-        navigate(ruta);
-      } else {
-        alert('Tipo de usuario desconocido');
+        const ruta = rutasPorTipo[data.tipoUsuario];
+        if (ruta) {
+          navigate(ruta);
+        } else {
+          alert('Tipo de usuario desconocido');
+        }
+      } catch (error) {
+        console.error('Error al verificar admin:', error);
+        // Si falla la verificación de admin, usar el tipoUsuario del login
+        localStorage.setItem('tipoUsuario', data.tipoUsuario);
+        
+        const rutasPorTipo: Record<string, string> = {
+          usuario: '/comprador',
+          locatario: '/locatario',
+          repartidor: '/repartidor',
+          admin: '/admin',
+        };
+
+        const ruta = rutasPorTipo[data.tipoUsuario];
+        if (ruta) {
+          navigate(ruta);
+        } else {
+          alert('Tipo de usuario desconocido');
+        }
       }
-      },
+    },
     onError: (error: any) => {
-        alert('Error en el login: ' + error.message);
+      alert('Error en el login: ' + error.message);
     },
   });
 

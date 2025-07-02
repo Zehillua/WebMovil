@@ -1,0 +1,16 @@
+# Para agregar el servicio de seed al docker-compose, agrega esto después del servicio 'front':
+
+  seed-data:
+    build:
+      context: ./seed
+      dockerfile: Dockerfile
+    container_name: seed-data
+    depends_on:
+      - mongo
+      - auth
+      - locatarios
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+    restart: "no"
+    volumes:
+      - ./seed:/app

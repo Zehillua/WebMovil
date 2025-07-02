@@ -28,6 +28,9 @@ async function bootstrap() {
         whitelist: true,
         forbidNonWhitelisted: true,
         transform: true,
+        skipUndefinedProperties: true, // ✅ AGREGAR ESTA LÍNEA
+        skipNullProperties: false,
+        skipMissingProperties: false,
     }));
     await app.listen(3002);
     console.log('🚀 Microservicio de Pedidos corriendo en puerto 3002');

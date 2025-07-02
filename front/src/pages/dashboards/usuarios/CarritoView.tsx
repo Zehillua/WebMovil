@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { normalizarDireccion } from '../../../utils/direccionUtils';
 import './CarritoView.css';
 
 interface ComidaCarrito {
@@ -201,9 +202,11 @@ const CarritoView: React.FC = () => {
       
       if (resUser.ok) {
         const userData = await resUser.json();
-        console.log('Datos del usuario:', userData);
-        setDireccionUsuario(userData.direccion || '');
-        setDireccionEntrega(userData.direccion || '');
+            console.log('Datos del usuario:', userData);
+
+            const direccionNormalizada = normalizarDireccion(userData.direccion);
+            setDireccionUsuario(direccionNormalizada);
+            setDireccionEntrega(direccionNormalizada);
       }
       setShowPago(true);
     } catch (error) {
@@ -258,7 +261,7 @@ const CarritoView: React.FC = () => {
         const nombresPromociones = promocionesLocal.map(p => p.nombrePromocion);
         const nombrePedido = [...nombresComidas, ...nombresPromociones].join(', ') || 'Pedido mixto';
 
-        const pedidoBody = {
+        const pedidoBody: any = {
           idComprador,
           idLocal,
           nombrePedido,
@@ -278,11 +281,21 @@ const CarritoView: React.FC = () => {
             tipo: 'promocion'
           })),
           esDelivery: !!esDelivery,
-          direccionEntrega: esDelivery ? direccionEntrega : undefined,
-          numeroCasaDepto: esDelivery ? numeroCasaDepto : undefined,
-          propina: esDelivery ? !!propina : false,
-          cantidadPropina: esDelivery && propina && cantidadPropina ? Number(cantidadPropina) : undefined
+          propina: esDelivery ? !!propina : false
         };
+
+        // ✅ Solo agregar campos de delivery si es delivery
+        if (esDelivery) {
+          if (direccionEntrega) {
+            pedidoBody.direccionEntrega = direccionEntrega;
+          }
+          if (numeroCasaDepto) {
+            pedidoBody.numeroCasaDepto = numeroCasaDepto;
+          }
+          if (propina && cantidadPropina) {
+            pedidoBody.cantidadPropina = Number(cantidadPropina);
+          }
+        }
 
         console.log('🚀 Enviando pedido:', pedidoBody);
 

@@ -27,10 +27,22 @@ export class PedidoService {
       direccionLocal = 'Dirección no disponible';
     }
 
-    // 2. Si es delivery, guardar dirección de entrega del usuario
+    // 2. Si es delivery, manejar dirección de entrega
     let direccionEntrega = '';
     if (createPedidoDto.esDelivery) {
-      direccionEntrega = this.normalizarDireccion(createPedidoDto.direccionEntrega);
+      if (createPedidoDto.direccionEntrega) {
+        // Si viene dirección desde el frontend, usarla
+        direccionEntrega = this.normalizarDireccion(createPedidoDto.direccionEntrega);
+      } else {
+        // Si no viene dirección, obtenerla del usuario
+        try {
+          const resUsuario = await axios.get(`http://localhost:3000/usuarios/${createPedidoDto.idComprador}`);
+          direccionEntrega = this.normalizarDireccion(resUsuario.data.direccion);
+        } catch (e) {
+          console.error('Error obteniendo dirección del usuario:', e);
+          direccionEntrega = 'Dirección no disponible';
+        }
+      }
     }
 
     // 3. Crear el pedido con todos los datos
@@ -55,22 +67,45 @@ export class PedidoService {
     return pedidoGuardado;
   }
 
-  private normalizarDireccion(direccion: any): string {
+    private normalizarDireccion(direccion: any): string {
     if (!direccion) return 'Dirección no disponible';
     
+    
     if (Array.isArray(direccion)) {
-      return direccion.filter(item => item && item.trim()).join(', ');
+      const elementosValidos = direccion.filter(item => 
+        item && 
+        typeof item === 'string' && 
+        item.trim() !== ''
+      );
+      return elementosValidos.length > 0 
+        ? elementosValidos.join(', ') 
+        : 'Dirección no disponible';
     }
+    
     
     if (typeof direccion === 'string') {
-      return direccion.trim();
+      const direccionLimpia = direccion.trim();
+      return direccionLimpia !== '' ? direccionLimpia : 'Dirección no disponible';
     }
     
+    
     if (typeof direccion === 'object') {
+      
+      if (direccion.calle || direccion.ciudad || direccion.direccion) {
+        const partes = [];
+        if (direccion.calle) partes.push(direccion.calle);
+        if (direccion.numero) partes.push(direccion.numero);
+        if (direccion.ciudad) partes.push(direccion.ciudad);
+        if (direccion.direccion) partes.push(direccion.direccion);
+        return partes.length > 0 ? partes.join(', ') : 'Dirección no disponible';
+      }
+     
       return JSON.stringify(direccion);
     }
     
-    return String(direccion);
+   
+    const resultado = String(direccion).trim();
+    return resultado !== '' ? resultado : 'Dirección no disponible';
   }
 
   async obtenerPedidos(): Promise<Pedido[]> {

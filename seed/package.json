@@ -1,0 +1,16 @@
+{
+  "name": "vecimarket-seed",
+  "version": "1.0.0",
+  "description": "Script de población de datos para VeciMarket",
+  "main": "seed.js",
+  "scripts": {
+    "seed": "node seed.js",
+    "start": "node seed.js"
+  },
+  "dependencies": {
+    "mongodb": "^6.0.0"
+  },
+  "keywords": ["seed", "database", "mongodb", "vecimarket"],
+  "author": "VeciMarket Team",
+  "license": "MIT"
+}

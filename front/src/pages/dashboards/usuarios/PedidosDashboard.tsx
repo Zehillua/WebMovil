@@ -67,14 +67,14 @@ const PedidosDashboard: React.FC = () => {
     skip: !userId,
     pollInterval: 5000,
     errorPolicy: 'all',
-    // ✅ USAR CONTEXT PARA ESPECIFICAR EL ENDPOINT CORRECTO
+    
     context: {
       uri: 'http://localhost:3002/graphql'
     }
   });
 
   const [rechazarPedidoMutation] = useMutation(RECHAZAR_PEDIDO, {
-    // ✅ USAR CONTEXT PARA ESPECIFICAR EL ENDPOINT CORRECTO
+    
     context: {
       uri: 'http://localhost:3002/graphql'
     },
